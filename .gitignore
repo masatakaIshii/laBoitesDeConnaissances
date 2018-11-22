@@ -55,3 +55,6 @@ dkms.conf
 *.depend
 *.layout
 *.cbp
+*.idea
+src/cmake-build-debug
+src/CMakeLists.txt
