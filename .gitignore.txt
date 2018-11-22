@@ -1,0 +1,8 @@
+# Files to ignore for git
+
+src/bin
+src/obj
+src/box_of_knowledge.depend
+src/box_of_knowledge.layout
+src/SDL.dll
+src/SDL
