@@ -13,3 +13,9 @@ typedef struct Config {
     int width;
     int height;
 } Config;
+
+typedef struct App {
+    SDL_Surface *screen;
+    Colors colors;
+    Config config;
+} App;

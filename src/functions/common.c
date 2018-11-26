@@ -2,14 +2,11 @@
 #include <stdio.h>
 #include <SDL.h>
 #include "../headers/common.h"
+#include "../headers/play.h"
 
-void mainEventLoop(SDL_Surface *screen, Config *config) {
+void mainEventLoop(App *app) {
     SDL_Event event;
     int done = 0;
-
-    // On charge les couleurs
-    Colors colors;
-    loadColors(screen, &colors);
 
     while (!done) {
         SDL_WaitEvent(&event);
@@ -18,42 +15,41 @@ void mainEventLoop(SDL_Surface *screen, Config *config) {
                 done = 1; // On quitte la boucle ie le programme
                 break;
             case SDL_VIDEORESIZE:
-                resizeScreen(screen, config, event.resize.h);
+                resizeScreen(app, event.resize.h);
                 break;
             case SDL_KEYDOWN:
                 if (event.key.keysym.sym == SDLK_ESCAPE) {
                     done = 1; // On quitte la boucle ie le programme
                     break;
                 }
-                if (event.key.keysym.sym == SDLK_KP1) {
-                    // Fonction PLAY
+                if (event.key.keysym.sym == SDLK_1) {
+                    playMode(app);
                     break;
                 }
-                if (event.key.keysym.sym == SDLK_KP2) {
-                    // Fonctio CREATE
+                if (event.key.keysym.sym == SDLK_2) {
+                    // Fonction CREATE
                     break;
                 }
         }
-        displayMenu(screen, config, &colors);
+        displayMenu(app);
     }
 }
 
-void displayMenu(SDL_Surface *screen, Config *config, Colors *colors) {
-    // On set la couleur du fond d'�cran
-    SDL_FillRect(screen, NULL, colors->blue);
+void displayMenu(App *app) {
+    // On set la couleur du fond d'ecran
+    SDL_FillRect(app->screen, NULL, app->colors.blue);
     // On creer le boutton Play
-    createRect(screen, config->width / 3, config->height / 1.5, config->width / 12, config->height / 4, colors->green);
+    createRect(app->screen, app->config.width / 3, app->config.height / 1.5, app->config.width / 12, app->config.height / 4, app->colors.green);
     // On creer le boutton Create
-    createRect(screen, config->width / 3, config->height / 1.5, (config->width / 12) * 7, config->height / 4,
-               colors->yellow);
+    createRect(app->screen, app->config.width / 3, app->config.height / 1.5, (app->config.width / 12) * 7, app->config.height / 4, app->colors.yellow);
     // Actualisation de l'�cran
-    SDL_Flip(screen);
+    SDL_Flip(app->screen);
 }
 
-void resizeScreen(SDL_Surface *screen, Config *config, int height) {
-    loadConfig(config, height);
-    screen = SDL_SetVideoMode(config->width, config->height, BPP, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
-    verifyPointer(screen, "Unable to set video mode");
+void resizeScreen(App *app, int height) {
+    loadConfig(&(app->config), height);
+    app->screen = SDL_SetVideoMode(app->config.width, app->config.height, BPP, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
+    verifyPointer(app->screen, "Unable to set video mode");
 }
 
 void createRect(SDL_Surface *screen, int width, int height, int x, int y, Uint32 color) {
@@ -93,4 +89,20 @@ void loadColors(SDL_Surface *screen, Colors *colors) {
 void loadConfig(Config *config, int height) {
     config->height = height; // A configurer dans le fichier de config
     config->width = config->height * 1.95; // Largeur intialis� au format 16/9 suivant la hauteur
+}
+
+void loadApp(App *app) {
+    // On charge la config
+    Config config;
+    loadConfig(&config, 480);
+    app->config = config;
+
+    // Create the window
+    app->screen = SDL_SetVideoMode(app->config.width, app->config.height, BPP, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
+    verifyPointer(app->screen, "Unable to set video mode");
+
+    // On charge les couleurs
+    Colors colors;
+    loadColors(app->screen, &colors);
+    app->colors = colors;
 }
