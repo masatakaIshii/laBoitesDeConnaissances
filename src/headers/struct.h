@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include <mysql.h>
 
 #define BPP     32
 
@@ -18,4 +19,5 @@ typedef struct App {
     SDL_Surface *screen;
     Colors colors;
     Config config;
+    MYSQL mysql;
 } App;
