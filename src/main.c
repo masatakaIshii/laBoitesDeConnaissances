@@ -5,6 +5,7 @@
 
 int main(int argc, char **argv) {
     App app;
+    int returnStat;
 
     // Start SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -12,14 +13,11 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-    SDL_WM_SetIcon(SDL_LoadBMP("img/icon.bmp"), NULL); // Chargement de l'icone du programme
-    SDL_WM_SetCaption(".::. The box of knowledge .::.", NULL); // Chargement du nom du programme
-
     loadApp(&app);
 
-    mainEventLoop(&app);
+    returnStat = mainEventLoop(&app);
 
-    SDL_Quit();
+    quitApp(&app);
 
-    return EXIT_SUCCESS;
+    return returnStat;
 }
