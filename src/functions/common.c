@@ -1,94 +1,108 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include "../headers/common.h"
 #include "../headers/play.h"
 
-void mainEventLoop(App *app) {
+int mainEventLoop(App *app) {
     SDL_Event event;
     int done = 0;
 
     while (!done) {
         SDL_WaitEvent(&event);
-        switch (event.type) {
+        switch (event.type){
+            // Quitte le programme
             case SDL_QUIT:
-                done = 1; // On quitte la boucle ie le programme
-                break;
-            case SDL_VIDEORESIZE:
-                resizeScreen(app, event.resize.h);
-                break;
+                return EXIT_SUCCESS;
+
+            // Redimensionnement de la fenetre
+            case SDL_WINDOWEVENT:
+                if(event.window.event == SDL_WINDOWEVENT_RESIZED)
+                    resizeScreen(app, event.window.data2);
+            break;
+
             case SDL_KEYDOWN:
-                if (event.key.keysym.sym == SDLK_ESCAPE) {
-                    done = 1; // On quitte la boucle ie le programme
-                    break;
-                }
-                if (event.key.keysym.sym == SDLK_1) {
+                // Quitte le programme
+                if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+                    return EXIT_SUCCESS;
+                // MODE PLAY
+                if (event.key.keysym.scancode == SDL_SCANCODE_1)
                     playMode(app);
-                    break;
-                }
-                if (event.key.keysym.sym == SDLK_2) {
+                // MODE CREATE
+                if (event.key.keysym.scancode == SDL_SCANCODE_2)
                     // Fonction CREATE
-                    break;
-                }
+            break;
         }
         displayMenu(app);
     }
+
+    return 2;
 }
 
 void displayMenu(App *app) {
     // On set la couleur du fond d'ecran
-    SDL_FillRect(app->screen, NULL, app->colors.blue);
+    SDL_SetRenderDrawColor(app->renderer, app->colors.blue[0], app->colors.blue[1], app->colors.blue[2], app->colors.blue[3]);
+    SDL_RenderClear(app->renderer);
     // On creer le boutton Play
-    createRect(app->screen, app->config.width / 3, app->config.height / 1.5, app->config.width / 12, app->config.height / 4, app->colors.green);
+    createRect(app, app->config.width / 3, app->config.height / 1.5, app->config.width / 12, app->config.height / 4, app->colors.green);
     // On creer le boutton Create
-    createRect(app->screen, app->config.width / 3, app->config.height / 1.5, (app->config.width / 12) * 7, app->config.height / 4, app->colors.yellow);
-    // Actualisation de l'ï¿½cran
-    SDL_Flip(app->screen);
+    createRect(app, app->config.width / 3, app->config.height / 1.5, (app->config.width / 12) * 7, app->config.height / 4, app->colors.yellow);
+    // Actualisation de l'ecran
+    SDL_RenderPresent(app->renderer);
 }
 
 void resizeScreen(App *app, int height) {
+    // On charge la nouvelle config
     loadConfig(&(app->config), height);
-    app->screen = SDL_SetVideoMode(app->config.width, app->config.height, BPP, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
-    verifyPointer(app->screen, "Unable to set video mode");
+
+    // On redimensionne la fenêtre
+    SDL_SetWindowSize(app->screen, app->config.width, app->config.height);
 }
 
-void createRect(SDL_Surface *screen, int width, int height, int x, int y, Uint32 color) {
-    SDL_Surface *rect = NULL;
-    SDL_Rect position;
+void createRect(App *app, int width, int height, int x, int y, int* color) {
+    // Definition du rectangle
+    SDL_Rect rect;
+    rect.x = x;
+    rect.y = y;
+    rect.w = width;
+    rect.h = height;
 
-    rect = SDL_CreateRGBSurface(SDL_HWSURFACE, width, height, BPP, 0, 0, 0, 0);
-    verifyPointer(rect, "Unable to load rectangle");
+    // Definition de la couleur
+    SDL_SetRenderDrawColor(app->renderer, color[0], color[1], color[2], color[3]);
 
-    setPosition(&position, x, y);
-
-    SDL_FillRect(rect, NULL, color);
-    SDL_BlitSurface(rect, NULL, screen, &position);
-
-    SDL_FreeSurface(rect);
+    // Creation du rectangle en couleur
+    SDL_RenderFillRect(app->renderer, &rect);
 }
 
-void verifyPointer(void *pointer, char *message) {
+void verifyPointer(App *app, void *pointer, char *message) {
     if (!pointer) {
         printf("%s %s\n", message, SDL_GetError());
+        // On ferme la SDL et on sort du programme
+        quitApp(app);
         exit(EXIT_FAILURE);
     }
 }
 
-void setPosition(SDL_Rect *position, int x, int y) {
-    position->x = x;
-    position->y = y;
-}
-
-void loadColors(SDL_Surface *screen, Colors *colors) {
-    colors->blue = SDL_MapRGB(screen->format, 93, 97, 203);
-    colors->lightblue = SDL_MapRGBA(screen->format, 0, 0, 0, 0);
-    colors->green = SDL_MapRGBA(screen->format, 86, 197, 138, 0);
-    colors->yellow = SDL_MapRGBA(screen->format, 191, 187, 80, 0);
-}
-
 void loadConfig(Config *config, int height) {
     config->height = height; // A configurer dans le fichier de config
-    config->width = config->height * 1.95; // Largeur intialisï¿½ au format 16/9 suivant la hauteur
+    config->width = config->height * 1.95; // Largeur intialise au format 16/9 suivant la hauteur
+}
+
+void loadColors(Colors *colors) {
+    colors->blue[0] = 93;
+    colors->blue[1] = 97;
+    colors->blue[2] = 203;
+    colors->blue[3] = 0;
+
+    colors->green[0] = 86;
+    colors->green[1] = 197;
+    colors->green[2] = 138;
+    colors->green[3] = 0;
+
+    colors->yellow[0] = 191;
+    colors->yellow[1] = 187;
+    colors->yellow[2] = 80;
+    colors->yellow[3] = 0;
 }
 
 void loadApp(App *app) {
@@ -97,12 +111,28 @@ void loadApp(App *app) {
     loadConfig(&config, 480);
     app->config = config;
 
-    // Create the window
-    app->screen = SDL_SetVideoMode(app->config.width, app->config.height, BPP, SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
-    verifyPointer(app->screen, "Unable to set video mode");
+    // On creer la fenetre
+    app->screen = SDL_CreateWindow(".::. The box of knowledge .::.",
+                        WINDOW_POS_X,
+                        WINDOW_POS_Y,
+                        app->config.width, app->config.height,
+                        SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+    verifyPointer(app, app->screen, "Unable to set video mode");
+    SDL_SetWindowIcon(app->screen, SDL_LoadBMP("img/icon.bmp")); // Chargement de l'icone du programme
+
+    // On creer le renderer
+    app->renderer = SDL_CreateRenderer(app->screen, -1, SDL_RENDERER_ACCELERATED);
+    verifyPointer(app, app->renderer, "Unable to create renderer");
 
     // On charge les couleurs
     Colors colors;
-    loadColors(app->screen, &colors);
+    loadColors(&colors);
     app->colors = colors;
+
+}
+
+void quitApp(App *app){
+    SDL_DestroyRenderer(app->renderer);
+    SDL_DestroyWindow(app->screen);
+    SDL_Quit();
 }

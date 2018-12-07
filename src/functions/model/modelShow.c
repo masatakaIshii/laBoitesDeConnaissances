@@ -15,7 +15,6 @@ void showQueryResult(char* ***resultResult,unsigned int* numberFields,unsigned i
     int i;
     int j;
 
-
     if (fieldsList != NULL) {
         addFieldsToResult(resultResult, &fieldsList, &numberRows);
     }
@@ -29,7 +28,6 @@ void showQueryResult(char* ***resultResult,unsigned int* numberFields,unsigned i
         }
         printf("\n");
     }
-
 }
 
 void addFieldsToResult(char* ***resultQuery, char* **fieldsList, unsigned int* *numberRows) {

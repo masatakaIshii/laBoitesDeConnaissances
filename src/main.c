@@ -4,6 +4,7 @@
 #include "headers/play.h"
 #include "headers/model/modelSelect.h"
 #include "headers/model/modelShow.h"
+#include "headers/model/modelIUD.h"
 
 int main(int argc, char **argv) {
     App app;
@@ -30,16 +31,19 @@ int main(int argc, char **argv) {
     /*mysql test*/
     unsigned int numberFields;
     unsigned int numberRows;
+    char *stmt = "DELETE FROM user WHERE id=3";
 
     char *** resultQuery = querySelect(&app.mysql, "SELECT * FROM user", &numberFields, &numberRows, 0);
     char **resultFieldsInfo = getFieldsNameType(&app.mysql, "user", NULL);
+    int resultIUDQuery = queryIUD(&app.mysql, stmt);
+
+    printf("resultIUDQuery : %d\n", resultIUDQuery);
 
     showQueryResult(&resultQuery, &numberFields, &numberRows, resultFieldsInfo);
 
     freeResultStringTable(&resultQuery, numberFields, numberRows);
 
     freeFieldsList(&resultFieldsInfo, numberFields);
-
 
     return EXIT_SUCCESS;
 }

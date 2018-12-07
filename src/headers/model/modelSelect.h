@@ -8,6 +8,6 @@
 #ifndef MYSQL_SELECT_FUNCTIONS
 #include "modelCommon.h"
 
-char ***querySelect(MYSQL* mysql, const char *currentQuery, unsigned int* numberFields, unsigned int* numberRows, short show);
+char ***querySelect(MYSQL* mysql, const char *currentQuery, unsigned int* numberFields, unsigned int* numberRows);
 char ***fetchQuerySelect(MYSQL_RES *result, unsigned int numberFields, unsigned int numberRows);
 #endif

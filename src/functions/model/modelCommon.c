@@ -7,12 +7,13 @@
 */
 #include <stdio.h>
 #include "../../headers/model/modelCommon.h"
+#include
 
 void dbConnect(MYSQL* mysql) {
     mysql_init(mysql);
     mysql_options(mysql, MYSQL_READ_DEFAULT_GROUP, "option");
 
-    checkMYSQLError(mysql_real_connect(mysql, "127.0.0.1", "root", "root", "the_box_of_knowledge", 0, NULL, 0), mysql);
+    mysql_real_connect(mysql, "127.0.0.1", "root", "root", "the_box_of_knowledge", 0, NULL, 0), mysql);
 }
 
 void checkMYSQLError(void *functionResult, MYSQL* mysql) {

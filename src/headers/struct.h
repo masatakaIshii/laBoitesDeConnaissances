@@ -1,13 +1,15 @@
-#include <SDL.h>
-#include <mysql.h>
+#include <SDL2/SDL.h>
 
 #define BPP     32
+#define WINDOW_POS_X    200
+#define WINDOW_POS_Y    100
+
 
 typedef struct Colors {
-    Uint32 blue;
-    Uint32 lightblue;
-    Uint32 green;
-    Uint32 yellow;
+    int blue[4];
+    int lightblue[4];
+    int green[4];
+    int yellow[4];
 } Colors;
 
 typedef struct Config {
@@ -16,8 +18,8 @@ typedef struct Config {
 } Config;
 
 typedef struct App {
-    SDL_Surface *screen;
+    SDL_Window *screen;
+    SDL_Renderer *renderer;
     Colors colors;
     Config config;
-    MYSQL mysql;
 } App;
