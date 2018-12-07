@@ -1,5 +1,8 @@
-#include <SDL2/SDL.h>
+#ifndef _STRUCTURE
+#define _STRUCTURE
 
+#include <SDL2/SDL.h>
+#include <mysql.h>
 #define BPP     32
 #define WINDOW_POS_X    200
 #define WINDOW_POS_Y    100
@@ -22,4 +25,6 @@ typedef struct App {
     SDL_Renderer *renderer;
     Colors colors;
     Config config;
+    MYSQL *mysql;
 } App;
+#endif // _STRUCTURE

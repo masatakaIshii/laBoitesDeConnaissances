@@ -1,8 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <SDL2/SDL.h>
+#include <mysql.h>
 #include "../headers/common.h"
 #include "../headers/play.h"
+#include "../headers/model/modelCommon.h"
 
 int mainEventLoop(App *app) {
     SDL_Event event;
@@ -74,7 +76,7 @@ void createRect(App *app, int width, int height, int x, int y, int* color) {
     SDL_RenderFillRect(app->renderer, &rect);
 }
 
-void verifyPointer(App *app, void *pointer, char *message) {
+void verifyPointer(App *app, void *pointer, const char *message) {
     if (!pointer) {
         printf("%s %s\n", message, SDL_GetError());
         // On ferme la SDL et on sort du programme
@@ -129,10 +131,15 @@ void loadApp(App *app) {
     loadColors(&colors);
     app->colors = colors;
 
+    // Connexion à la base de données
+    dbConnect(app);
 }
 
 void quitApp(App *app){
     SDL_DestroyRenderer(app->renderer);
     SDL_DestroyWindow(app->screen);
     SDL_Quit();
+
+    //deconnexion de la base de données
+    mysql_close(app->mysql);
 }
