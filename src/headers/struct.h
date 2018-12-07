@@ -25,6 +25,6 @@ typedef struct App {
     SDL_Renderer *renderer;
     Colors colors;
     Config config;
-    MYSQL *mysql;
+    MYSQL mysql;
 } App;
 #endif // _STRUCTURE

@@ -8,13 +8,17 @@
 #include <stdio.h>
 #include "../../headers/model/modelCommon.h"
 #include "../../headers/common.h"
+#include <mysql.h>
 #include <SDL2/SDL.h>
 
 void dbConnect(App *app) {
-    mysql_init(app->mysql);
-    mysql_options(app->mysql, MYSQL_READ_DEFAULT_GROUP, "option");
 
-    mysql_real_connect(app->mysql, "127.0.0.1", "root", "root", "the_box_of_knowledge", 0, NULL, 0);
+    mysql_options(&app->mysql, MYSQL_READ_DEFAULT_GROUP, "option");
+
+    mysql_real_connect(&app->mysql, "127.0.0.1", "root", "root", "the_box_of_knowledge", 0, NULL, 0);
+    if (!(&app->mysql)) {
+        printf("%s", mysql_error(&app->mysql));
+    }
 }
 
 char **getFieldsNameType(App *app, const char *table, unsigned int* numberFields) {
@@ -22,8 +26,8 @@ char **getFieldsNameType(App *app, const char *table, unsigned int* numberFields
     MYSQL_RES *resultFields;
     unsigned int fieldsCount;
 
-    resultFields = mysql_list_fields(app->mysql, table, NULL);
-    verifyPointer(app, resultFields, mysql_error(app->mysql));
+    resultFields = mysql_list_fields(&app->mysql, table, NULL);
+    verifyPointer(app, resultFields, mysql_error(&app->mysql));
 
     fieldsCount = mysql_num_fields(resultFields);
 

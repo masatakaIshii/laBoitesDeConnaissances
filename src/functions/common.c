@@ -132,6 +132,8 @@ void loadApp(App *app) {
     app->colors = colors;
 
     // Connexion à la base de données
+    mysql_init(&app->mysql);
+
     dbConnect(app);
 }
 
@@ -141,5 +143,5 @@ void quitApp(App *app){
     SDL_Quit();
 
     //deconnexion de la base de données
-    mysql_close(app->mysql);
+    mysql_close(&app->mysql);
 }

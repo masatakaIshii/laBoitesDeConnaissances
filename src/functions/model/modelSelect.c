@@ -23,14 +23,10 @@ char ***querySelect (App *app, const char *currentQuery, unsigned int *numberFie
     char ***resultQuery;
     MYSQL_RES *result;
 
-    if(mysql_query(app->mysql, currentQuery) != 0){
-        printf("%s", mysql_error(app->mysql));
-        quitApp(app);
-        exit(EXIT_FAILURE);
-    }
+    mysql_query(&app->mysql, currentQuery);
 
-    result = mysql_store_result(app->mysql);
-    verifyPointer(app, result, mysql_error(app->mysql));
+    result = mysql_store_result(&app->mysql);
+    verifyPointer(app, result, mysql_error(&app->mysql));
 
     *numberFields = mysql_num_fields(result);
     *numberRows = mysql_num_rows(result);

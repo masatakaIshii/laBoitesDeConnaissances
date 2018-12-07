@@ -1,3 +1,4 @@
+#ifndef COMMON_FUNCTIONS
 #include "struct.h"
 
 int mainEventLoop(App *app);
@@ -9,3 +10,5 @@ void loadConfig(Config *config, int height);
 void loadColors(Colors *colors);
 void loadApp(App *app);
 void quitApp(App *app);
+#endif // COMMON_FUNCTIONS
+
