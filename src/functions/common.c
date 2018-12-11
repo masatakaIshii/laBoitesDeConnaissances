@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <SDL2/SDL.h>
 #include <mysql.h>
 #include "../headers/common.h"
@@ -55,13 +56,13 @@ void displayMenu(App *app) {
 
 void resizeScreen(App *app, int height) {
     // On charge la nouvelle config
-    loadConfig(&(app->config), height);
+    //loadConfig(&(app->config));
 
-    // On redimensionne la fenêtre
+    // On redimensionne la fenï¿½tre
     SDL_SetWindowSize(app->screen, app->config.width, app->config.height);
 }
 
-void createRect(App *app, int width, int height, int x, int y, int* color) {
+void createRect(App *app, int width, int height, int x, int y, Uint8* color) {
     // Definition du rectangle
     SDL_Rect rect;
     rect.x = x;
@@ -76,7 +77,21 @@ void createRect(App *app, int width, int height, int x, int y, int* color) {
     SDL_RenderFillRect(app->renderer, &rect);
 }
 
-void verifyPointer(App *app, void *pointer, const char *message) {
+int inRect(SDL_Rect rect, int clicX, int clicY){
+    int x, y;
+
+    for(x = 0; x < rect.w; x++){
+        for(y = 0; y < rect.h; y++){
+            if(x + rect.x == clicX && y + rect.y == clicY){
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+void verifyPointer(App *app, void *pointer, char *message) {
     if (!pointer) {
         printf("%s %s\n", message, SDL_GetError());
         // On ferme la SDL et on sort du programme
@@ -85,16 +100,39 @@ void verifyPointer(App *app, void *pointer, const char *message) {
     }
 }
 
-void loadConfig(Config *config, int height) {
-    config->height = height; // A configurer dans le fichier de config
-    config->width = config->height * 1.95; // Largeur intialise au format 16/9 suivant la hauteur
+void loadConfig(Config *config) {
+    char *ptr = NULL;
+    char line[200];
+    char param[200];
+    char value[200];
+
+    FILE *file = fopen("config.txt", "r");
+    if(file == NULL) {
+        printf("Unable to load file");
+    }
+
+    while(fgets(line, 200, file) != NULL) {
+        ptr = strchr(line, '=');
+        strcpy(value, ptr + 1);
+        strncpy(param, line, ptr - line);
+        param[ptr-line] = '\0';
+
+        if(strcmp(param, "windowHeight") == 0){
+            config->height = (int)strtol(value, NULL, 0);
+            config->width = config->height * 1.95; // Largeur intialise au format 16/9 suivant la hauteur
+        }
+        //else if(strcmp(param, "color1") == 0)
+            // Set la couleur ici
+    }
+
+    fclose(file);
 }
 
 void loadColors(Colors *colors) {
-    colors->blue[0] = 93;
-    colors->blue[1] = 97;
-    colors->blue[2] = 203;
-    colors->blue[3] = 0;
+    colors->blue[0] = 93;   // RED
+    colors->blue[1] = 97;   // GREEN
+    colors->blue[2] = 203;  // BLUE
+    colors->blue[3] = 0;    // ALPHA
 
     colors->green[0] = 86;
     colors->green[1] = 197;
@@ -110,7 +148,7 @@ void loadColors(Colors *colors) {
 void loadApp(App *app) {
     // On charge la config
     Config config;
-    loadConfig(&config, 480);
+    loadConfig(&config);
     app->config = config;
 
     // On creer la fenetre
@@ -131,7 +169,7 @@ void loadApp(App *app) {
     loadColors(&colors);
     app->colors = colors;
 
-    // Connexion à la base de données
+    // Connexion ï¿½ la base de donnï¿½es
     mysql_init(&app->mysql);
 
     dbConnect(app);
@@ -142,6 +180,6 @@ void quitApp(App *app){
     SDL_DestroyWindow(app->screen);
     SDL_Quit();
 
-    //deconnexion de la base de données
+    //deconnexion de la base de donnï¿½es
     mysql_close(&app->mysql);
 }
