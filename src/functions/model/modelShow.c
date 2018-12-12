@@ -9,9 +9,7 @@
 #include <string.h>
 #include "../../headers/model/modelShow.h"
 #define MAX_CURRENT_VALUE 1000
-/*
-@TODO : Mettre en place un affichage bien structuré en prenant en compte la taille max de chaque colonne et nom de colonne
-*/
+
 
 void showQueryResult(char ****resultQuery, unsigned int *numberFields, unsigned int *numberRows, char **fieldsList) {
 
@@ -27,9 +25,9 @@ void addFieldsToResult(char ****resultQuery, char ***fieldsList, unsigned int **
     int i;
 
     inter = malloc(sizeof(char**) * (++**numberRows));
-    inter = fieldsList;
+    inter[0] = *fieldsList;
 
-    for (i = 0; i < (**numberRows); i++) {
+    for (i = 0; i < (**numberRows) - 1; i++) {
 
         inter[i + 1] = (*resultQuery)[i];
     }
@@ -40,7 +38,7 @@ void addFieldsToResult(char ****resultQuery, char ***fieldsList, unsigned int **
 }
 
 void showWellResult(char ***resultQuery, int numberFields, int numberRows, char **fieldsList) {
-    int *maxLengthsFields = getMaxLengthOfEachFields(resultQuery, numberFields, numberRows, fieldsList);
+    int *maxLengthsFields = getMaxLengthOfEachFields(resultQuery, numberFields, numberRows);
     int i;
     int j;
     int z;
@@ -53,7 +51,7 @@ void showWellResult(char ***resultQuery, int numberFields, int numberRows, char 
             printf(" %s |", resultQuery[i][j]);
         }
         printf("\n");
-        if (i == 0) {
+        if (i == 0 && fieldsList != NULL) {
             for (j = 0; j < numberFields; j++) {
                 for (z = 0; z < maxLengthsFields[j]; z++) {
                     printf("_");
@@ -67,7 +65,7 @@ void showWellResult(char ***resultQuery, int numberFields, int numberRows, char 
     free(maxLengthsFields);
 }
 
-int *getMaxLengthOfEachFields(char ***resultQuery, int numberFields, int numberRows, char **fieldsList) {
+int *getMaxLengthOfEachFields(char ***resultQuery, int numberFields, int numberRows) {
     int i;
     int j;
     int *maxLengthsFields = malloc(sizeof(int) * numberFields);

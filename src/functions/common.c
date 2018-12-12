@@ -85,6 +85,7 @@ void verifyPointer(App *app, void *pointer, const char *message) {
     }
 }
 
+
 void loadConfig(Config *config, int height) {
     config->height = height; // A configurer dans le fichier de config
     config->width = config->height * 1.95; // Largeur intialise au format 16/9 suivant la hauteur
@@ -144,4 +145,14 @@ void quitApp(App *app){
 
     //deconnexion de la base de données
     mysql_close(&app->mysql);
+}
+
+void checkPointer(void *pointer, char *errorMessage){
+    if (pointer == NULL) {
+        printf("%s", errorMessage);
+        exit(EXIT_FAILURE);
+    }
+}
+void freePointer(void **pointer) {
+    free(*pointer);
 }

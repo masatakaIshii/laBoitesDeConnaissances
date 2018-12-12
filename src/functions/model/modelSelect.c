@@ -22,11 +22,13 @@ char ***querySelect (App *app, const char *currentQuery, unsigned int *numberFie
 
     char ***resultQuery;
     MYSQL_RES *result;
+    int checkResult = 0;
 
-    mysql_query(&app->mysql, currentQuery);
+    checkResult = mysql_query(&app->mysql, currentQuery);
+    verifyMYSQLIntResult(app, checkResult);
 
     result = mysql_store_result(&app->mysql);
-    verifyPointer(app, result, mysql_error(&app->mysql));
+    verifyMYSQLPointer(app, result);
 
     *numberFields = mysql_num_fields(result);
     *numberRows = mysql_num_rows(result);
@@ -39,24 +41,22 @@ char ***querySelect (App *app, const char *currentQuery, unsigned int *numberFie
 }
 
 char ***fetchQuerySelect(MYSQL_RES *result, unsigned int numberFields, unsigned int numberRows){
-
     char ***resultFetch;
     MYSQL_ROW row;
     unsigned long *lengths;
     int i = 0, j = 0;
 
     resultFetch = malloc(sizeof(char**) * numberRows);
-    if (resultFetch == NULL) exit(0);
+    checkPointer(resultFetch[i], "problem of allocation memory resultFetch");
 
     while((row = mysql_fetch_row(result))){
         //get length of each value
         lengths = mysql_fetch_lengths(result);
         resultFetch[i] = malloc(sizeof(char*) * numberFields);
-        if (resultFetch[i] == NULL) exit(-1);
-        //put all values of select query in resultFetch
+        checkPointer(resultFetch[i], "problem of allocation memory in resultFetch[i]");
         for (j = 0; j < numberFields; j++) {
             resultFetch[i][j] = malloc(sizeof(char) * (lengths[j] + 1));
-            if (resultFetch[i][j] == NULL) exit(-1);
+            checkPointer(resultFetch[i], "problem of allocation memory resultFetch[i][j]");
             sprintf(resultFetch[i][j],(row[j] != NULL)?row[j]:"");
         }
         i++;

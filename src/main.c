@@ -24,16 +24,24 @@ int main(int argc, char **argv) {
     loadApp(&app);
 
     returnStat = mainEventLoop(&app);
-
     /*mysql test*/
     unsigned int numberFields;
     unsigned int numberRows;
+    unsigned int typeField = 9;
+    unsigned int *listFieldTypes;
+    unsigned int test;
+
+
     char ***resultQuery = querySelect(&app, "SELECT * FROM user", &numberFields, &numberRows);
-    char **resultFieldsInfo = getFieldsNameType(&app, "user", NULL);
+
+    char **resultFieldsInfo = getFieldsName(&app, "user", &numberFields, NULL);
 
     showQueryResult(&resultQuery, &numberFields, &numberRows, resultFieldsInfo);
 
     freeResultStringTable(&resultQuery, numberFields, numberRows);
+    freeFieldsList(&resultFieldsInfo, numberFields);
+
+    test = getTypeOfField(&app, "user.name", NULL);
 
     quitApp(&app);
 

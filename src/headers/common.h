@@ -10,5 +10,8 @@ void loadConfig(Config *config, int height);
 void loadColors(Colors *colors);
 void loadApp(App *app);
 void quitApp(App *app);
+
+void checkPointer(void *pointer, char *errorMessage);
+void freePointer(void **pointer);
 #endif // COMMON_FUNCTIONS
 
