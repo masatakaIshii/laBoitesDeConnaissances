@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
     freeResultStringTable(&resultQuery, numberFields, numberRows);
     freeFieldsList(&resultFieldsInfo, numberFields);
 
-    test = getTypeOfField(&app, "user.name", NULL);
+    test = getProperFieldAndTable(&app, "user.name", NULL);
 
     quitApp(&app);
 

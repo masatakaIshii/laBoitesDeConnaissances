@@ -7,11 +7,26 @@
 */
 #include "../../headers/model/modelIUD.h"
 
-int queryIUD(MYSQL *mysql, const char *currentQuery) {
+int queryIUD(App *app, const char *currentQuery) {
     int affectedRows = 0;
+    int result;
 
-    mysql_query(mysql, currentQuery);
-    affectedRows = mysql_affected_rows(mysql);
+    result = mysql_query(&app->mysql, currentQuery);
+    verifyMYSQLIntResult(app, result);
+
+    affectedRows = mysql_affected_rows(&app->mysql);
 
     return affectedRows;
+}
+
+int preparedQueryIUD(App *app, const char *currentQuery, const char **paramValues, unsigned int *numberValues) {
+
+
+    /*
+    verify if '?' in currentQuery correspond to numberValues
+    specialParamValues = escape special char for paramValues
+    getTable by currentQuery;
+
+
+    */
 }

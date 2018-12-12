@@ -27,4 +27,11 @@ typedef struct App {
     Config config;
     MYSQL mysql;
 } App;
+
+typedef struct TableMysql {
+    char tableName[255];
+    char **listFieldsNames;
+    int numberField;
+    char **listFieldsTypes;
+} TableMysql;
 #endif // _STRUCTURE

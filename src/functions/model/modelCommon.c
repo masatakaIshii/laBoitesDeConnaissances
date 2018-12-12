@@ -140,15 +140,6 @@ MYSQL_STMT *stmtInitialisation(App *app) {
     return preparedQuery;
 }
 
-unsigned int getTypeOfField(App *app, char *field, char *table){
-    unsigned int onetype, *listType;
-    char **getList = getFieldsName(app, "user", NULL, &listType);
-
-
-
-    return 1;
-}
-
 void getProperFieldAndTable(char **field, char **table) {
     char temp[255];
     if (strchr(*field, '.')) {
