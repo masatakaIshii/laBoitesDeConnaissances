@@ -47,16 +47,25 @@ char ***fetchQuerySelect(MYSQL_RES *result, unsigned int numberFields, unsigned 
     int i = 0, j = 0;
 
     resultFetch = malloc(sizeof(char**) * numberRows);
-    checkPointer(resultFetch[i], "problem of allocation memory resultFetch");
+    if (resultFetch == NULL) {
+        printf("problem of allocation memory resultFetch");
+        exit(EXIT_FAILURE);
+    }
 
     while((row = mysql_fetch_row(result))){
         //get length of each value
         lengths = mysql_fetch_lengths(result);
         resultFetch[i] = malloc(sizeof(char*) * numberFields);
-        checkPointer(resultFetch[i], "problem of allocation memory in resultFetch[i]");
+        if (resultFetch[i] == NULL) {
+            printf("problem of allocation memory in resultFetch[i]");
+            exit(EXIT_FAILURE);
+        }
         for (j = 0; j < numberFields; j++) {
             resultFetch[i][j] = malloc(sizeof(char) * (lengths[j] + 1));
-            checkPointer(resultFetch[i], "problem of allocation memory resultFetch[i][j]");
+            if (resultFetch[i][j] == NULL) {
+                printf("problem of allocation memory resultFetch[i][j]");
+                exit(EXIT_FAILURE);
+            }
             sprintf(resultFetch[i][j],(row[j] != NULL)?row[j]:"");
         }
         i++;
