@@ -1,3 +1,11 @@
+/*
+** Filename : play.c
+**
+** Made by  : Baptiste LEGO
+**
+** Description  : play mode main functions
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <SDL2/SDL.h>
@@ -11,18 +19,22 @@ void playMode(App *app){
     while (!done) {
         SDL_WaitEvent(&event);
         switch (event.type) {
+            // On quitte le programme
             case SDL_QUIT:
-                done = 1; // On quitte la boucle et on retourne au menu principal
-                break;
+                quitApp(app);
+                exit(EXIT_SUCCESS);
+            break;
+
             case SDL_WINDOWEVENT:
                 if(event.window.event == SDL_WINDOWEVENT_RESIZED)
                     resizeScreen(app, event.window.data2);
-                break;
+            break;
+
             case SDL_KEYDOWN:
                 if (event.key.keysym.sym == SDLK_ESCAPE) {
                     done = 1; // On quitte la boucle et on retourne au menu principal
-                    break;
                 }
+            break;
         }
         displayHomePlay(app);
     }

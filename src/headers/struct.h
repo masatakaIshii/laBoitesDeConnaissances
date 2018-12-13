@@ -3,8 +3,10 @@
 
 #include <SDL2/SDL.h>
 #include <mysql.h>
+
 #define WINDOW_POS_X    200
 #define WINDOW_POS_Y    100
+#define SCREEN_FORMAT   1.95
 
 
 typedef struct Colors {
@@ -22,8 +24,8 @@ typedef struct Config {
 typedef struct App {
     SDL_Window *screen;
     SDL_Renderer *renderer;
+    MYSQL mysql;
     Colors colors;
     Config config;
-    MYSQL mysql;
 } App;
 #endif // _STRUCTURE
