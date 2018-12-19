@@ -1,5 +1,5 @@
 /*
-** Filename : modelBindHelper.c
+** Filename : modelBindHelper.h
 **
 ** Made by  : Masataka ISHII
 **
@@ -9,9 +9,19 @@
 #ifndef MYSQL_BINDHELPER_FUNCTIONS
 #include "../struct.h"
 
-short numberOfQMarkAndParamsIsEqual(const char *query, int numberParams);
+void loadTablesStruct(App *app, MySqlStmtManager *stmtManager, char **listTables);
+int *getArrayTypeParams(App *app, MySqlTable *tables, int numberTables, char **paramsName, int numberParams);
+void loadBindParams(App *app, MySqlStmtManager *stmtManager, char **paramsNames, char **paramsValues);
+int getTypeField(char *paramName, MySqlTable *tables, int numberTables);
+void bindParamString(int index, MySqlStmtManager *stmtManager, enum_field_types typeParam, char *paramValue);
+void bindParamInt(int index, MySqlStmtManager *stmtManager, enum_field_types typeParam, char *paramValue);
+void bindParamDate(int index, MySqlStmtManager *stmtManager, enum_field_types typeParam, char *paramValue)
 
-MYSQL_BIND *bindParams(App *app, char **tableNames, char **paramsName, char **paramsValues, int numberTables, int numberParams);
-TableMysql *loadTablesStruct(char **listTables, int numberTables);
+int *getArrayLengthParams(App *app, MySqlTable *tables, int numberTables, char **paramsNames, int numberParams);
+
+MYSQL_BIND *bindParams(App *app, MySqlTable *tables, int numberTables, char **paramsName, char **paramsValues,  int numberParams);
+MYSQL_BIND bindOneParam(App *app, char *paramsName, char *paramsValues, MySqlTable *tables, int numberTables);
+void getProperFieldAndTable(char **field, char **table);
+
 
 #endif // MYSQL_BINDHELPER_FUNCTIONS

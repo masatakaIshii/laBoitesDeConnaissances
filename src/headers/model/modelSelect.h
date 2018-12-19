@@ -7,7 +7,8 @@
 */
 #ifndef MYSQL_SELECT_FUNCTIONS
 #include "modelCommon.h"
+#include "../struct.h"
 
 char ***querySelect (App *app, const char *currentQuery, unsigned int *numberFields, unsigned int *numberRows);
-char ***fetchQuerySelect(MYSQL_RES *result, unsigned int numberFields, unsigned int numberRows);
+char ***fetchQuerySelect(App *app, MYSQL_RES *result, unsigned int numberFields, unsigned int numberRows);
 #endif

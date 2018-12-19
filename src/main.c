@@ -1,15 +1,18 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include "headers/struct.h"
 #include "headers/common.h"
 #include "headers/play.h"
-#include "headers/model/modelSelect.h"
-#include "headers/model/modelShow.h"
+#include "headers/model/modelCommon.h"
 #include "headers/model/modelIUD.h"
+
+
+#define free(ptr) free(ptr), ptr=NULL
 
 int main(int argc, char **argv) {
     App app;
 
-    int returnStat;
+    int returnStat = NULL;
 
     // Start SDL
     freopen("CON", "w", stdout);
@@ -21,28 +24,32 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
+
     loadApp(&app);
 
+
     returnStat = mainEventLoop(&app);
+
     /*mysql test*/
     unsigned int numberFields;
     unsigned int numberRows;
-    unsigned int typeField = 9;
-    unsigned int *listFieldTypes;
-    unsigned int test;
 
+    //char ***resultQuery = querySelect(&app, "SELECT list.name, box.name FROM list, box WHERE list.id_box=1 AND box.id_box_parent=1", &numberFields, &numberRows);
 
-    char ***resultQuery = querySelect(&app, "SELECT * FROM user", &numberFields, &numberRows);
+    //char **resultFieldsInfo = getFieldsName(&app, "box", &numberFields, NULL);
 
-    char **resultFieldsInfo = getFieldsName(&app, "user", &numberFields, NULL);
+    //showQueryResult(&resultQuery, &numberFields, &numberRows, NULL);
+//
+//    freeResultStringTable(&resultQuery, numberFields, numberRows);
+    //freeFieldsList(&resultFieldsInfo, numberFields);
 
-    showQueryResult(&resultQuery, &numberFields, &numberRows, resultFieldsInfo);
+    char *tables[100] = {"box"};
+    char *paramNames[100] = {"name", "id"};
+    char *paramsValues[100] = {"notRandomBox", "2"};
+    int result = 0;
+    result = preparedQueryIUD(&app, "UPDATE box SET name = ? WHERE id = ?", tables, 1, paramNames, paramsValues, 2);
 
-    freeResultStringTable(&resultQuery, numberFields, numberRows);
-    freeFieldsList(&resultFieldsInfo, numberFields);
-
-    test = getProperFieldAndTable(&app, "user.name", NULL);
-
+    printf("result : %d", result);
     quitApp(&app);
 
     return returnStat;

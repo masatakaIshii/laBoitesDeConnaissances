@@ -78,7 +78,7 @@ void createRect(App *app, int width, int height, int x, int y, int* color) {
 
 void verifyPointer(App *app, void *pointer, const char *message) {
     if (!pointer) {
-        printf("%s %s\n", message, SDL_GetError());
+        printf("%s\n", message);
         // On ferme la SDL et on sort du programme
         quitApp(app);
         exit(EXIT_FAILURE);
@@ -133,8 +133,6 @@ void loadApp(App *app) {
     app->colors = colors;
 
     // Connexion à la base de données
-    mysql_init(&app->mysql);
-
     dbConnect(app);
 }
 
@@ -143,16 +141,19 @@ void quitApp(App *app){
     SDL_DestroyWindow(app->screen);
     SDL_Quit();
 
-    //deconnexion de la base de données
     mysql_close(&app->mysql);
 }
 
-void checkPointer(void *pointer, char *errorMessage){
-    if (pointer == NULL) {
-        printf("%s", errorMessage);
-        exit(EXIT_FAILURE);
-    }
-}
 void freePointer(void **pointer) {
     free(*pointer);
+}
+
+char *mySubstring(const char* name, int minIndex, int maxIndex) {
+    int length = maxIndex - minIndex;
+    char *string = malloc(sizeof(char) * (length));
+
+    strncpy(string, name + minIndex, length);
+    *(string + length) = '\0';
+
+    return string;
 }
