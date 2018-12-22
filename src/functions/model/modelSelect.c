@@ -26,8 +26,10 @@ void getSelectQuery (App *app, const char *currentQuery, SelectQuery *selectQuer
     checkResult = mysql_query(app->model.mysql, currentQuery);
     verifyMYSQLIntResult(app, checkResult);
 
+
     selectQuery->result = mysql_store_result(app->model.mysql);
     verifyPointer(app, selectQuery->result, mysql_error(app->model.mysql));
+
 
     //get number of fields and row in result of query
     selectQuery->numberFields = mysql_num_fields(selectQuery->result);
@@ -96,14 +98,20 @@ void fetchQuerySelect(App *app, SelectQuery *selectQuery) {
     MYSQL_ROW row; // fetch result of each row
     unsigned long *lengths; //array of lengths of each fetch result of row
     int i = 0;
-    selectQuery->listColumnsRows = NULL;
+
+    printf("malloc : %d\n", sizeof(selectQuery->listColumnsRows) * selectQuery->numberRows);
 
     //malloc rows
-    selectQuery->listColumnsRows = malloc(sizeof(char**) * selectQuery->numberRows);
-
+    selectQuery->listColumnsRows = malloc(sizeof(selectQuery->listColumnsRows) * selectQuery->numberRows);
+    if (selectQuery->listColumnsRows == NULL) {
+        printf("Problem malloc selectQuery->listColumnsRows");
+        quitApp(app);
+    }
+    printf("pointer problem : %p\n", selectQuery->listColumnsRows);
     verifyPointer(app, selectQuery->listColumnsRows, "problem of allocation memory selectQuery->listColumnsRows");
 
     while((row = mysql_fetch_row(selectQuery->result))){
+
         if (row == NULL && strcmp(mysql_error(app->model.mysql), "") != 0){
             verifyPointer(app, row, strcat("Error[MySQL] : ", mysql_error(app->model.mysql)));
         }
