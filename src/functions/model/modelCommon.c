@@ -11,19 +11,29 @@
 #include "../../headers/model/modelQuit.h"
 
 void dbConnect(App *app) {
-    mysql_init(&app->mysql);
-    mysql_options(&app->mysql, MYSQL_READ_DEFAULT_GROUP, "option");
 
-    if (!mysql_real_connect(&app->mysql, "127.0.0.1", "root", "root", "the_box_of_knowledge", 0, NULL, 0)) {
-        printf("%s", mysql_error(&app->mysql));
-        quitApp(app);
-        exit(EXIT_FAILURE);
+    mysql_init(app->model.mysql);
+
+    mysql_options(app->model.mysql, MYSQL_READ_DEFAULT_GROUP, "option");
+
+    if (!mysql_real_connect(app->model.mysql, "localhost", "root", "root", "the_box_of_knowledge", 0, NULL, 0)) {
+        printf("%s", mysql_error(app->model.mysql));
+        mysql_close(app->model.mysql);
     }
+
+    printf("Connect !\n");
 }
+
+void closeMySQL(App *app) {
+    mysql_close(app->model.mysql);
+
+    printf("closing suiccess");
+}
+
 
 void verifyMYSQLIntResult(App *app, int result) {
     if (result != 0) {
-        printf("%s", mysql_error(&app->mysql));
+        printf("%s", mysql_error(app->model.mysql));
         quitApp(app);
         exit(EXIT_FAILURE);
     }
@@ -52,8 +62,8 @@ char **getFieldsName(App *app, const char *table, unsigned int* numberFields, un
     unsigned int fieldsCount;
 
     //result of table if is correct
-    resultFields = mysql_list_fields(&app->mysql, table, NULL);
-    verifyPointer(app, resultFields, (char *)mysql_error(&app->mysql));
+    resultFields = mysql_list_fields(app->model.mysql, table, NULL);
+    verifyPointer(app, resultFields, (char *)mysql_error(app->model.mysql));
 
     fieldsCount = mysql_num_fields(resultFields);
 
@@ -137,8 +147,8 @@ char ***mallocStringTable(unsigned int numberRows,unsigned int numberFields) {
 *@return preparedQuery : MYSQL_STMT
 */
 MYSQL_STMT *stmtInitialisation(App *app) {
-    MYSQL_STMT *preparedQuery = mysql_stmt_init(&app->mysql);
-    verifyPointer(app, preparedQuery, mysql_error(&app->mysql));
+    MYSQL_STMT *preparedQuery = mysql_stmt_init(app->model.mysql);
+    verifyPointer(app, preparedQuery, mysql_error(app->model.mysql));
 
     return preparedQuery;
 }
@@ -157,10 +167,6 @@ void initStmtManager(MySqlStmtManager *stmtManager) {
     stmtManager->buffersBind = NULL;
     stmtManager->buffersBind->is_null = NULL;
     stmtManager->buffersBind->length = NULL;
-
-    stmtManager->tables = NULL;
-    stmtManager->tables->listFieldsNames = NULL;
-    stmtManager->tables->listFieldsTypes = NULL;
 
     stmtManager->numberParams = 0;
     stmtManager->numberTables = 0;

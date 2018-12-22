@@ -9,20 +9,22 @@
 #include "../../headers/model/modelQuit.h"
 #include "../../headers/struct.h"
 
+//TODO freeSelectQuery
+
 /**
 *@brief Free list of fields
 *
 *@param fieldsList : list of string content fields name
 *@param numberFields : number of fields that content the list
 */
-void freeFieldsList(char ***fieldsList, unsigned int numberFields) {
+void freeFieldsList(char **fieldsList, unsigned int numberFields) {
     int i;
 
-    if (*fieldsList != NULL) {
+    if (fieldsList != NULL) {
         for (i = 0; i < numberFields; i++) {
-            free((*fieldsList)[i]);
+            free(fieldsList[i]);
         }
-        free(*fieldsList);
+        free(fieldsList);
     }
 }
 
@@ -33,18 +35,19 @@ void freeFieldsList(char ***fieldsList, unsigned int numberFields) {
 *@param numberFields : number of field of table
 *@param numberRows : number of rows of table
 */
-void freeResultStringTable(char ****stringTable, unsigned int numberFields, unsigned int numberRows) {
+void freeResultStringTable(char ***stringTable, unsigned int numberFields, unsigned int numberRows) {
     int i;
     int j;
 
-
-    for (i = 0; i < numberRows; i++) {
-        for (j = 0; j < numberFields; j++) {
-            free((*stringTable)[i][j]);
+    if (stringTable != NULL) {
+        for (i = 0; i < numberRows; i++) {
+            for (j = 0; j < numberFields; j++) {
+                free(stringTable[i][j]);
+            }
+            free(stringTable[i]);
         }
-        free((*stringTable)[i]);
+        free(stringTable);
     }
-    free(*stringTable);
 }
 
 /**
@@ -58,7 +61,7 @@ void freeStructTableMysql(MySqlTable **tables, int numberTables) {
 
     if (tables != NULL) {
         for (i =0; i < numberTables; i++) {
-            freeFieldsList(&tables[i]->listFieldsNames, tables[i]->numberField);
+            freeFieldsList(tables[i]->listFieldsNames, tables[i]->numberField);
 
             if (tables[i]->listFieldsTypes != NULL) {
 
@@ -74,10 +77,6 @@ void freeStructTableMysql(MySqlTable **tables, int numberTables) {
 *@param (MySqlStmtManager *) - stmtManager : structure for prepared query
 */
 void quitStmtManager(MySqlStmtManager *stmtManager) {
-
-    if (stmtManager->tables != NULL) {
-        freeStructTableMysql(&stmtManager->tables, stmtManager->numberTables);
-    }
 
     if (stmtManager->buffersBind != NULL) {
         free(stmtManager->buffersBind);

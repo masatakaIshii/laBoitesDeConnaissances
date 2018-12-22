@@ -77,8 +77,8 @@ void createRect(App *app, int width, int height, int x, int y, int* color) {
 }
 
 void verifyPointer(App *app, void *pointer, const char *message) {
+
     if (!pointer) {
-        printf("%s\n", message);
         // On ferme la SDL et on sort du programme
         quitApp(app);
         exit(EXIT_FAILURE);
@@ -133,6 +133,7 @@ void loadApp(App *app) {
     app->colors = colors;
 
     // Connexion à la base de données
+
     dbConnect(app);
 }
 
@@ -141,7 +142,7 @@ void quitApp(App *app){
     SDL_DestroyWindow(app->screen);
     SDL_Quit();
 
-    mysql_close(&app->mysql);
+    mysql_close(app->model.mysql); // a test avec &(app.mysql)
 }
 
 void freePointer(void **pointer) {

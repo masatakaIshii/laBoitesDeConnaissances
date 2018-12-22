@@ -24,17 +24,17 @@
 void loadTablesStruct(App *app, MySqlStmtManager *stmtManager, char **listTables) {
     int i;
     unsigned int *listFieldsType;
-    unsigned int numberFields = NULL;
+    unsigned int numberFields = 0;
 
-    stmtManager->tables = malloc(sizeof(MySqlTable) * stmtManager->numberTables);
-    verifyPointer(app, stmtManager->tables, "Problem with memory allocation");
-
-    for (i = 0; i < stmtManager->numberTables; i++) {
-        strcpy(stmtManager->tables[i].tableName, listTables[i]);
-        stmtManager->tables[i].listFieldsNames = getFieldsName(app, listTables[i], &numberFields, &listFieldsType);
-        stmtManager->tables[i].listFieldsTypes = listFieldsType;
-        stmtManager->tables[i].numberField = numberFields;
-    }
+//    stmtManager->tables = malloc(sizeof(MySqlTable) * stmtManager->numberTables);
+//    verifyPointer(app, stmtManager->tables, "Problem with memory allocation");
+//
+//    for (i = 0; i < stmtManager->numberTables; i++) {
+//        strcpy(stmtManager->tables[i].tableName, listTables[i]);
+//        stmtManager->tables[i].listFieldsNames = getFieldsName(app, listTables[i], &numberFields, &listFieldsType);
+//        stmtManager->tables[i].listFieldsTypes = listFieldsType;
+//        stmtManager->tables[i].numberField = numberFields;
+//    }
 }
 
 void loadBindParams(App *app, MySqlStmtManager *stmtManager, char **paramsNames, char **paramsValues){
@@ -45,24 +45,24 @@ void loadBindParams(App *app, MySqlStmtManager *stmtManager, char **paramsNames,
     verifyPointer(app, stmtManager->buffersBind, "problem with memory allocation in stmtManager->bufferBind");
 
     for (i = 0; i < stmtManager->numberParams; i++) {
-        typeParam = (enum_field_types)getTypeField(paramsNames[i], stmtManager->tables, stmtManager->numberTables);
-
-        if (typeParam == MYSQL_TYPE_BLOB || typeParam == MYSQL_TYPE_STRING || typeParam == MYSQL_TYPE_VAR_STRING){
-
-            bindParamString(i, stmtManager, typeParam, paramsValues[i]);
-        }
-
-        if (typeParam == MYSQL_TYPE_LONG || typeParam == MYSQL_TYPE_SHORT || typeParam == MYSQL_TYPE_TINY) {
-            bindParamInt(i, stmtManager, typeParam, paramsValues[i]);
-        }
-
-        if (typeParam == MYSQL_TYPE_DATE || typeParam == MYSQL_TYPE_DATETIME || typeParam == MYSQL_TYPE_TIMESTAMP) {
-            binParamDate(i, stmtManager, typeParam, paramsValues[i]);
-        }
-
-        if (typeParam == MYSQL_TYPE_DOUBLE) {
-            //TODO bindParamDouble
-        }
+//        typeParam = (enum_field_types)getTypeField(paramsNames[i], stmtManager->tables, stmtManager->numberTables);
+//
+//        if (typeParam == MYSQL_TYPE_BLOB || typeParam == MYSQL_TYPE_STRING || typeParam == MYSQL_TYPE_VAR_STRING){
+//
+//            bindParamString(i, stmtManager, typeParam, paramsValues[i]);
+//        }
+//
+//        if (typeParam == MYSQL_TYPE_LONG || typeParam == MYSQL_TYPE_SHORT || typeParam == MYSQL_TYPE_TINY) {
+//            bindParamInt(i, stmtManager, typeParam, paramsValues[i]);
+//        }
+//
+//        if (typeParam == MYSQL_TYPE_DATE || typeParam == MYSQL_TYPE_DATETIME || typeParam == MYSQL_TYPE_TIMESTAMP) {
+//            //binParamDate(i, stmtManager, typeParam, paramsValues[i]);
+//        }
+//
+//        if (typeParam == MYSQL_TYPE_DOUBLE) {
+//            //TODO bindParamDouble
+//        }
     }
 }
 
@@ -108,7 +108,6 @@ void bindParamInt(int index, MySqlStmtManager *stmtManager, enum_field_types typ
     int value = atoi(paramValue);
     int isNull = (strcmp(paramValue, "") == 0) ? 0 : 1;
 
-    printf("haha\n");
     stmtManager->buffersBind[index].buffer_type = typeParam;
     stmtManager->buffersBind[index].buffer = (void *)&value;
     stmtManager->buffersBind[index].is_null = (my_bool *)&isNull;

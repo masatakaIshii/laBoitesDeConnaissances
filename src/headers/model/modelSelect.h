@@ -8,7 +8,10 @@
 #ifndef MYSQL_SELECT_FUNCTIONS
 #include "modelCommon.h"
 #include "../struct.h"
-
-char ***querySelect (App *app, const char *currentQuery, unsigned int *numberFields, unsigned int *numberRows);
-char ***fetchQuerySelect(App *app, MYSQL_RES *result, unsigned int numberFields, unsigned int numberRows);
+void getSelectQuery (App *app, const char *currentQuery, SelectQuery *selectQuery);
+void fetchFieldsOfQuerySelect(App *app, SelectQuery *selectQuery);
+short checkIfQueryConcernMoreThan1Table(MYSQL_FIELD *fields, int numberFields);
+void fetchQuerySelect(App *app, SelectQuery *selectQuery);
+void fetchOneRowQuerySelect(App *app, SelectQuery *selectQuery, unsigned long *lengths, MYSQL_ROW row, int i);
+void addFieldsToResult(char ****resultQuery, char ***fieldsList, int *numberRows);
 #endif

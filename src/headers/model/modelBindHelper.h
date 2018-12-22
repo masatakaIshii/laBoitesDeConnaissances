@@ -15,7 +15,7 @@ void loadBindParams(App *app, MySqlStmtManager *stmtManager, char **paramsNames,
 int getTypeField(char *paramName, MySqlTable *tables, int numberTables);
 void bindParamString(int index, MySqlStmtManager *stmtManager, enum_field_types typeParam, char *paramValue);
 void bindParamInt(int index, MySqlStmtManager *stmtManager, enum_field_types typeParam, char *paramValue);
-void bindParamDate(int index, MySqlStmtManager *stmtManager, enum_field_types typeParam, char *paramValue)
+void bindParamDate(int index, MySqlStmtManager *stmtManager, enum_field_types typeParam, char *paramValue);
 
 int *getArrayLengthParams(App *app, MySqlTable *tables, int numberTables, char **paramsNames, int numberParams);
 

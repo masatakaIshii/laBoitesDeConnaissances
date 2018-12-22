@@ -19,28 +19,71 @@
 *@param (unsigned ind*) numberRows - pointer of number of rows
 *@return (char ***) resultQuery - columns and rows of selection of query
 */
-char ***querySelect (App *app, const char *currentQuery, unsigned int *numberFields, unsigned int *numberRows) {
+void getSelectQuery (App *app, const char *currentQuery, SelectQuery *selectQuery) {
 
-    char ***resultQuery; //columns and row of select query
-    MYSQL_RES *result; //store the informations of the query result
     int checkResult = 0; // check if mysql_query is success => 0, or fail => =!0
 
-    checkResult = mysql_query(&app->mysql, currentQuery);
+    checkResult = mysql_query(app->model.mysql, currentQuery);
     verifyMYSQLIntResult(app, checkResult);
 
-    result = mysql_store_result(&app->mysql);
-    verifyPointer(app, result, mysql_error(&app->mysql));
+    selectQuery->result = mysql_store_result(app->model.mysql);
+    verifyPointer(app, selectQuery->result, mysql_error(app->model.mysql));
 
     //get number of fields and row in result of query
-    *numberFields = mysql_num_fields(result);
-    *numberRows = mysql_num_rows(result);
+    selectQuery->numberFields = mysql_num_fields(selectQuery->result);
+    selectQuery->numberRows = mysql_num_rows(selectQuery->result);
 
-    resultQuery = fetchQuerySelect(app, result, *numberFields, *numberRows);
 
-    mysql_free_result(result);
 
-    return resultQuery;
+    fetchFieldsOfQuerySelect(app, selectQuery);
+
+    fetchQuerySelect(app, selectQuery);
+
+    mysql_free_result(selectQuery->result);
 }
+
+void fetchFieldsOfQuerySelect(App *app, SelectQuery *selectQuery) {
+    int i;
+    short moreThanOneTable = 0;
+    char temp[100];
+    MYSQL_FIELD *fields = mysql_fetch_fields(selectQuery->result);
+
+    selectQuery->listFields = malloc(sizeof(char *) * selectQuery->numberFields);
+    verifyPointer(app, selectQuery->listFields, "Problem memory allocation at selectQuery->listFieldss");
+
+    moreThanOneTable = checkIfQueryConcernMoreThan1Table(fields, selectQuery->numberFields);
+
+    for (i = 0; i < selectQuery->numberFields; i++) {
+
+        if (moreThanOneTable) {
+            strcpy(temp, fields[i].table);
+            strcat(temp, ".");
+            selectQuery->listFields[i] = malloc(sizeof(char) * (fields[i].table_length + fields[i].name_length + 1));
+            strcpy(selectQuery->listFields[i], strcat(temp, fields[i].name));
+
+        } else {
+            selectQuery->listFields[i] = malloc(sizeof(char) * (fields[i].name_length + 1));
+            strcpy(selectQuery->listFields[i], fields[i].name);
+        }
+    }
+}
+
+short checkIfQueryConcernMoreThan1Table(MYSQL_FIELD *fields, int numberFields) {
+    int i;
+    char table[100];
+    short result = 0;
+
+    strcpy(table, fields[0].table);
+
+    for (i = 1; i < numberFields && result == 0; i++) {
+        if (strcmp(table, fields[i].table) != 0) {
+            result = 1;
+        }
+    }
+
+    return result;
+}
+
 /**
 *@brief Fetch the query's results in table of rows and fields
 *
@@ -48,34 +91,62 @@ char ***querySelect (App *app, const char *currentQuery, unsigned int *numberFie
 *@param (unsigned ind*) numberRows - pointer of number of rows
 *@return (char ***) resultFetch - columns and rows of selection of query
 */
-char ***fetchQuerySelect(App *app, MYSQL_RES *result, unsigned int numberFields, unsigned int numberRows){
-    char ***resultFetch; //columns and row of select query
+void fetchQuerySelect(App *app, SelectQuery *selectQuery) {
+
     MYSQL_ROW row; // fetch result of each row
     unsigned long *lengths; //array of lengths of each fetch result of row
-    int i = 0, j = 0;
+    int i = 0;
+    selectQuery->listColumnsRows = NULL;
 
     //malloc rows
-    resultFetch = malloc(sizeof(char**) * numberRows);
-    verifyPointer(app, resultFetch, "problem of allocation memory resultFetch");
+    selectQuery->listColumnsRows = malloc(sizeof(char**) * selectQuery->numberRows);
 
-    while((row = mysql_fetch_row(result))){
-        if (row == NULL && strcmp(mysql_error(&app->mysql), "") != 0){
-            verifyPointer(app, row, strcat("Error[MySQL] : ", mysql_error(&app->mysql)));
+    verifyPointer(app, selectQuery->listColumnsRows, "problem of allocation memory selectQuery->listColumnsRows");
+
+    while((row = mysql_fetch_row(selectQuery->result))){
+        if (row == NULL && strcmp(mysql_error(app->model.mysql), "") != 0){
+            verifyPointer(app, row, strcat("Error[MySQL] : ", mysql_error(app->model.mysql)));
         }
+
         //get length of each value
-        lengths = mysql_fetch_lengths(result);
-        verifyPointer(app, lengths, strcat("Error[MySQL] : ", mysql_error(&app->mysql)));
-        //malloc fields for each row
-        resultFetch[i] = malloc(sizeof(char*) * numberFields);
-        verifyPointer(app, resultFetch[i], "Problem allocation memory resultFetch[i]");
-        for (j = 0; j < numberFields; j++) {
-            resultFetch[i][j] = malloc(sizeof(char) * (lengths[j] + 1));
-            verifyPointer(app, resultFetch[i][j], "problem of allocation memory resultFetch[i][j]");
-            sprintf(resultFetch[i][j],(row[j] != NULL)?row[j]:"");
-        }
+        lengths = mysql_fetch_lengths(selectQuery->result);
+
+        fetchOneRowQuerySelect(app, selectQuery, lengths, row, i);
+
+        printf("\n");
         i++;
     }
+}
 
-    return resultFetch;
+void fetchOneRowQuerySelect(App *app, SelectQuery *selectQuery, unsigned long *lengths, MYSQL_ROW row, int i) {
+    int j;
+    int numberFields = selectQuery->numberFields;
+
+    selectQuery->listColumnsRows[i] = malloc(sizeof(char*) * numberFields);
+    verifyPointer(app, selectQuery->listColumnsRows[i], "Problem allocation memory selectQuery->listColumnsRows[i]");
+
+    for (j = 0; j < numberFields; j++) {
+
+        selectQuery->listColumnsRows[i][j] = malloc(sizeof(char) * (lengths[j] + 1));
+        verifyPointer(app, selectQuery->listColumnsRows[i][j], "problem of allocation memory selectQuery->listColumnsRows[i][j]");
+        sprintf(selectQuery->listColumnsRows[i][j],(row[j] != NULL)?row[j]:"");
+    }
+}
+
+void addFieldsToResult(char ****resultQuery, char ***fieldsList, int *numberRows) {
+    char ***inter;
+    int i;
+
+    inter = malloc(sizeof(char**) * (++*numberRows));
+    inter[0] = (*fieldsList);
+
+    for (i = 0; i < (*numberRows) - 1; i++) {
+
+        inter[i + 1] = (*resultQuery)[i];
+    }
+
+    free(*resultQuery);
+
+    (*resultQuery) = inter;
 }
 //TODO : prepared query select

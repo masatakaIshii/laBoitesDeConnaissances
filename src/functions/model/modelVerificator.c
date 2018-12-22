@@ -10,6 +10,8 @@
 #include "../../headers/model/modelVerificator.h"
 #define MAX 1000
 
+//TODO : verifier si la requête est correct (si c'est un select ou si c'est un IUD)
+
 /**
 *@brief Compare if numberMark in query is equal to numberParams
 *

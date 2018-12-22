@@ -9,6 +9,7 @@
 #ifndef MYSQL_COMMON_FUNCTIONS
 #include "../struct.h"
 void dbConnect(App *app);
+void closeMySQL(App *app);
 void verifyMYSQLIntResult(App *app, int result);
 void verifyMYSQLRes(App *app, MYSQL_RES *result);
 void verifyPointerForQueryStmt(App *app, MySqlStmtManager *stmtManager, void *pointer, const char *message);

@@ -11,10 +11,10 @@ int queryIUD(App *app, const char *currentQuery) {
     int affectedRows = 0;
     int result;
 
-    result = mysql_query(&app->mysql, currentQuery);
+    result = mysql_query(app->model.mysql, currentQuery);
     verifyMYSQLIntResult(app, result);
 
-    affectedRows = mysql_affected_rows(&app->mysql);
+    affectedRows = mysql_affected_rows(app->model.mysql);
 
     return affectedRows;
 }
