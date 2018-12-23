@@ -15,7 +15,6 @@ int main(int argc, char **argv) {
 
     App app;
     MYSQL mysqlFirst;
-
     app.model.mysql = &mysqlFirst;
 
     int returnStat = NULL;
@@ -38,8 +37,8 @@ int main(int argc, char **argv) {
     returnStat = mainEventLoop(&app);
 
     /*mysql test*/
-//    char * query = "SELECT * FROM list";
-//    SelectQuery *selectQuery = &app.model.query.selectQuery;
+    char * query = "SELECT * FROM list";
+    SelectQuery *selectQuery = &app.model.query.selectQuery;
     //get structure SelectQuery
 
     getSelectQuery(&app, query, selectQuery);
@@ -47,13 +46,13 @@ int main(int argc, char **argv) {
 
     //char **resultFieldsInfo = getFieldsName(&app, "box", &numberFields, NULL);
 
-//    addFieldsToResult(&selectQuery->listColumnsRows, &selectQuery->listFields, &selectQuery->numberRows);
+    addFieldsToResult(selectQuery);
 
 
-//    showQueryResult(&app, selectQuery);
-//
-//    freeFieldsList(selectQuery->listFields, selectQuery->numberFields);
-//    freeResultStringTable(selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows);
+    showQueryResult(&app, selectQuery);
+
+
+    freeSelectQuery(selectQuery);
 
 //    int rowAffected = queryIUD(&app, "INSERT INTO box (name, description, created_date, modified_date, id_box_parent) VALUES('theBox', 'this is THE box', NOW(), NOW(), 1)");
 //    printf("number of row affected : %d\n", rowAffected);

@@ -41,7 +41,9 @@ void showQueryResult(App *app, SelectQuery *selectQuery) {
 
     }
 
+    printf("\nfree maxLengthsFields\n");
     free(maxLengthsFields);
+    printf("\nfree resultQuery\n");
     freeResultStringTable(resultQuery, numberFields, numberRows);
 }
 
@@ -49,7 +51,7 @@ int *getMaxLengthOfEachFields(App *app, char ***resultQuery, int numberFields, i
     int i;
     int j;
     int *maxLengthsFields = malloc(sizeof(int) * numberFields);
-    verifyPointer(app, maxLengthsFields, "Problem memory allocation in maxLengthsFields");
+    verifyPointer(app, maxLengthsFields, "Problem memory allocation in maxLengthsFields\n");
 
 
     if (maxLengthsFields == NULL) {
@@ -77,11 +79,11 @@ void copyListQuerySelect(App *app, char ****resultQuery,SelectQuery *selectQuery
     char ***listToCopy = selectQuery->listColumnsRows;
 
     *resultQuery = malloc(sizeof(char**) * numberRows);
-    verifyPointer(app, *resultQuery, "Problem memory allocation for resultQuery in copyListQuerySelect");
+    verifyPointer(app, *resultQuery, "Problem memory allocation for resultQuery in copyListQuerySelect\n");
     for (i = 0; i < numberRows; i++){
 
         (*resultQuery)[i] = malloc(sizeof(char*) * numberFields);
-        verifyPointer(app, (*resultQuery)[i], "Problem memory allocation for resultQuery[i] in copyListQuerySelect");
+        verifyPointer(app, (*resultQuery)[i], "Problem memory allocation for resultQuery[i] in copyListQuerySelect\n");
         for (j = 0; j < numberFields; j++) {
 
             (*resultQuery)[i][j] = malloc(sizeof(char) * (strlen(listToCopy[i][j]) + 1));

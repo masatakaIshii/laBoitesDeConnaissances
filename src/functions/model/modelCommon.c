@@ -20,8 +20,6 @@ void dbConnect(App *app) {
         printf("%s", mysql_error(app->model.mysql));
         mysql_close(app->model.mysql);
     }
-
-    printf("Connect !\n");
 }
 
 void closeMySQL(App *app) {
@@ -42,7 +40,7 @@ void verifyMYSQLIntResult(App *app, int result) {
 void verifyPointerForQueryStmt(App *app, MySqlStmtManager *stmtManager, void *pointer, const char *message) {
     if (pointer == NULL) {
         printf("%s", message);
-        quitStmtManager(stmtManager);
+        //quitStmtManager(stmtManager);
         quitApp(app);
         exit(EXIT_FAILURE);
     }
@@ -192,7 +190,7 @@ void loadStmtManager(App *app, MySqlStmtManager *stmtManager, int numberTables, 
     paramsCount = mysql_stmt_param_count(stmtManager->stmt);
     if (paramsCount != numberParams) {
         printf("Error [MYSQL_STMT] : the total parameters = %d, whereas numberParams = %d", paramsCount, numberParams);
-        quitStmtManager(stmtManager);
+        //quitStmtManager(stmtManager);
         quitApp(app);
         exit(EXIT_FAILURE);
     }

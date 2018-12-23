@@ -56,7 +56,7 @@ int preparedQueryIUD(App *app, const char *currentQuery, char **tableNames, int 
 
 
     */
-    quitStmtManager(&stmtManager);
+    //quitStmtManager(&stmtManager);
 
     return affectedRow;
 }

@@ -13,5 +13,6 @@ void fetchFieldsOfQuerySelect(App *app, SelectQuery *selectQuery);
 short checkIfQueryConcernMoreThan1Table(MYSQL_FIELD *fields, int numberFields);
 void fetchQuerySelect(App *app, SelectQuery *selectQuery);
 void fetchOneRowQuerySelect(App *app, SelectQuery *selectQuery, unsigned long *lengths, MYSQL_ROW row, int i);
-void addFieldsToResult(char ****resultQuery, char ***fieldsList, int *numberRows);
+void addFieldsToResult(SelectQuery *selectQuery);
+char **copyListString(char **listString, int numberFields);
 #endif

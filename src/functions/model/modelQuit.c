@@ -9,7 +9,14 @@
 #include "../../headers/model/modelQuit.h"
 #include "../../headers/struct.h"
 
-//TODO freeSelectQuery
+void freeSelectQuery(SelectQuery *selectQuery) {
+    int i, j;
+
+    if (selectQuery != NULL) {
+        freeResultStringTable(selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows);
+        freeListString(selectQuery->listFields, selectQuery->numberFields);
+    }
+}
 
 /**
 *@brief Free list of fields
@@ -17,7 +24,7 @@
 *@param fieldsList : list of string content fields name
 *@param numberFields : number of fields that content the list
 */
-void freeFieldsList(char **fieldsList, unsigned int numberFields) {
+void freeListString(char **fieldsList, unsigned int numberFields) {
     int i;
 
     if (fieldsList != NULL) {
@@ -61,7 +68,7 @@ void freeStructTableMysql(MySqlTable **tables, int numberTables) {
 
     if (tables != NULL) {
         for (i =0; i < numberTables; i++) {
-            freeFieldsList(tables[i]->listFieldsNames, tables[i]->numberField);
+            freeListString(tables[i]->listFieldsNames, tables[i]->numberField);
 
             if (tables[i]->listFieldsTypes != NULL) {
 
@@ -86,7 +93,7 @@ void quitStmtManager(MySqlStmtManager *stmtManager) {
         printf("Problem with free result");
     }
 
-    if (mysql_stmt_close(stmtManager->stmt) != 0){
+    if (mysql_stmt_close(stmtManager->stmt) != 0) {
         printf("Problem with close mysql stmt\n");
     }
 }

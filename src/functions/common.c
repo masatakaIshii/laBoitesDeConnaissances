@@ -80,6 +80,7 @@ void verifyPointer(App *app, void *pointer, const char *message) {
 
     if (!pointer) {
         // On ferme la SDL et on sort du programme
+        printf("%s\n", message);
         quitApp(app);
         exit(EXIT_FAILURE);
     }

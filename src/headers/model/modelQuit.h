@@ -10,8 +10,9 @@
 #include <stdlib.h>
 #include "../struct.h"
 
+void freeSelectQuery(SelectQuery *selectQuery);
 void freeResultStringTable(char ***stringTable, unsigned int numberFields, unsigned int numberRows);
-void freeFieldsList(char **fieldsList, unsigned int numberFields);
+void freeListString(char **fieldsList, unsigned int numberFields);
 void freeStructTableMysql(MySqlTable **tables, int numberTables);
 void quitStmtManager(MySqlStmtManager *stmtManager);
 
