@@ -11,8 +11,6 @@ void loadColors(Colors *colors);
 void loadApp(App *app);
 void quitApp(App *app);
 
-void freePointer(void **pointer);
-
 char *mySubstring(const char* name, int minIndex, int maxIndex);
 #endif // COMMON_FUNCTIONS
 

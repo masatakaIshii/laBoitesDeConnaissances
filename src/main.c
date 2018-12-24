@@ -29,33 +29,25 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
 
-
-
     loadApp(&app);
-
 
     returnStat = mainEventLoop(&app);
 
     /*mysql test*/
-    char * query = "SELECT * FROM list";
+    char * query = "SELECT list.name, box.name FROM list, box WHERE box.id_box_parent = 1 AND list.id_box = 1";
     SelectQuery *selectQuery = &app.model.query.selectQuery;
     //get structure SelectQuery
 
     getSelectQuery(&app, query, selectQuery);
 
-
-    //char **resultFieldsInfo = getFieldsName(&app, "box", &numberFields, NULL);
-
     addFieldsToResult(selectQuery);
-
 
     showQueryResult(&app, selectQuery);
 
-
     freeSelectQuery(selectQuery);
 
-//    int rowAffected = queryIUD(&app, "INSERT INTO box (name, description, created_date, modified_date, id_box_parent) VALUES('theBox', 'this is THE box', NOW(), NOW(), 1)");
-//    printf("number of row affected : %d\n", rowAffected);
+    int rowAffected = queryIUD(&app, "UPDATE box SET name = 'the box', modified_date = '28-12-24 00:00:00' WHERE id = 31");
+    printf("number of row affected : %d\n", rowAffected);
 //    char *tables[100] = {"box"};,
 //    char *paramNames[100] = {"name", "id"};
 //    char *paramsValues[100] = {"notRandomBox", "2"};

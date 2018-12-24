@@ -6,6 +6,7 @@
 ** Description  : insert, update and delete functions used API C MySQL for select data in database
 */
 #include "../../headers/model/modelIUD.h"
+#include "../../headers/model/modelInit.h"
 
 int queryIUD(App *app, const char *currentQuery) {
     int affectedRows = 0;
@@ -26,7 +27,7 @@ int preparedQueryIUD(App *app, const char *currentQuery, char **tableNames, int 
 
     loadStmtManager(app, &stmtManager, numberTables, numberParams, currentQuery);
 
-    loadTablesStruct(app, &stmtManager, tableNames);
+    //loadTablesStruct(app, &stmtManager, tableNames);
 
     loadBindParams(app, &stmtManager, paramsName, paramsValues);
 

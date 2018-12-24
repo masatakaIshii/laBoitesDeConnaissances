@@ -4,7 +4,7 @@
 #include <mysql.h>
 #include "../headers/common.h"
 #include "../headers/play.h"
-#include "../headers/model/modelCommon.h"
+#include "../headers/model/modelInit.h"
 
 int mainEventLoop(App *app) {
     SDL_Event event;
@@ -133,9 +133,11 @@ void loadApp(App *app) {
     loadColors(&colors);
     app->colors = colors;
 
-    // Connexion à la base de données
+    // Connexion à la base de données , initialisation et chargement
 
     dbConnect(app);
+    InitModel(app);
+    loadFileModelTables(app);
 }
 
 void quitApp(App *app){
@@ -144,10 +146,6 @@ void quitApp(App *app){
     SDL_Quit();
 
     mysql_close(app->model.mysql); // a test avec &(app.mysql)
-}
-
-void freePointer(void **pointer) {
-    free(*pointer);
 }
 
 char *mySubstring(const char* name, int minIndex, int maxIndex) {

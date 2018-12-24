@@ -1,5 +1,5 @@
 /*
-** Filename : mysqlQuit.c
+** Filename : modelQuit.c
 **
 ** Made by  : Masataka ISHII
 **

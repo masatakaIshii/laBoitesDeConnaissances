@@ -9,7 +9,6 @@
 #ifndef MYSQL_BINDHELPER_FUNCTIONS
 #include "../struct.h"
 
-void loadTablesStruct(App *app, MySqlStmtManager *stmtManager, char **listTables);
 int *getArrayTypeParams(App *app, MySqlTable *tables, int numberTables, char **paramsName, int numberParams);
 void loadBindParams(App *app, MySqlStmtManager *stmtManager, char **paramsNames, char **paramsValues);
 int getTypeField(char *paramName, MySqlTable *tables, int numberTables);

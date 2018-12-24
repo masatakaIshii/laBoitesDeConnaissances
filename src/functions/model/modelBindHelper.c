@@ -13,29 +13,7 @@
 #include "../../headers/model/modelCommon.h"
 #include "../../headers/model/modelQuit.h"
 
-/**
-*@brief load the structure MySqlTable to get all metadatas for parameters
-*
-*@param (App *) app  - structure of app to use mysql
-*@param (char *) listTables - list of tables concern to the query
-*@param (int) numberTables - number of tables concern to the query
-*@return (MySqlTable *) loadTables - structure that concern all informations of tables concern to the query
-*/
-void loadTablesStruct(App *app, MySqlStmtManager *stmtManager, char **listTables) {
-    int i;
-    unsigned int *listFieldsType;
-    unsigned int numberFields = 0;
 
-//    stmtManager->tables = malloc(sizeof(MySqlTable) * stmtManager->numberTables);
-//    verifyPointer(app, stmtManager->tables, "Problem with memory allocation");
-//
-//    for (i = 0; i < stmtManager->numberTables; i++) {
-//        strcpy(stmtManager->tables[i].tableName, listTables[i]);
-//        stmtManager->tables[i].listFieldsNames = getFieldsName(app, listTables[i], &numberFields, &listFieldsType);
-//        stmtManager->tables[i].listFieldsTypes = listFieldsType;
-//        stmtManager->tables[i].numberField = numberFields;
-//    }
-}
 
 void loadBindParams(App *app, MySqlStmtManager *stmtManager, char **paramsNames, char **paramsValues){
     int i;

@@ -7,6 +7,7 @@
 #define BPP     32
 #define WINDOW_POS_X    200
 #define WINDOW_POS_Y    100
+#define MAX_VARCHAR 100
 
 
 typedef struct Colors {
@@ -30,7 +31,7 @@ typedef struct Config {
 *@var (unsigned int *) listFieldsTypes : la liste des type MYSQL_TYPE_ correspondant chaque index au nom du champ concerné
 */
 typedef struct MySqlTable {
-    char tableName[255];
+    char tableName[MAX_VARCHAR];
     char **listFieldsNames;
     int numberField;
     unsigned int *listFieldsTypes;
@@ -80,11 +81,12 @@ typedef struct Query {
 typedef struct Model {
     MYSQL *mysql;
     MySqlTable *tables;
+    char ** listAllTables;
+    int numberAllTables;
     Query query;
 } Model;
 
 /* --App-- */
-
 typedef struct App {
     SDL_Window *screen;
     SDL_Renderer *renderer;
