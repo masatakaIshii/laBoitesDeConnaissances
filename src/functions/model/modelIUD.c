@@ -61,5 +61,3 @@ int preparedQueryIUD(App *app, const char *currentQuery, char **tableNames, int 
 
     return affectedRow;
 }
-
-

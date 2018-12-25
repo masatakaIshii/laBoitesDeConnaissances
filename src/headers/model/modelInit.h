@@ -10,7 +10,8 @@
 #include "../common.h"
 
 void dbConnect(App *app);
-void InitModel(App *app);
+void InitModel(Model *model);
+void initTables(MySqlTable *tables);
 void initStmtManager(MySqlStmtManager *stmtManager);
 void loadFileModelTables(App *app);
 void loadTablesStruct(App *app, Model *model);

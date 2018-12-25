@@ -138,38 +138,49 @@ void fetchOneRowQuerySelect(App *app, SelectQuery *selectQuery, unsigned long *l
     }
 }
 
-void addFieldsToResult(SelectQuery *selectQuery) {
+void addFieldsToResult(App *app, SelectQuery *selectQuery) {
     char ***inter;
     int i;
     int j;
     //printf("\nin addFieldsToResult\n");
 
-    inter = malloc(sizeof(char**) * (++selectQuery->numberRows));
+    if (selectQuery->resultWithFieldsList == 1) {
+        printf("Warning : you already have fields list in your result. The function addFieldsToResult is call few times.\n");
+        return;
+    }
 
+    inter = malloc(sizeof(char**) * (++selectQuery->numberRows));
+    verifyPointer(app, inter, "Problem malloc for inter in addFieldsToResult");
 
     for (i = 0; i < selectQuery->numberRows; i++) {
         if (i == 0) {
-            inter[i] = copyListString(selectQuery->listFields, selectQuery->numberFields);
+            inter[i] = copyListString(app, selectQuery->listFields, selectQuery->numberFields);
         } else {
-            inter[i] = copyListString(selectQuery->listColumnsRows[i - 1], selectQuery->numberFields);
+            inter[i] = copyListString(app, selectQuery->listColumnsRows[i - 1], selectQuery->numberFields);
         }
     }
 
-    free(selectQuery->listColumnsRows);
+    freeResultStringTable(selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows - 1);
+    selectQuery->listColumnsRows = inter;
 
-    (selectQuery->listColumnsRows) = inter;
+    selectQuery->resultWithFieldsList = 1;
 }
 
-char **copyListString(char **listString, int numberFields) {
-    char **copyListString;
+char **copyListString(App *app, char **listString, unsigned int numberFields) {
+    char **copyList;
     int i;
 
-    copyListString = malloc(sizeof(char*) * numberFields);
+    copyList = malloc(sizeof(char*) * numberFields);
+
+    verifyPointer(app, copyList, "Problem malloc in copyList in the function copyListString\n");
+
     for (i = 0; i < numberFields; i++) {
-        copyListString[i] = malloc(sizeof(char) * (strlen(listString[i]) + 1));
-        strcpy(copyListString[i], (listString[i] == NULL) ? "" : listString[i]);
+
+        copyList[i] = malloc(sizeof(char) * (strlen(listString[i]) + 1));
+        verifyPointer(app, copyList[i], "Problem malloc in copyList[i] in the function copyListString\n");
+        strcpy(copyList[i], (listString[i] == NULL) ? "" : listString[i]);
     }
 
-    return copyListString;
+    return copyList;
 }
 //TODO : prepared query select

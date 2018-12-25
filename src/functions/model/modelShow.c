@@ -41,9 +41,7 @@ void showQueryResult(App *app, SelectQuery *selectQuery) {
 
     }
 
-    printf("\nfree maxLengthsFields\n");
     free(maxLengthsFields);
-    printf("\nfree resultQuery\n");
     freeResultStringTable(resultQuery, numberFields, numberRows);
 }
 
@@ -52,7 +50,6 @@ int *getMaxLengthOfEachFields(App *app, char ***resultQuery, int numberFields, i
     int j;
     int *maxLengthsFields = malloc(sizeof(int) * numberFields);
     verifyPointer(app, maxLengthsFields, "Problem memory allocation in maxLengthsFields\n");
-
 
     if (maxLengthsFields == NULL) {
         printf("problem of calloc for maxLengthsFields");

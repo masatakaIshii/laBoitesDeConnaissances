@@ -40,13 +40,13 @@ typedef struct MySqlTable {
 /* Query to the database*/
 //Les structures pour la partie bind
 typedef struct MySqlParamsBind {
-    int *paramsTypes;
-    int *paramsBufferLengths;
-    char **paramsBuffer;
-    int *paramsIsNull;
-    int *paramsLengths;
-    MYSQL_TIME *datetimeBind;
-    int *paramsDateTime;
+    int paramsTypes;
+    int paramsBufferLengths;
+    char *paramsBuffer;
+    int paramsIsNull;
+    int paramsLengths;
+    MYSQL_TIME datetimeBind;
+    int paramsDateTime;
 } MySqlParamsBind;
 
 typedef struct MySqlStmtManager {
@@ -69,8 +69,9 @@ typedef struct SelectQuery {
     MYSQL_RES *result;
     char ***listColumnsRows;
     char **listFields;
-    int numberFields;
-    int numberRows;
+    unsigned int numberFields;
+    unsigned int numberRows;
+    short resultWithFieldsList;
 } SelectQuery;
 
 typedef struct Query {

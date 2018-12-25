@@ -11,9 +11,12 @@
 
 void dbConnect(App *app) {
 
+    int check = 0;
     mysql_init(app->model.mysql);
+    verifyPointer(app, app->model.mysql, "Problem with mysql_init");
 
-    mysql_options(app->model.mysql, MYSQL_READ_DEFAULT_GROUP, "option");
+    check = mysql_options(app->model.mysql, MYSQL_READ_DEFAULT_GROUP, "option");
+    verifyMYSQLIntResult(app, check);
 
     if (!mysql_real_connect(app->model.mysql, "localhost", "root", "root", "the_box_of_knowledge", 0, NULL, 0)) {
         printf("%s", mysql_error(app->model.mysql));
@@ -21,37 +24,25 @@ void dbConnect(App *app) {
     }
 }
 
-void InitModel(App *app) {
+void InitModel(Model *model) {
 
-    app->model.tables = NULL;
-    app->model.tables->listFieldsNames = NULL;
-    app->model.tables->listFieldsTypes = NULL;
+    model->listAllTables = NULL;
 
-    app->model.query.selectQuery.listColumnsRows = NULL;
-    app->model.query.selectQuery.listFields = NULL;
+    model->tables = NULL;
 
-    app->model.query.selectQuery.result = NULL;
+    model->query.selectQuery.listColumnsRows = NULL;
+    model->query.selectQuery.listFields = NULL;
+    model->query.selectQuery.result = NULL;
+    model->query.selectQuery.resultWithFieldsList = 0;
 
-    initStmtManager(&app->model.query.stmtManager);
+    model->query.stmtManager.buffersBind = NULL;
+    model->query.stmtManager.params = NULL;
+    model->query.stmtManager.stmt = NULL;
 }
 
-void initStmtManager(MySqlStmtManager *stmtManager) {
-
-    stmtManager->params = NULL;
-    stmtManager->params->paramsBuffer = NULL;
-    stmtManager->params->paramsBufferLengths = NULL;
-    stmtManager->params->paramsIsNull = NULL;
-    stmtManager->params->paramsLengths = NULL;
-    stmtManager->params->paramsTypes = NULL;
-    stmtManager->params->datetimeBind = NULL;
-    stmtManager->params->paramsDateTime = NULL;
-
-    stmtManager->buffersBind = NULL;
-
-    stmtManager->numberParams = 0;
-    stmtManager->numberTables = 0;
-
-    stmtManager->stmt = NULL;
+void initTables(MySqlTable *tables) {
+    tables->listFieldsNames = NULL;
+    tables->listFieldsTypes = NULL;
 }
 
 void loadFileModelTables(App *app) {

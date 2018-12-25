@@ -135,9 +135,11 @@ void loadApp(App *app) {
 
     // Connexion à la base de données , initialisation et chargement
 
+    InitModel(&app->model);
+
     dbConnect(app);
-    InitModel(app);
-    loadFileModelTables(app);
+
+    //loadFileModelTables(app);
 }
 
 void quitApp(App *app){
