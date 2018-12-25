@@ -12,7 +12,7 @@
 #include <SDL2/SDL.h>
 #include <mysql.h>
 #include "../headers/common.h"
-#include "../headers/play.h"
+#include "../headers/play/box.h"
 #include "../headers/model/modelCommon.h"
 
 /*

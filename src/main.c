@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "headers/common.h"
-#include "headers/play.h"
+#include "headers/play/box.h"
 #include "headers/model/modelSelect.h"
 #include "headers/model/modelShow.h"
 #include "headers/model/modelIUD.h"

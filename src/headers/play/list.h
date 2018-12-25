@@ -1,10 +1,9 @@
 /*
-** Filename : play.c
+** Filename : list.h
 **
 ** Made by  : Baptiste LEGO
 **
 ** Description  : play mode main functions
 */
 
-void playMode(App *app);
-void displayHomePlay(App *app);
+void listMenu(App *app, int page, int i);
