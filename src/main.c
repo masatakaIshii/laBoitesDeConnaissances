@@ -40,8 +40,6 @@ int main(int argc, char **argv) {
 
     getSelectQuery(&app, query, selectQuery);
 
-    addFieldsToResult(&app, selectQuery);
-
     showQueryResult(&app, selectQuery);
 
     freeSelectQuery(selectQuery);

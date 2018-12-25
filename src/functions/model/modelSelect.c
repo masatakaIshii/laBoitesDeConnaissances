@@ -145,7 +145,8 @@ void addFieldsToResult(App *app, SelectQuery *selectQuery) {
     //printf("\nin addFieldsToResult\n");
 
     if (selectQuery->resultWithFieldsList == 1) {
-        printf("Warning : you already have fields list in your result. The function addFieldsToResult is call few times.\n");
+        printf("Warning : you already have fields list in your result. ");
+        printf("The function addFieldsToResult is call few times.\n");
         return;
     }
 
@@ -164,6 +165,29 @@ void addFieldsToResult(App *app, SelectQuery *selectQuery) {
     selectQuery->listColumnsRows = inter;
 
     selectQuery->resultWithFieldsList = 1;
+}
+
+void removeFieldsInResult(App *app, SelectQuery *selectQuery) {
+    char ***inter;
+    int i;
+
+    if (selectQuery->resultWithFieldsList == 0) {
+        printf("Warning : you already don't have fields list in your result. ");
+        printf("The function removeFieldsInResult have to be call if listColumnsRows have fields lists.\n");
+        return;
+    }
+
+    inter = malloc(sizeof(char**) * (--selectQuery->numberRows));
+    verifyPointer(app, inter, "Problem in inter in function removeFieldsInResult\n");
+
+    for (i = 0; i < selectQuery->numberRows; i++) {
+        inter[i] = copyListString(app, selectQuery->listColumnsRows[i + 1], selectQuery->numberFields);
+    }
+
+    freeResultStringTable(selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows + 1);
+    selectQuery->listColumnsRows = inter;
+
+    selectQuery->resultWithFieldsList = 0;
 }
 
 char **copyListString(App *app, char **listString, unsigned int numberFields) {
