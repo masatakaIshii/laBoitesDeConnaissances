@@ -11,7 +11,10 @@
 
 void dbConnect(App *app);
 void InitModel(Model *model);
+
 void initTables(MySqlTable *tables);
+void getAllTablesNumberAndNames (App *app, Model *model);
+
 void initStmtManager(MySqlStmtManager *stmtManager);
 void loadFileModelTables(App *app);
 void loadTablesStruct(App *app, Model *model);

@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
     returnStat = mainEventLoop(&app);
 
     /*mysql test*/
-    char * query = "SELECT list.name, box.name FROM list, box WHERE box.id_box_parent = 1 AND list.id_box = 1 AND box.id = 3";
+    char * query = "SHOW tables";
     SelectQuery *selectQuery = &app.model.query.selectQuery;
     //get structure SelectQuery
 

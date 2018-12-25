@@ -9,7 +9,7 @@
 #include "../../headers/common.h"
 #include "../../headers/struct.h"
 #include "../../headers/model/modelSelect.h"
-#include <errno.h>
+#include "../../headers/model/modelQuit.h"
 
 /**
 *@brief To connect to the database and get result of select query

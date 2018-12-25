@@ -47,12 +47,44 @@ void initTables(MySqlTable *tables) {
 
 void loadFileModelTables(App *app) {
 
+    int i;
+
+    getAllTablesNumberAndNames(app, &app->model);
+
+    printf("numberTables : %d\n" , app->model.numberAllTables);
+    for (i = 0; i < app->model.numberAllTables; i++){
+        printf("app->model.listAllTables[%d] : %s\n", i, app->model.listAllTables[i]);
+    }
+
     /**
-    *@todo : getTablesInformations
     *@todo : fill app->model.numberTables and app->model.tables
     *@todo : save array of structures in file modelTables
     */
+    freeListString(app->model.listAllTables, app->model.numberAllTables);
 }
+
+void getAllTablesNumberAndNames (App *app, Model *model) {
+    MYSQL_ROW row;
+    unsigned int numberFields;
+    unsigned int numberTables;
+    int i = 0;
+    MYSQL_RES *resultTables = mysql_list_tables(model->mysql, NULL);
+    verifyPointer(app, resultTables, mysql_error(model->mysql));
+
+    numberTables = mysql_num_rows(resultTables);
+
+    model->listAllTables = malloc(sizeof(char *) * numberTables);
+    while((row = mysql_fetch_row(resultTables)) != NULL) {
+        model->listAllTables[i] = malloc(sizeof(char) * (strlen(row[0]) + 1));
+        strcpy(model->listAllTables[i], row[0]);
+        i++;
+    }
+
+    model->numberAllTables = (int)numberTables;
+
+    mysql_free_result(resultTables);
+}
+
 /**
 
 *@brief load the structure MySqlTable to get all metadatas for parameters

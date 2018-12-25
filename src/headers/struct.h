@@ -82,7 +82,7 @@ typedef struct Query {
 typedef struct Model {
     MYSQL *mysql;
     MySqlTable *tables;
-    char ** listAllTables;
+    char **listAllTables;
     int numberAllTables;
     Query query;
 } Model;

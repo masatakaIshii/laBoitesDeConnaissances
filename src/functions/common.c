@@ -139,7 +139,7 @@ void loadApp(App *app) {
 
     dbConnect(app);
 
-    //loadFileModelTables(app);
+    loadFileModelTables(app);
 }
 
 void quitApp(App *app){
