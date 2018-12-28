@@ -7,7 +7,9 @@
 */
 
 #ifndef MODEL_INIT_FUNCTIONS
+#include "../struct.h"
 #include "../common.h"
+#include "modelCommon.h"
 
 void dbConnect(App *app);
 void InitModel(Model *model);
@@ -17,7 +19,12 @@ void getAllTablesNumberAndNames (App *app, Model *model);
 
 void initStmtManager(MySqlStmtManager *stmtManager);
 void loadFileModelTables(App *app);
-void loadTablesStruct(App *app, Model *model);
+void loadTablesStructByQuery(App *app, Model *model);
+void writeNumberAndNamesAndStructTablesInFile(App *app, Model *model);
+void writeStructTables(App *app, Model *model, FILE *fp);
+void readAndGetNumberAndNamesAndStructTables(App *app, Model *model);
+void readAndGetStructTables(App *app, Model *model, FILE *fp);
+
 MYSQL_STMT *stmtInitialisation(App *app);
 void loadStmtManager(App *app, MySqlStmtManager *stmtManager, int numberTables, int numberParams, const char *query);
 #endif // MODEL_INIT_FUNCTIONS

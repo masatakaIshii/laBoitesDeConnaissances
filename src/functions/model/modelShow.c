@@ -42,6 +42,7 @@ void showQueryResult(App *app, SelectQuery *selectQuery) {
     }
 
     free(maxLengthsFields);
+
     freeResultStringTable(resultQuery, numberFields, numberRows);
 }
 

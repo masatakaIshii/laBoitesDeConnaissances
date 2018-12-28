@@ -8,6 +8,7 @@
 
 #ifndef MYSQL_BINDHELPER_FUNCTIONS
 #include "../struct.h"
+#include "../common.h"
 
 int *getArrayTypeParams(App *app, MySqlTable *tables, int numberTables, char **paramsName, int numberParams);
 void loadBindParams(App *app, MySqlStmtManager *stmtManager, char **paramsNames, char **paramsValues);

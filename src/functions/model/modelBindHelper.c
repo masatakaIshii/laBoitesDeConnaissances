@@ -5,15 +5,8 @@
 **
 ** Description  : functions used API C MySQL for bind prepared queries
 */
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "../../headers/common.h"
+
 #include "../../headers/model/modelBindHelper.h"
-#include "../../headers/model/modelCommon.h"
-#include "../../headers/model/modelQuit.h"
-
-
 
 void loadBindParams(App *app, MySqlStmtManager *stmtManager, char **paramsNames, char **paramsValues){
     int i;

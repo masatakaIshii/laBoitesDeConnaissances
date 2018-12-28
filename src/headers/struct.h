@@ -1,6 +1,8 @@
 #ifndef _STRUCTURE
 #define _STRUCTURE
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <SDL2/SDL.h>
 #include <winsock2.h>
 #include <mysql.h>
@@ -8,7 +10,7 @@
 #define WINDOW_POS_X    200
 #define WINDOW_POS_Y    100
 #define MAX_VARCHAR 100
-
+#define free(ptr) free(ptr), ptr=NULL
 
 typedef struct Colors {
     int blue[4];
@@ -23,6 +25,9 @@ typedef struct Config {
 } Config;
 
 /* Model */
+
+typedef char Varchar[MAX_VARCHAR];
+
 /**
 *@struct MySqlTable : pour avoir les informations d'une table, nécessaire lors d'une requête préparée
 *@var (char) tableName : le nom de la table dans une base de données
@@ -31,8 +36,8 @@ typedef struct Config {
 *@var (unsigned int *) listFieldsTypes : la liste des type MYSQL_TYPE_ correspondant chaque index au nom du champ concerné
 */
 typedef struct MySqlTable {
-    char tableName[MAX_VARCHAR];
-    char **listFieldsNames;
+    Varchar tableName;
+    Varchar *listFieldsNames;
     int numberField;
     unsigned int *listFieldsTypes;
 } MySqlTable;
@@ -41,16 +46,16 @@ typedef struct MySqlTable {
 //Les structures pour la partie bind
 typedef struct MySqlParamsBind {
     int paramsTypes;
-    int paramsBufferLengths;
     char *paramsBuffer;
+    int paramsBufferLengths;
     int paramsIsNull;
     int paramsLengths;
-    MYSQL_TIME datetimeBind;
-    int paramsDateTime;
+    MYSQL_TIME paramsDateTime;
 } MySqlParamsBind;
 
 typedef struct MySqlStmtManager {
     MYSQL_STMT *stmt;
+    short ifStmtIsInit;
     MYSQL_BIND *buffersBind;
     int numberTables;
     MySqlParamsBind *params;
@@ -68,7 +73,7 @@ typedef struct MySqlStmtManager {
 typedef struct SelectQuery {
     MYSQL_RES *result;
     char ***listColumnsRows;
-    char **listFields;
+    Varchar *listFields;
     unsigned int numberFields;
     unsigned int numberRows;
     short resultWithFieldsList;
@@ -81,8 +86,9 @@ typedef struct Query {
 
 typedef struct Model {
     MYSQL *mysql;
+    short ifMysqlIsInit;
     MySqlTable *tables;
-    char **listAllTables;
+    Varchar *listAllTables;
     int numberAllTables;
     Query query;
 } Model;

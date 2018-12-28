@@ -1,15 +1,15 @@
-#include <stdlib.h>
-#include <stdio.h>
 #include "headers/struct.h"
 #include "headers/common.h"
 #include "headers/play.h"
+#include "headers/model/modelCommon.h"
+#include "headers/model/modelQuit.h"
 #include "headers/model/modelSelect.h"
 #include "headers/model/modelShow.h"
-#include "headers/model/modelCommon.h"
 #include "headers/model/modelIUD.h"
+#include "headers/model/modelBindHelper.h"
+#include "headers/model/modelVerificator.h"
 
 
-#define free(ptr) free(ptr), ptr=NULL
 
 int main(int argc, char **argv) {
 
@@ -34,15 +34,14 @@ int main(int argc, char **argv) {
     returnStat = mainEventLoop(&app);
 
     /*mysql test*/
-    char * query = "SHOW tables";
+    char * query = "SELECT * FROM box";
     SelectQuery *selectQuery = &app.model.query.selectQuery;
-    //get structure SelectQuery
 
     getSelectQuery(&app, query, selectQuery);
+//
+//    showQueryResult(&app, selectQuery);
 
-    showQueryResult(&app, selectQuery);
-
-    freeSelectQuery(selectQuery);
+    //freeSelectQuery(selectQuery);
 
 //    int rowAffected = queryIUD(&app, "UPDATE box SET name = 'the box', modified_date = '28-12-24 00:00:00' WHERE id = 31");
 //    printf("number of row affected : %d\n", rowAffected);
@@ -51,7 +50,6 @@ int main(int argc, char **argv) {
 //    char *paramsValues[100] = {"notRandomBox", "2"};
 //    int result = 0;
     //result = preparedQueryIUD(&app, "UPDATE box, box2 SET box.name = ? WHERE box2.id = ?", tables, 1, paramNames, paramsValues, 2);
-
 
     quitApp(&app);
 

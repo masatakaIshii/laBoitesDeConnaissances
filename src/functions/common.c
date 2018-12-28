@@ -1,10 +1,7 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <SDL2/SDL.h>
-#include <mysql.h>
 #include "../headers/common.h"
 #include "../headers/play.h"
 #include "../headers/model/modelInit.h"
+#include "../headers/model/modelQuit.h"
 
 int mainEventLoop(App *app) {
     SDL_Event event;
@@ -147,7 +144,8 @@ void quitApp(App *app){
     SDL_DestroyWindow(app->screen);
     SDL_Quit();
 
-    mysql_close(app->model.mysql); // a test avec &(app.mysql)
+    quitModel(&app->model);
+
 }
 
 char *mySubstring(const char* name, int minIndex, int maxIndex) {

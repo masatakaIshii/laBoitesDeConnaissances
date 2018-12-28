@@ -5,9 +5,8 @@
 **
 ** Description  : init and load functions that uses API C MySQL
 */
-#include <stdio.h>
+
 #include "../../headers/model/modelInit.h"
-#include "../../headers/model/modelCommon.h"
 
 void dbConnect(App *app) {
 
@@ -22,13 +21,16 @@ void dbConnect(App *app) {
         printf("%s", mysql_error(app->model.mysql));
         quitApp(app);
     }
+    app->model.ifMysqlIsInit = 1;
 }
 
 void InitModel(Model *model) {
 
-    model->listAllTables = NULL;
+    model->ifMysqlIsInit = 0;
 
+    model->listAllTables = NULL;
     model->tables = NULL;
+    model->numberAllTables = 0;
 
     model->query.selectQuery.listColumnsRows = NULL;
     model->query.selectQuery.listFields = NULL;
@@ -37,7 +39,9 @@ void InitModel(Model *model) {
 
     model->query.stmtManager.buffersBind = NULL;
     model->query.stmtManager.params = NULL;
+    model->query.stmtManager.numberParams = 0;
     model->query.stmtManager.stmt = NULL;
+    model->query.stmtManager.ifStmtIsInit = 0;
 }
 
 void initTables(MySqlTable *tables) {
@@ -47,25 +51,36 @@ void initTables(MySqlTable *tables) {
 
 void loadFileModelTables(App *app) {
 
-    int i;
+    int i, j;
 
     getAllTablesNumberAndNames(app, &app->model);
 
-    printf("numberTables : %d\n" , app->model.numberAllTables);
-    for (i = 0; i < app->model.numberAllTables; i++){
-        printf("app->model.listAllTables[%d] : %s\n", i, app->model.listAllTables[i]);
-    }
+    loadTablesStructByQuery(app, &app->model);
 
-    /**
-    *@todo : fill app->model.numberTables and app->model.tables
-    *@todo : save array of structures in file modelTables
-    */
-    freeListString(app->model.listAllTables, app->model.numberAllTables);
+    writeNumberAndNamesAndStructTablesInFile(app, &app->model);
+
+    freeStructTableMysql(&app->model);
+
+    readAndGetNumberAndNamesAndStructTables(app, &app->model);
+
+//    for (i = 0; i < app->model.numberAllTables; i++) {
+//        printf("tables[%d].tablesName : %s\n", i, app->model.tables[i].tableName);
+//        for (j = 0; j < app->model.tables[i].numberField; j++) {
+//            printf("tables[%d].listFieldsName[%d] : %s\n", i, j, app->model.tables[i].listFieldsNames[j]);
+//            printf("tables[%d].listFieldsType[%d] : %u\n", i, j, app->model.tables[i].listFieldsTypes[j]);
+//        }
+//        printf("\n");
+//    }
 }
 
+/**
+*@brief to get the number of all tables and their names and save in model's structure
+*
+*@param (App *) app - structure of app, the kernel
+*@param (Model *) model - structure of all informations linked to database
+*/
 void getAllTablesNumberAndNames (App *app, Model *model) {
     MYSQL_ROW row;
-    unsigned int numberFields;
     unsigned int numberTables;
     int i = 0;
     MYSQL_RES *resultTables = mysql_list_tables(model->mysql, NULL);
@@ -73,9 +88,8 @@ void getAllTablesNumberAndNames (App *app, Model *model) {
 
     numberTables = mysql_num_rows(resultTables);
 
-    model->listAllTables = malloc(sizeof(char *) * numberTables);
+    model->listAllTables = malloc(sizeof(Varchar) * numberTables);
     while((row = mysql_fetch_row(resultTables)) != NULL) {
-        model->listAllTables[i] = malloc(sizeof(char) * (strlen(row[0]) + 1));
         strcpy(model->listAllTables[i], row[0]);
         i++;
     }
@@ -86,26 +100,119 @@ void getAllTablesNumberAndNames (App *app, Model *model) {
 }
 
 /**
-
 *@brief load the structure MySqlTable to get all metadatas for parameters
 *
-*@param (App *) app  - structure of app, the kernel of structure
+*@param (App *) app - structure of app that containt all necessary load and quit structure
 *@param (Model *) model - structure of model to use mysql
 */
 
-void loadTablesStruct(App *app, Model *model) {
-    int i;
+void loadTablesStructByQuery(App *app, Model *model) {
+    int i, j;
     unsigned int *listFieldsType;
     unsigned int numberFields = 0;
 
-    model->tables = calloc(0, sizeof(MySqlTable) * model->numberAllTables);
+    model->tables = malloc(sizeof(MySqlTable) * (model->numberAllTables));
     verifyPointer(app, model->tables, "Problem with memory allocation");
 
     for (i = 0; i < model->numberAllTables; i++) {
         strcpy(model->tables[i].tableName, model->listAllTables[i]);
-        model->tables[i].listFieldsNames = getFieldsName(app, model->listAllTables[i], &numberFields, &listFieldsType);
+
+        model->tables[i].listFieldsNames = getFieldsName(app, model->tables[i].tableName, &numberFields, &listFieldsType);
+
         model->tables[i].listFieldsTypes = listFieldsType;
+
         model->tables[i].numberField = numberFields;
+    }
+
+}
+
+/**
+*@brief to write number and names and structures of all tables in file numberNamesStructTables
+*
+*@param (App *) app - structure of app that containt all necessary load and quit structure
+*@param (Model *) model - structure of model to use mysql
+*/
+void writeNumberAndNamesAndStructTablesInFile(App *app, Model *model) {
+    FILE *fp;
+    int result;
+    int i;
+
+    fp = fopen("numberNamesStructTables", "wb");
+    verifyPointer(app, fp, "Problem with open file numberNamesStructTables for write");
+
+    result = fwrite(&model->numberAllTables, sizeof(int), 1, fp);
+
+    verifyResultFile(app, result, 1, "Problem with fwrite &model->numberAllTables\n");
+
+    result = fwrite(model->listAllTables, sizeof(Varchar), model->numberAllTables, fp);
+    verifyResultFile(app, result, model->numberAllTables, "Problem with fwrite model->listAllTables\n");
+
+    writeStructTables(app, model, fp);
+
+    fclose(fp);
+}
+
+void writeStructTables(App *app, Model *model, FILE *fp) {
+    int i;
+    int result;
+
+    for (i = 0; i < model->numberAllTables; i++) {
+        result = fwrite(&model->tables[i].numberField, sizeof(int), 1, fp);
+        verifyResultFile(app, result, 1, "Problem in fwrite for &model->tables[i].numberField");
+
+        result = fwrite(&model->tables[i].tableName, sizeof(Varchar), 1, fp);
+        verifyResultFile(app, result, 1, "Problem in fwrite for &model->tables[i].tableName");
+
+        result = fwrite(model->tables[i].listFieldsTypes, sizeof(int), model->tables[i].numberField, fp);
+        verifyResultFile(app, result, model->tables[i].numberField, "Problem in fwrite for model->tables[i].listFieldsTypes");
+
+        result = fwrite(model->tables[i].listFieldsNames, sizeof(Varchar), model->tables[i].numberField, fp);
+        verifyResultFile(app, result, model->tables[i].numberField, "Problem in fwrite formodel->tables[i].listFieldsNames");
+    }
+
+}
+
+void readAndGetNumberAndNamesAndStructTables(App *app, Model *model){
+    FILE *fp;
+    int result;
+    int i;
+
+    fp = fopen("numberNamesStructTables", "rb");
+
+    verifyPointer(app, fp, "Problem with open file numberNamesStructTables for read");
+
+    result = fread(&model->numberAllTables, sizeof(int), 1, fp);
+
+    verifyResultFile(app, result, 1, "Problem with fread &model->numberAllTables\n");
+
+    model->listAllTables = malloc(sizeof(Varchar) * model->numberAllTables);
+    result = fread(model->listAllTables, sizeof(Varchar), model->numberAllTables, fp);
+    verifyResultFile(app, result, model->numberAllTables, "Problme with fread model->listAllTables\n");
+
+    readAndGetStructTables(app, model, fp);
+
+    fclose(fp);
+}
+
+void readAndGetStructTables(App *app, Model *model, FILE *fp) {
+    int i;
+    int result;
+
+    model->tables = malloc(sizeof(MySqlTable) * model->numberAllTables);
+    for (i = 0; i < model->numberAllTables; i++) {
+        result = fread(&model->tables[i].numberField, sizeof(int), 1, fp);
+        verifyResultFile(app, result, 1, "Problem in fread for &model->tables[i].numberField\n");
+
+        result = fread(&model->tables[i].tableName, sizeof(Varchar), 1, fp);
+        verifyResultFile(app, result, 1, "Problem in fread for &model->tables[i].tableName\n");
+
+        model->tables[i].listFieldsTypes = malloc(sizeof(int) * model->tables[i].numberField);
+        result = fread(model->tables[i].listFieldsTypes, sizeof(int), model->tables[i].numberField, fp);
+        verifyResultFile(app, result, model->tables[i].numberField, "Problem in fread for model->tables[i].listFieldsTypes\n");
+
+        model->tables[i].listFieldsNames = malloc(sizeof(Varchar) * model->tables[i].numberField);
+        result = fread(model->tables[i].listFieldsNames, sizeof(Varchar), model->tables[i].numberField, fp);
+        verifyResultFile(app, result, model->tables[i].numberField, "Problem in fread for model->tables[i].listFieldsNames\n");
     }
 }
 
@@ -142,6 +249,5 @@ void loadStmtManager(App *app, MySqlStmtManager *stmtManager, int numberTables, 
         quitApp(app);
         exit(EXIT_FAILURE);
     }
-    stmtManager->numberParams = paramsCount;
 }
 

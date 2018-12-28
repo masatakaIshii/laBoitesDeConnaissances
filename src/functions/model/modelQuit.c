@@ -7,14 +7,13 @@
 */
 
 #include "../../headers/model/modelQuit.h"
-#include "../../headers/struct.h"
 
 void freeSelectQuery(SelectQuery *selectQuery) {
-    int i, j;
 
     if (selectQuery != NULL) {
         freeResultStringTable(selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows);
-        freeListString(selectQuery->listFields, selectQuery->numberFields);
+        freeListString(&selectQuery->listFields);
+        selectQuery->listFields = NULL;
     }
 }
 
@@ -24,14 +23,11 @@ void freeSelectQuery(SelectQuery *selectQuery) {
 *@param fieldsList : list of string content fields name
 *@param numberFields : number of fields that content the list
 */
-void freeListString(char **fieldsList, unsigned int numberFields) {
-    int i;
+void freeListString(Varchar **fieldsList) {
 
-    if (fieldsList != NULL) {
-        for (i = 0; i < numberFields; i++) {
-            free(fieldsList[i]);
-        }
-        free(fieldsList);
+    if (*fieldsList != NULL) {
+        free(*fieldsList);
+        *fieldsList = NULL;
     }
 }
 
@@ -63,18 +59,52 @@ void freeResultStringTable(char ***stringTable, unsigned int numberFields, unsig
 *@param tables : TableMysql structure that content table informations
 *@param numberTables : number of TableMysql structure
 */
-void freeStructTableMysql(MySqlTable **tables, int numberTables) {
+void freeStructTableMysql(Model *model) {
     int i;
 
-    if (tables != NULL) {
-        for (i =0; i < numberTables; i++) {
-            freeListString(tables[i]->listFieldsNames, tables[i]->numberField);
-
-            if (tables[i]->listFieldsTypes != NULL) {
-
-                free(tables[i]->listFieldsTypes);
-            }
+    if (model->tables != NULL) {
+        for (i = 0; i < model->numberAllTables; i++) {
+            free(model->tables[i].listFieldsTypes);
+            freeListString(&model->tables[i].listFieldsNames);
         }
+        free(model->tables);
+    }
+}
+
+void quitModel(Model *model) {
+
+
+    if (model->listAllTables != NULL) {
+        freeListString(&model->listAllTables);
+    }
+
+    quitSelectQuery(&model->query.selectQuery);
+
+    quitStmtManager(&model->query.stmtManager);
+
+    if (model->tables != NULL) {
+        freeStructTableMysql(model);
+    }
+
+    if (model->ifMysqlIsInit != 0) {
+        mysql_close(model->mysql);
+        model->ifMysqlIsInit = 0;
+    }
+}
+
+void quitSelectQuery(SelectQuery *selectQuery) {
+
+    unsigned int numberRows = 0;
+    unsigned int numberFields = 0;
+
+    if (selectQuery->listColumnsRows != NULL) {
+        numberRows = selectQuery->numberRows;
+        numberFields = selectQuery->numberFields;
+        freeResultStringTable(selectQuery->listColumnsRows, numberFields, numberRows);
+        if (selectQuery->listFields != NULL) {
+            freeListString(selectQuery->listFields);
+        }
+        selectQuery->resultWithFieldsList = 0;
     }
 }
 
@@ -85,15 +115,25 @@ void freeStructTableMysql(MySqlTable **tables, int numberTables) {
 */
 void quitStmtManager(MySqlStmtManager *stmtManager) {
 
-    if (stmtManager->buffersBind != NULL) {
-        free(stmtManager->buffersBind);
+    if (stmtManager->ifStmtIsInit != 0) {
+        mysql_stmt_close(stmtManager->stmt);
+        stmtManager->ifStmtIsInit = 0;
     }
 
-    if (mysql_stmt_free_result(stmtManager->stmt) != 0) {
-        printf("Problem with free result");
-    }
+    if (stmtManager->numberParams != 0) {
 
-    if (mysql_stmt_close(stmtManager->stmt) != 0) {
-        printf("Problem with close mysql stmt\n");
+        if (stmtManager->params != NULL) {
+            free(stmtManager->params);
+        } else {
+            printf("Warning : stmtManager->params was free with numberParams != 0. ");
+            printf("Check if there is not a forgotten to put numberParams to 0\n");
+        }
+        if (stmtManager->buffersBind != NULL) {
+            free(stmtManager->buffersBind);
+        } else {
+            printf("Warning : stmtManager->bufferBind was free with numberParams != 0. ");
+            printf("Check if there is not a forgotten to put numberParams to 0\n");
+        }
+        stmtManager->numberParams = 0;
     }
 }
