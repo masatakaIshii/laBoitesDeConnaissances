@@ -16,8 +16,9 @@
 *@return (char ***) resultQuery - columns and rows of selection of query
 */
 
-void getSelectQuery (App *app, const char *currentQuery, SelectQuery *selectQuery) {
+void getSelectQuery (App *app, const char *currentQuery) {
 
+    SelectQuery *selectQuery = &app->model.query.selectQuery;
     int checkResult = 0; // check if mysql_query is success => 0, or fail => =!0
 
     checkResult = mysql_query(app->model.mysql, currentQuery);
@@ -135,7 +136,8 @@ void fetchOneRowQuerySelect(App *app, SelectQuery *selectQuery, unsigned long *l
     }
 }
 
-void addFieldsToResult(App *app, SelectQuery *selectQuery) {
+void addFieldsToResult(App *app) {
+    SelectQuery *selectQuery = &app->model.query.selectQuery;
     char ***inter;
     int i;
     //printf("\nin addFieldsToResult\n");
@@ -151,11 +153,12 @@ void addFieldsToResult(App *app, SelectQuery *selectQuery) {
 
     for (i = 0; i < selectQuery->numberRows; i++) {
         if (i == 0) {
-            inter[i] = copyListString(app, (char**)selectQuery->listFields, selectQuery->numberFields);
+            inter[i] = copyListFields(app, selectQuery->listFields, selectQuery->numberFields);
         } else {
             inter[i] = copyListString(app, selectQuery->listColumnsRows[i - 1], selectQuery->numberFields);
         }
     }
+
 
     freeResultStringTable(selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows - 1);
     selectQuery->listColumnsRows = inter;
@@ -163,7 +166,8 @@ void addFieldsToResult(App *app, SelectQuery *selectQuery) {
     selectQuery->resultWithFieldsList = 1;
 }
 
-void removeFieldsInResult(App *app, SelectQuery *selectQuery) {
+void removeFieldsInResult(App *app) {
+    SelectQuery *selectQuery = &app->model.query.selectQuery;
     char ***inter;
     int i;
 
@@ -186,12 +190,27 @@ void removeFieldsInResult(App *app, SelectQuery *selectQuery) {
     selectQuery->resultWithFieldsList = 0;
 }
 
+char **copyListFields(App *app, Varchar *listFields, unsigned int numberFields) {
+    char **copyList;
+    int i;
+
+    copyList = malloc(sizeof(char *) * numberFields);
+    verifyPointer(app, copyList, "Problem malloc in copyList in function copyListFields\n");
+
+    for (i = 0; i < numberFields; i++) {
+        copyList[i] = malloc(sizeof(char) * (strlen(listFields[i]) + 1));
+        verifyPointer(app, copyList[i], "Problem malloc in copyList[i], in function copyListFields\n");
+        strcpy(copyList[i], (listFields[i] == NULL) ? "" : listFields[i]);
+    }
+
+    return copyList;
+}
+
 char **copyListString(App *app, char **listString, unsigned int numberFields) {
     char **copyList;
     int i;
 
     copyList = malloc(sizeof(char*) * numberFields);
-
     verifyPointer(app, copyList, "Problem malloc in copyList in the function copyListString\n");
 
     for (i = 0; i < numberFields; i++) {

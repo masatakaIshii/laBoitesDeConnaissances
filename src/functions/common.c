@@ -147,13 +147,3 @@ void quitApp(App *app){
     quitModel(&app->model);
 
 }
-
-char *mySubstring(const char* name, int minIndex, int maxIndex) {
-    int length = maxIndex - minIndex;
-    char *string = malloc(sizeof(char) * (length));
-
-    strncpy(string, name + minIndex, length);
-    *(string + length) = '\0';
-
-    return string;
-}

@@ -8,10 +8,11 @@
 
 #include "../../headers/model/modelQuit.h"
 
-void freeSelectQuery(SelectQuery *selectQuery) {
-
+void freeSelectQuery(App *app) {
+    SelectQuery *selectQuery = &app->model.query.selectQuery;
     if (selectQuery != NULL) {
         freeResultStringTable(selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows);
+        selectQuery->listColumnsRows = NULL;
         freeListString(&selectQuery->listFields);
         selectQuery->listFields = NULL;
     }
@@ -44,6 +45,7 @@ void freeResultStringTable(char ***stringTable, unsigned int numberFields, unsig
 
     if (stringTable != NULL) {
         for (i = 0; i < numberRows; i++) {
+
             for (j = 0; j < numberFields; j++) {
                 free(stringTable[i][j]);
             }
@@ -66,13 +68,15 @@ void freeStructTableMysql(Model *model) {
         for (i = 0; i < model->numberAllTables; i++) {
             free(model->tables[i].listFieldsTypes);
             freeListString(&model->tables[i].listFieldsNames);
+            model->tables[i].listFieldsNames = NULL;
+            model->tables[i].numberField = 0;
+            strcpy(model->tables[i].tableName, "");
         }
         free(model->tables);
     }
 }
 
 void quitModel(Model *model) {
-
 
     if (model->listAllTables != NULL) {
         freeListString(&model->listAllTables);
@@ -84,6 +88,7 @@ void quitModel(Model *model) {
 
     if (model->tables != NULL) {
         freeStructTableMysql(model);
+        //remove(numberNamesStructTables);
     }
 
     if (model->ifMysqlIsInit != 0) {
@@ -102,7 +107,7 @@ void quitSelectQuery(SelectQuery *selectQuery) {
         numberFields = selectQuery->numberFields;
         freeResultStringTable(selectQuery->listColumnsRows, numberFields, numberRows);
         if (selectQuery->listFields != NULL) {
-            freeListString(selectQuery->listFields);
+            freeListString(&selectQuery->listFields);
         }
         selectQuery->resultWithFieldsList = 0;
     }
@@ -121,19 +126,22 @@ void quitStmtManager(MySqlStmtManager *stmtManager) {
     }
 
     if (stmtManager->numberParams != 0) {
-
+        if (stmtManager->paramsNames != NULL) {
+            free(stmtManager->paramsNames);
+        }
         if (stmtManager->params != NULL) {
             free(stmtManager->params);
-        } else {
-            printf("Warning : stmtManager->params was free with numberParams != 0. ");
-            printf("Check if there is not a forgotten to put numberParams to 0\n");
         }
         if (stmtManager->buffersBind != NULL) {
             free(stmtManager->buffersBind);
-        } else {
-            printf("Warning : stmtManager->bufferBind was free with numberParams != 0. ");
-            printf("Check if there is not a forgotten to put numberParams to 0\n");
         }
         stmtManager->numberParams = 0;
+    }
+
+    if (stmtManager->numberTables != 0) {
+        if (stmtManager->tablesNames != NULL) {
+            free(stmtManager->tablesNames);
+        }
+        stmtManager->numberTables = 0;
     }
 }

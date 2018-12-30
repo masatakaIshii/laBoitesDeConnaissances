@@ -46,20 +46,24 @@ typedef struct MySqlTable {
 //Les structures pour la partie bind
 typedef struct MySqlParamsBind {
     int paramsTypes;
-    char *paramsBuffer;
-    int paramsBufferLengths;
+    char *paramsString;
+    int paramsStrLen;
+    int paramNumber;
+    double paramDouble;
+    MYSQL_TIME paramsDateTime;
     int paramsIsNull;
     int paramsLengths;
-    MYSQL_TIME paramsDateTime;
 } MySqlParamsBind;
 
 typedef struct MySqlStmtManager {
     MYSQL_STMT *stmt;
     short ifStmtIsInit;
-    MYSQL_BIND *buffersBind;
+    Varchar *tablesNames;
     int numberTables;
-    MySqlParamsBind *params;
+    Varchar *paramsNames;
     int numberParams;
+    MySqlParamsBind *params;
+    MYSQL_BIND *buffersBind;
 } MySqlStmtManager;
 
 // Concernant les requêtes préparées

@@ -10,7 +10,5 @@ void loadConfig(Config *config, int height);
 void loadColors(Colors *colors);
 void loadApp(App *app);
 void quitApp(App *app);
-
-char *mySubstring(const char* name, int minIndex, int maxIndex);
 #endif // COMMON_FUNCTIONS
 

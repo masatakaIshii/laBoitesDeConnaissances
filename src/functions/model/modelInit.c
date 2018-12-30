@@ -40,8 +40,11 @@ void InitModel(Model *model) {
     model->query.stmtManager.buffersBind = NULL;
     model->query.stmtManager.params = NULL;
     model->query.stmtManager.numberParams = 0;
+    model->query.stmtManager.numberTables = 0;
     model->query.stmtManager.stmt = NULL;
     model->query.stmtManager.ifStmtIsInit = 0;
+    model->query.stmtManager.tablesNames = NULL;
+    model->query.stmtManager.paramsNames = NULL;
 }
 
 void initTables(MySqlTable *tables) {
@@ -61,7 +64,7 @@ void loadFileModelTables(App *app) {
 
     freeStructTableMysql(&app->model);
 
-    readAndGetNumberAndNamesAndStructTables(app, &app->model);
+//    readAndGetNumberAndNamesAndStructTables(app, &app->model);
 
 //    for (i = 0; i < app->model.numberAllTables; i++) {
 //        printf("tables[%d].tablesName : %s\n", i, app->model.tables[i].tableName);
@@ -107,7 +110,7 @@ void getAllTablesNumberAndNames (App *app, Model *model) {
 */
 
 void loadTablesStructByQuery(App *app, Model *model) {
-    int i, j;
+    int i;
     unsigned int *listFieldsType;
     unsigned int numberFields = 0;
 
@@ -135,7 +138,6 @@ void loadTablesStructByQuery(App *app, Model *model) {
 void writeNumberAndNamesAndStructTablesInFile(App *app, Model *model) {
     FILE *fp;
     int result;
-    int i;
 
     fp = fopen("numberNamesStructTables", "wb");
     verifyPointer(app, fp, "Problem with open file numberNamesStructTables for write");
@@ -171,11 +173,15 @@ void writeStructTables(App *app, Model *model, FILE *fp) {
     }
 
 }
-
+/**
+*@brief readAndGetNumberAndNamesAndStructTables : function allowing to fill MysqlTableStruct
+*
+*@param (App *) app - structure that content all structures of application
+*@param (Model *) model - structure that content all informations about database
+*/
 void readAndGetNumberAndNamesAndStructTables(App *app, Model *model){
     FILE *fp;
     int result;
-    int i;
 
     fp = fopen("numberNamesStructTables", "rb");
 
@@ -217,37 +223,17 @@ void readAndGetStructTables(App *app, Model *model, FILE *fp) {
 }
 
 /**
-*@brief Initialisation of prepared query
+*@brief Initialization of prepared query
 *
 *@param app : structure of application which content MYSQL variable
 *@return preparedQuery : MYSQL_STMT
 */
-MYSQL_STMT *stmtInitialisation(App *app) {
-    MYSQL_STMT *mysqlStmt = mysql_stmt_init(app->model.mysql);
-    verifyPointer(app, mysqlStmt, mysql_error(app->model.mysql));
+void stmtInitialisation(App *app, MySqlStmtManager *stmtManager) {
 
-    return mysqlStmt;
+    stmtManager->stmt = mysql_stmt_init(app->model.mysql);
+    verifyPointer(app, stmtManager->stmt, mysql_stmt_error(stmtManager->stmt));
+    app->model.query.stmtManager.ifStmtIsInit = 1;
 }
 
-void loadStmtManager(App *app, MySqlStmtManager *stmtManager, int numberTables, int numberParams, const char *query) {
 
-    int paramsCount;
-
-    stmtManager->numberTables = numberTables;
-
-    if (mysql_stmt_prepare(stmtManager->stmt, query, strlen(query))){
-
-        printf("Error [MYSQL_STMT] in preparation of stmt : %s\n" , mysql_stmt_error(stmtManager->stmt));
-        quitApp(app);
-        exit(EXIT_FAILURE);
-    }
-
-    paramsCount = mysql_stmt_param_count(stmtManager->stmt);
-    if (paramsCount != numberParams) {
-        printf("Error [MYSQL_STMT] : the total parameters = %d, whereas numberParams = %d", paramsCount, numberParams);
-        //quitStmtManager(stmtManager);
-        quitApp(app);
-        exit(EXIT_FAILURE);
-    }
-}
 

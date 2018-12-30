@@ -11,7 +11,7 @@
 #include "modelCommon.h"
 #include "modelQuit.h"
 
-void showQueryResult(App *app, SelectQuery *selectQuery);
+void showQueryResult(App *app);
 int *getMaxLengthOfEachFields(App *app, char ***resultQuery, int numberFields, int numberRows);
 void copyListQuerySelect(App *app, char ****resultQuery,SelectQuery *selectQuery);
 void addSpaceToGetSameLengthPerField(App *app, char ****resultQuery, int numberFields, int numberRows, int *maxLengthsFields);

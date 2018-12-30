@@ -20,16 +20,22 @@ int queryIUD(App *app, const char *currentQuery) {
     return affectedRows;
 }
 
-int preparedQueryIUD(App *app, const char *currentQuery, char **tableNames, int numberTables, char **paramsName, char **paramsValues,  int numberParams) {
+
+
+int sendPreparedQueryIUD(App *app, const char *currentQuery, char **tableNames, int numberTables, char **paramsName, char **paramsValues,  int numberParams) {
     int affectedRow = 0;
     int i;
-    MySqlStmtManager stmtManager;
+    //MySqlStmtManager *stmt = &app->model.query.stmtManager;
 
-    loadStmtManager(app, &stmtManager, numberTables, numberParams, currentQuery);
+    //loadStmtManager(app, stmt, numberTables, numberParams, currentQuery);
+//
+//    printf("stmt.numberParams : %d\n", stmt.numberParams);
+//    printf("stmt.numberParams : %d\n", stmt.);
+    //readAndGetNumberAndNamesAndStructTables(app, &app->model);
 
-    //loadTablesStruct(app, &stmtManager, tableNames);
 
-    loadBindParams(app, &stmtManager, paramsName, paramsValues);
+
+    //loadBindParams(app, &stmtManager, paramsName, paramsValues);
 
     //printf("numberfield : %d\n", stmtManager.tables.numberField);
     //loadParams(app, &stmtManager, );

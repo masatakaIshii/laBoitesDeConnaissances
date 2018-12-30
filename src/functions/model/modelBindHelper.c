@@ -37,32 +37,32 @@ void loadBindParams(App *app, MySqlStmtManager *stmtManager, char **paramsNames,
     }
 }
 
-int getTypeField(char *paramName, MySqlTable *tables, int numberTables) {
-    char *table;
-    int typeField = -1;
-    int i;
-    int j;
-
-    if (numberTables > 1) {
-        getProperFieldAndTable(&paramName, &table);
-    } else {
-        table = tables[0].tableName;
-    }
-
-    for (i = 0; i < numberTables; i++) {
-        for (j = 0; j < tables[i].numberField; j++) {
-            if (table == tables[i].tableName) {
-                if (strncmp(paramName, tables[i].listFieldsNames[j], strlen(paramName) + 1) == 0) {
-                    printf("le type %s de paramName est de :%d\n", paramName, tables[i].listFieldsTypes[j]);
-                    typeField = tables[i].listFieldsTypes[j];
-                }
-            }
-        }
-        printf("\n");
-    }
-
-    return typeField;
-}
+//int getTypeField(char *paramName, MySqlTable *tables, int numberTables) {
+//    char *table;
+//    int typeField = -1;
+//    int i;
+//    int j;
+//
+//    if (numberTables > 1) {
+//        getProperFieldAndTable(&paramName, &table);
+//    } else {
+//        table = tables[0].tableName;
+//    }
+//
+//    for (i = 0; i < numberTables; i++) {
+//        for (j = 0; j < tables[i].numberField; j++) {
+//            if (table == tables[i].tableName) {
+//                if (strncmp(paramName, tables[i].listFieldsNames[j], strlen(paramName) + 1) == 0) {
+//                    printf("le type %s de paramName est de :%d\n", paramName, tables[i].listFieldsTypes[j]);
+//                    typeField = tables[i].listFieldsTypes[j];
+//                }
+//            }
+//        }
+//        printf("\n");
+//    }
+//
+//    return typeField;
+//}
 
 void bindParamString(int index, MySqlStmtManager *stmtManager, enum_field_types typeParam, char *paramValue) {
     unsigned long length = strlen(paramValue);
