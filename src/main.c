@@ -53,15 +53,16 @@ int main(int argc, char **argv) {
 //    printf("number of row affected : %d\n", rowAffected);
 
     char *tables[100] = {"box", "list"};
-    char *paramNames[100] = {"box.name", "list.name" , "box.id", "list.id"};
-    char *paramsValues[100] = {"toto", "tata", "3", "2"};
-    char *preparedQueryIUD = "UPDATE box, list SET box.name = ?, list.name = ? WHERE box.id = ? AND list.id = ?";
+    char *paramsValues[100] = {"toto", "tata", "this is THE box", "2"};
+    char *preparedQueryIUD = "UPDATE box, list SET box.name = ?, list.name = ? WHERE box.description = ? AND list.id = ?";
     int result = 0;
-    MYSQL_STMT stmt;
-    app.model.query.stmtManager.stmt = &stmt;
 
-    setPreparedQuery(&app, preparedQueryIUD, tables, 2, paramNames, paramsValues);
+    setPreparedQuery(&app, preparedQueryIUD, tables, 2);
+
+    printf("numberParams : %d\n", app.model.query.stmtManager.numberParams);
+    setBindParams(&app, paramsValues);
     //result = sendPreparedQueryIUD(&app, preparedQueryIUD);
+
 
     quitApp(&app);
 

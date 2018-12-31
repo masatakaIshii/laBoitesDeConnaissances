@@ -11,13 +11,20 @@
 #include "modelCommon.h"
 #include "modelInit.h"
 
-void setPreparedQuery(App *app, char *query, char **tablesNames, int numberTables, char **paramsNames, char **paramsValues);
-void loadStmtManager(App *app,MySqlStmtManager * stmtManager, char **tablesNames, char **paramsNames);
+void setPreparedQuery(App *app, char *query, char **tablesNames, int numberTables);
+void loadStmtManager(App *app,MySqlStmtManager * stmtManager, char **tablesNames, int numberTables);
 void getParamsNames(App *app, MySqlStmtManager  *stmtManager, char *query, int numberParams);
 void getBeginAndEndOfParamName(char *query, int *minIndex, int *maxIndex);
 void mySubstring(Varchar newString, const char* stringToSub, int minIndex, int maxIndex);
 void addStringInList(App *app, Varchar paramName, Varchar **listString, int *currentLength);
-int getTypeField(char *paramName, MySqlTable *tables, Varchar *tablesNames, int numberTables);
 
+void loadStmtManagerBindTypes(App *app, Model *model);
+int getTypeField(Varchar paramName, Model *model, MySqlStmtManager *stmtManager);
+void getProperFieldAndTable(Varchar field, Varchar table);
+
+void fillParams(App *app, int paramType, MySqlParamsBind *params, char *paramValue);
+void fillParamsString(App *app, MySqlParamsBind *params, char *paramValue);
+void fillParamInt(App *app, MySqlParamsBind *params, char *paramValue);
+void fillParamDouble(App *app, MySqlParamsBind *params, char *paramValue);
 #endif // MODEL_STMT_MANAGER
 

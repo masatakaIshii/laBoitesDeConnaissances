@@ -16,7 +16,7 @@
 *@param (int) numberTables : number of params that use for the prepared query
 *@param (char **) paramsValues : list of parameters values used for the prepared query
 */
-void setPreparedQuery(App *app, char *query, char **tablesNames, int numberTables, char **paramsNames, char **paramsValues){
+void setPreparedQuery(App *app, char *query, char **tablesNames, int numberTables){
 
     MySqlStmtManager *stmtManager = &app->model.query.stmtManager;
     stmtInitialisation(app, stmtManager);
@@ -29,13 +29,13 @@ void setPreparedQuery(App *app, char *query, char **tablesNames, int numberTable
     }
 
     //load numberParams, numberTables, tables and params names in stmtManager
-    stmtManager->numberParams = mysql_stmt_param_count(stmtManager->stmt);
-    stmtManager->numberTables = numberTables;
-    //loadStmtManager(app, stmtManager, tablesNames, paramsNames);
-
+    loadStmtManager(app, stmtManager, tablesNames, numberTables);
     getParamsNames(app, stmtManager, query, stmtManager->numberParams);
+
     //load app->model.tables
-    //readAndGetNumberAndNamesAndStructTables(app, &app->model);
+    readAndGetNumberAndNamesAndStructTables(app, &app->model);
+
+    loadStmtManagerBindTypes(app, &app->model);
 
     /*
     TODO : remplir dans stmtManager la partie MySqlParamsBind par rapport aux types des params :
@@ -43,16 +43,15 @@ void setPreparedQuery(App *app, char *query, char **tablesNames, int numberTable
     - déterminer le type de param par rapport à son nom, grâce à MysqlTablesStruct
     - après avoir trouver le type, remplir en fonction sa structure param
     */
+
 }
 
-void loadStmtManager(App *app,MySqlStmtManager * stmtManager, char **tablesNames, char **paramsNames) {
+void loadStmtManager(App *app,MySqlStmtManager * stmtManager, char **tablesNames, int numberTables) {
 
     int i;
 
-    stmtManager->paramsNames = malloc(sizeof(Varchar) * stmtManager->numberParams);
-    for(i = 0; i < stmtManager->numberParams; i++) {
-        strcpy(stmtManager->paramsNames[i], paramsNames[i]);
-    }
+    stmtManager->numberParams = mysql_stmt_param_count(stmtManager->stmt);
+    stmtManager->numberTables = numberTables;
 
     stmtManager->tablesNames = malloc(sizeof(Varchar) * stmtManager->numberTables);
     for (i = 0; i < stmtManager->numberTables; i++){
@@ -62,8 +61,8 @@ void loadStmtManager(App *app,MySqlStmtManager * stmtManager, char **tablesNames
 
 
 void getParamsNames(App *app, MySqlStmtManager  *stmtManager, char *query, int numberParams) {
-    char temp1[1000];
-    char temp2[1000];
+    char temp1[MAX_TEXT];
+    char temp2[MAX_TEXT];
     int max = -1, min = -1;
     Varchar name;
     int currentLenght = 0;
@@ -77,11 +76,10 @@ void getParamsNames(App *app, MySqlStmtManager  *stmtManager, char *query, int n
         //obtenir du debut a la premiere occurence '?' pour trouver son parametre
         temp2[strchr(temp1, '?') - temp1] = '\0';
 
-        printf("\ntemp2 : %s\n", temp2);
         getBeginAndEndOfParamName(temp2, &min, &max);
 
         mySubstring(name, temp2, min, max);
-        printf("name : %s\n", name);
+
         addStringInList(app, name, &stmtManager->paramsNames, &currentLenght);
 
         //Enlever la premiere occurence '?' et initialisez max et min
@@ -95,24 +93,16 @@ void getBeginAndEndOfParamName(char *query, int *min, int *max) {
     int length = strlen(query);
 
     while (length >= 0 && (*max < 0 || *min < 0)) {
-        printf("char ascii: %d\n", query[strlen(query) - 1]);
-        printf("char :%c\n" , query[strlen(query) - 1]);
-        printf("number char of empty : %d\n", ' ');
-        printf("number char of = : %d\n", '=');
 
         //trouver la derniere lettre du parametre
         if (query[strlen(query) - 1] != '=' && query[strlen(query) - 1] != ' ') {
             *max = strlen(query);
-            printf("char in *max : %c\n", query[*max]);
-            printf("*max : %d\n", *max);
         }
 
         // trouver la premiere lettre du parametre apres avoir trouver la derniere
         if (*max != -1){
             if (strrchr(query, ' ')){
                 *min = strrchr(query, ' ') - query + 1;
-                printf("char in *min : %c\n", query[*min]);
-                printf("*min : %d\n", *min);
                 break;
             } else {
                 printf("Warning : Problem of query instruction.\n");
@@ -142,7 +132,6 @@ void addStringInList(App *app, Varchar paramName, Varchar **listString, int *cur
     int length = *currentLength;
     int i;
 
-
     //printf("\n in addStringInlist\n");
     if ((*listString) == NULL) {
         inter = malloc(sizeof(Varchar));
@@ -162,36 +151,127 @@ void addStringInList(App *app, Varchar paramName, Varchar **listString, int *cur
         free(*listString);
     }
     (*listString) = inter;
-
 }
 
 /*
 TODO : adapter cette fonction pour la requête préparée
 */
+void loadStmtManagerBindTypes(App *app, Model *model) {
 
-int getTypeField(char *paramName, MySqlTable *tables, Varchar *tablesNames, int numberTables) {
-    char *table;
+    int i;
+    MySqlStmtManager *stmtManager = &model->query.stmtManager;
+
+    stmtManager->buffersBind = malloc(sizeof(MYSQL_BIND) * stmtManager->numberParams);
+    verifyPointer(app, stmtManager->buffersBind, "Problem malloc stmtManager->params in loadStmtManagerParams");
+    for (i = 0; i < stmtManager->numberParams; i++) {
+        stmtManager->buffersBind[i].buffer_type = getTypeField(stmtManager->paramsNames[i], model, stmtManager);
+    }
+}
+
+int getTypeField(Varchar paramName, Model *model, MySqlStmtManager *stmtManager) {
+    MySqlTable *tables = model->tables;
+    Varchar table;
     int typeField = -1;
+    Varchar *tablesNames = stmtManager->tablesNames;
+    int numberTables = model->numberAllTables;
     int i;
     int j;
 
     if (numberTables > 1) {
-        getProperFieldAndTable(&paramName, &table);
+        getProperFieldAndTable(paramName, table);
     } else {
-        table = tablesNames[0];
+        strcpy(table, tablesNames[0]);
     }
 
     for (i = 0; i < numberTables; i++) {
-        for (j = 0; j < tables[i].numberField; j++) {
-            if (table == tables[i].tableName) {
+        if (strncmp(table, tables[i].tableName, strlen(table) + 1) == 0) {
+            for (j = 0; j < tables[i].numberField; j++) {
                 if (strncmp(paramName, tables[i].listFieldsNames[j], strlen(paramName) + 1) == 0) {
-                    printf("le type %s de paramName est de :%d\n", paramName, tables[i].listFieldsTypes[j]);
                     typeField = tables[i].listFieldsTypes[j];
                 }
             }
         }
-        printf("\n");
     }
 
     return typeField;
 }
+
+/**
+*@brief if field is juncture, separated "table.field" to "table" and "field"
+*
+*@param field : address of field
+*@param table : address of table
+*/
+void getProperFieldAndTable(Varchar field, Varchar table) {
+    char temp[255];
+
+    //Check if field is juncture
+    if (strchr(field, '.')) {
+        strcpy(temp, field);
+        sprintf(field, "%s", strchr(temp, '.') + 1);
+
+        //verify if table content a value, if table is NULL it'll be affected
+        strcpy(table, temp);
+        table[strchr(temp, '.') - temp] = '\0';
+
+    }
+}
+//
+//void fillParams(App *app, int paramType, MySqlParamsBind *params, char *paramValue) {
+//    if (paramType == MYSQL_TYPE_STRING || paramType == MYSQL_TYPE_VAR_STRING || paramType == MYSQL_TYPE_BLOB) {
+//        fillParamString(app, params, paramValue);
+//    }
+//    if (paramType == MYSQL_TYPE_LONG || paramType == MYSQL_TYPE_INT24) {
+//        fillParamInt(app, params, paramValue);
+//    }
+//    if (paramType == MYSQL_TYPE_DOUBLE) {
+//        fillParamDouble(app, params, paramValue);
+//    }
+//    if (paramType == MYSQL_TYPE_DATETIME) {
+//        fillParamDatetime(app, params, paramValue);
+//    }
+//    params->paramsIsNull = (strlen(paramValue) == 0) ? 1 : 0;
+//}
+//
+//void fillParamsString(App *app, MySqlParamsBind *params, char *paramValue) {
+//    strcpy(params->paramsString, paramValue);
+//    params->paramsStrLen = strlen(paramValue);
+//}
+//
+//void fillParamInt(App *app, MySqlParamsBind *params, char *paramValue) {
+//
+//    if (strlen(paramValue) == 0) {
+//        params->paramNumber = 0;
+//    } else if (atoi(paramValue) == 0 && paramsValue[0] != '0') {
+//        printf("Problem with %s paramValue in fillParamInt\n", paramValue);
+//        quitApp(app);
+//    } else {
+//        params->paramNumber = atoi(paramsValue);
+//    }
+//    params->paramsLengths = 0;
+//    params->paramsStrLen = 0;
+//}
+//
+//void fillParamDouble(App *app, MySqlParamsBind *params, char *paramValue) {
+//
+//    if (atof(paramValue) == 0 && paramsValue[0] != '0') {
+//        printf("Problem with %s paramValue in fillParamDouble\n", paramValue);
+//    } else {
+//        params->paramDouble = atof(paramValue);
+//    }
+//    params->paramsLengths = 0;
+//}
+//
+//void fillParamDatetime(App *app, MySqlParamsBind *params, char *paramValue) {
+//
+//    unsigned year, month, day, hour, minute, second;
+//
+//    sscanf(paramValue, "%u-%u-%u %d:%d:%d", &year, &month, &day, &hour, &minute, &second);
+//
+//    printf("paramsDateTime.year : %u\n", params->paramsDateTime.year);
+//    printf("paramsDateTime.month : %u\n", params->paramsDateTime.month);
+//    printf("paramsDateTime.day : %u\n", params->paramsDateTime.day);
+//    printf("paramsDateTime.hour : %u\n", params->paramsDateTime.hour);
+//    printf("paramsDateTime.minute : %u\n", params->paramsDateTime.minute);
+//    printf("paramsDateTime.second : %u\n", params->paramsDateTime.second);
+//}

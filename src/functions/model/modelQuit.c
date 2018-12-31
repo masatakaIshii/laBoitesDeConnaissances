@@ -73,7 +73,9 @@ void freeStructTableMysql(Model *model) {
             strcpy(model->tables[i].tableName, "");
         }
         free(model->tables);
+        model->tables = NULL;
     }
+
 }
 
 void quitModel(Model *model) {
@@ -95,6 +97,7 @@ void quitModel(Model *model) {
         mysql_close(model->mysql);
         model->ifMysqlIsInit = 0;
     }
+
 }
 
 void quitSelectQuery(SelectQuery *selectQuery) {
@@ -128,12 +131,15 @@ void quitStmtManager(MySqlStmtManager *stmtManager) {
     if (stmtManager->numberParams != 0) {
         if (stmtManager->paramsNames != NULL) {
             free(stmtManager->paramsNames);
+            printf("ca free stmtManager->paramsNames\n");
         }
         if (stmtManager->params != NULL) {
             free(stmtManager->params);
+            printf("ca free stmtManager->params\n");
         }
         if (stmtManager->buffersBind != NULL) {
             free(stmtManager->buffersBind);
+            printf("ca free stmtManager->params\n");
         }
         stmtManager->numberParams = 0;
     }
@@ -141,6 +147,7 @@ void quitStmtManager(MySqlStmtManager *stmtManager) {
     if (stmtManager->numberTables != 0) {
         if (stmtManager->tablesNames != NULL) {
             free(stmtManager->tablesNames);
+            printf("ca free stmtManager->tablesNames\n");
         }
         stmtManager->numberTables = 0;
     }

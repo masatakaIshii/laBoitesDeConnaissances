@@ -7,88 +7,98 @@
 */
 
 #include "../../headers/model/modelBindHelper.h"
+void setBindParams(App *app, char **paramsValues) {
 
-void loadBindParams(App *app, MySqlStmtManager *stmtManager, char **paramsNames, char **paramsValues){
+    Model *model = &app->model;
+    MySqlStmtManager *stmtManager = &app->model.query.stmtManager;
+
+    loadBindParams(app, stmtManager, paramsValues);
+    /*
+    TODO :
+    mettre les valeurs dans MYSQL_BIND
+    */
+    if (mysql_stmt_bind_param(stmtManager->stmt, stmtManager->buffersBind)) {
+        printf("Problem in mysql_stmt_bind_param");
+        exit(EXIT_FAILURE);
+    }
+
+}
+void loadBindParams(App *app, MySqlStmtManager *stmtManager, char **paramsValues){
     int i;
     enum_field_types typeParam;
 
-    stmtManager->buffersBind = malloc(sizeof(MYSQL_BIND) * stmtManager->numberParams);
-    verifyPointer(app, stmtManager->buffersBind, "problem with memory allocation in stmtManager->bufferBind");
-
     for (i = 0; i < stmtManager->numberParams; i++) {
-//        typeParam = (enum_field_types)getTypeField(paramsNames[i], stmtManager->tables, stmtManager->numberTables);
-//
-//        if (typeParam == MYSQL_TYPE_BLOB || typeParam == MYSQL_TYPE_STRING || typeParam == MYSQL_TYPE_VAR_STRING){
-//
-//            bindParamString(i, stmtManager, typeParam, paramsValues[i]);
-//        }
-//
-//        if (typeParam == MYSQL_TYPE_LONG || typeParam == MYSQL_TYPE_SHORT || typeParam == MYSQL_TYPE_TINY) {
-//            bindParamInt(i, stmtManager, typeParam, paramsValues[i]);
-//        }
-//
-//        if (typeParam == MYSQL_TYPE_DATE || typeParam == MYSQL_TYPE_DATETIME || typeParam == MYSQL_TYPE_TIMESTAMP) {
-//            //binParamDate(i, stmtManager, typeParam, paramsValues[i]);
-//        }
-//
-//        if (typeParam == MYSQL_TYPE_DOUBLE) {
-//            //TODO bindParamDouble
-//        }
+
+        typeParam = stmtManager->buffersBind[i].buffer_type;
+        if (typeParam == MYSQL_TYPE_BLOB || typeParam == MYSQL_TYPE_STRING || typeParam == MYSQL_TYPE_VAR_STRING){
+
+            bindParamString(app, i, stmtManager, paramsValues[i]);
+        }
+
+        if (typeParam == MYSQL_TYPE_LONG || typeParam == MYSQL_TYPE_SHORT || typeParam == MYSQL_TYPE_TINY) {
+            bindParamInt(app, i, stmtManager, paramsValues[i]);
+        }
+
+        if (typeParam == MYSQL_TYPE_DATE || typeParam == MYSQL_TYPE_DATETIME || typeParam == MYSQL_TYPE_TIMESTAMP) {
+            bindParamDate(app, i, stmtManager, paramsValues[i]);
+        }
+
+        if (typeParam == MYSQL_TYPE_DOUBLE) {
+            //TODO bindParamDouble
+        }
     }
 }
 
-//int getTypeField(char *paramName, MySqlTable *tables, int numberTables) {
-//    char *table;
-//    int typeField = -1;
-//    int i;
-//    int j;
-//
-//    if (numberTables > 1) {
-//        getProperFieldAndTable(&paramName, &table);
-//    } else {
-//        table = tables[0].tableName;
-//    }
-//
-//    for (i = 0; i < numberTables; i++) {
-//        for (j = 0; j < tables[i].numberField; j++) {
-//            if (table == tables[i].tableName) {
-//                if (strncmp(paramName, tables[i].listFieldsNames[j], strlen(paramName) + 1) == 0) {
-//                    printf("le type %s de paramName est de :%d\n", paramName, tables[i].listFieldsTypes[j]);
-//                    typeField = tables[i].listFieldsTypes[j];
-//                }
-//            }
-//        }
-//        printf("\n");
-//    }
-//
-//    return typeField;
-//}
-
-void bindParamString(int index, MySqlStmtManager *stmtManager, enum_field_types typeParam, char *paramValue) {
+void bindParamString(App *app, int index, MySqlStmtManager *stmtManager, char *paramValue) {
     unsigned long length = strlen(paramValue);
     int isNull = (strcmp(paramValue, "") == 0) ? 0 : 1;
 
-    stmtManager->buffersBind[index].buffer_type = typeParam;
     stmtManager->buffersBind[index].buffer_length = length + 1;
     stmtManager->buffersBind[index].buffer = (void *)paramValue;
     stmtManager->buffersBind[index].is_null = (my_bool *)&isNull;
     stmtManager->buffersBind[index].length = &length;
 }
 
-void bindParamInt(int index, MySqlStmtManager *stmtManager, enum_field_types typeParam, char *paramValue) {
+void bindParamInt(App *app, int index, MySqlStmtManager *stmtManager, char *paramValue) {
     int value = atoi(paramValue);
     int isNull = (strcmp(paramValue, "") == 0) ? 0 : 1;
 
-    stmtManager->buffersBind[index].buffer_type = typeParam;
+    if (isNull == 1) {
+        if (atoi(paramValue) == 0 && paramValue[0] != '0') {
+            printf("Problem with paramValue and its type\n");
+            quitApp(app);
+        }
+    }
+
     stmtManager->buffersBind[index].buffer = (void *)&value;
     stmtManager->buffersBind[index].is_null = (my_bool *)&isNull;
     stmtManager->buffersBind[index].length = 0;
 }
 
-void bindParamDate(int index, MySqlStmtManager *stmtManager, enum_field_types typeParam, char *paramValue) {
+void bindParamDate(App *app, int index, MySqlStmtManager *stmtManager, char *paramValue) {
+    MYSQL_TIME time;
+    int isNull = (strcmp(paramValue, "") == 0) ? 0 : 1;
 
+    if (isNull == 0){
+        sscanf(paramValue, "%u-%u-%u %u:%u:%u", &time.year, &time.month, &time.day, &time.hour, &time.minute, &time.second);
+    }
+    stmtManager->buffersBind[index].buffer = (void *)&time;
+    stmtManager->buffersBind[index].is_null = (my_bool*)&isNull;
+    stmtManager->buffersBind[index].length = 0;
 }
 
+void bindParamDouble(App *app, int index, MySqlStmtManager *stmtManager, char *paramValue) {
+    double value = atof(paramValue);
+    int isNull = (strcmp(paramValue, "") == 0) ? 0 : 1;
+
+    if (isNull == 0) {
+        if (atof(paramValue) == 0 && paramValue[0] != '0') {
+            printf("Problem with paramValue and its type\n");
+            quitApp(app);
+        }
+    }
+
+}
 
 //
 //int *getArrayTypeParams(App *app, MySqlTable *tables, int numberTables, char **paramsName, int numberParams) {
@@ -109,7 +119,7 @@ void bindParamDate(int index, MySqlStmtManager *stmtManager, enum_field_types ty
 //}
 
 //
-///**
+//**
 //*@brief bind parameters values and metadatas for the prepared query
 //*
 //*@param (App *) app  - structure of app to use mysql
@@ -170,26 +180,5 @@ void bindParamDate(int index, MySqlStmtManager *stmtManager, enum_field_types ty
 //    return param;
 //}
 
-/**
-*@brief if field is juncture, separated "table.field" to "table" and "field"
-*
-*@param field : address of field
-*@param table : address of table
-*/
-void getProperFieldAndTable(char **field, char **table) {
-    char temp[255];
 
-    //Check if field is juncture
-    if (strchr(*field, '.')) {
-        strcpy(temp, *field);
-        sprintf(*field, "%s", strchr(temp, '.') + 1);
-
-        //verify if table content a value, if table is NULL it'll be affected
-        if (table && (*table) == NULL) {
-            *table = malloc(sizeof(char) * (strlen(temp) + 1));
-            *table = temp;
-            (*table)[strchr(temp, '.') - temp] = '\0';
-        }
-    }
-}
 

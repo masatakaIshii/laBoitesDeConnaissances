@@ -9,7 +9,8 @@
 #define BPP     32
 #define WINDOW_POS_X    200
 #define WINDOW_POS_Y    100
-#define MAX_VARCHAR 100
+#define MAX_VARCHAR 255
+#define MAX_TEXT 1000
 #define free(ptr) free(ptr), ptr=NULL
 
 typedef struct Colors {

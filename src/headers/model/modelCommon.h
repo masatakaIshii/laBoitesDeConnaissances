@@ -19,6 +19,4 @@ Varchar *getFieldsName(App *app, Varchar table, unsigned int* numberFields, unsi
 Varchar *fetchFieldsName(App *app, MYSQL_RES *result, unsigned int numberFields, unsigned int **listMysqlType);
 char ***mallocStringTable(unsigned int numberRows,unsigned int numberFields);
 
-unsigned int getTypeOfField(App *app, char *field, char *table);
-
 #endif // MYSQL_COMMON_FUNCTIONS
