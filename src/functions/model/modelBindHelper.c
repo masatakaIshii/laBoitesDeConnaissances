@@ -52,21 +52,25 @@ void loadBindParams(App *app, MySqlStmtManager *stmtManager, char **paramsValues
 
 void bindParamString(App *app, int index, MySqlStmtManager *stmtManager, char *paramValue) {
     stmtManager->params[index].paramsLengths = strlen(paramValue);
-    stmtManager->params[index].paramsIsNull = (strcmp(paramValue, "") == 0) ? 0 : 1;
+    stmtManager->params[index].paramsIsNull = (strncmp(paramValue, "", strlen(paramValue)) == 0) ? 1 : 0;
 
     stmtManager->params[index].paramsString = malloc(sizeof(char) * (strlen(paramValue) + 1));
     strcpy(stmtManager->params[index].paramsString, paramValue);
 
     stmtManager->buffersBind[index].buffer_length = stmtManager->params[index].paramsLengths + 1;
     stmtManager->buffersBind[index].buffer = (char *)stmtManager->params[index].paramsString;
-    stmtManager->buffersBind[index].is_null = (my_bool *)&stmtManager->params[index].paramsIsNull;
+    if (stmtManager->params[index].paramsIsNull == 1) {
+        stmtManager->buffersBind[index].is_null = (my_bool*)&stmtManager->params[index].paramsIsNull;
+    } else {
+        stmtManager->buffersBind[index].is_null = 0;
+    }
     stmtManager->buffersBind[index].length = &stmtManager->params[index].paramsLengths;
 
     printf("buffer : %s\n", stmtManager->buffersBind[index].buffer);
 }
 
 void bindParamInt(App *app, int index, MySqlStmtManager *stmtManager, char *paramValue) {
-    stmtManager->params[index].paramsIsNull = (strcmp(paramValue, "") == 0) ? 0 : 1;
+    stmtManager->params[index].paramsIsNull = (strncmp(paramValue, "", strlen(paramValue)) == 0) ? 1 : 0;
     stmtManager->params[index].paramNumber = atoi(paramValue);
 
     if (stmtManager->params[index].paramsIsNull == 1) {
@@ -77,25 +81,33 @@ void bindParamInt(App *app, int index, MySqlStmtManager *stmtManager, char *para
     }
 
     stmtManager->buffersBind[index].buffer = (void *)&stmtManager->params[index].paramNumber;
-    stmtManager->buffersBind[index].is_null = (my_bool *)&stmtManager->params[index].paramsIsNull;
+    if (stmtManager->params[index].paramsIsNull == 1) {
+        stmtManager->buffersBind[index].is_null = (my_bool*)&stmtManager->params[index].paramsIsNull;
+    } else {
+        stmtManager->buffersBind[index].is_null = 0;
+    }
     stmtManager->buffersBind[index].length = 0;
 }
 
 void bindParamDate(App *app, int index, MySqlStmtManager *stmtManager, char *paramValue) {
     MYSQL_TIME *time = &stmtManager->params[index].paramsDateTime;
-    stmtManager->params[index].paramsIsNull = (strcmp(paramValue, "") == 0) ? 0 : 1;
+    stmtManager->params[index].paramsIsNull = (strncmp(paramValue, "", strlen(paramValue)) == 0) ? 1 : 0;
 
     if (stmtManager->params[index].paramsIsNull == 0){
         sscanf(paramValue, "%u-%u-%u %u:%u:%u", &time->year, &time->month, &time->day, &time->hour, &time->minute, &time->second);
     }
     stmtManager->buffersBind[index].buffer = (void *)time;
-    stmtManager->buffersBind[index].is_null = (my_bool*)&stmtManager->params[index].paramsIsNull;
+    if (stmtManager->params[index].paramsIsNull == 1) {
+        stmtManager->buffersBind[index].is_null = (my_bool*)&stmtManager->params[index].paramsIsNull;
+    } else {
+        stmtManager->buffersBind[index].is_null = 0;
+    }
     stmtManager->buffersBind[index].length = 0;
 }
 
 void bindParamDouble(App *app, int index, MySqlStmtManager *stmtManager, char *paramValue) {
     stmtManager->params[index].paramDouble = atof(paramValue);
-    stmtManager->params[index].paramsIsNull = (strcmp(paramValue, "") == 0) ? 0 : 1;
+    stmtManager->params[index].paramsIsNull = (strncmp(paramValue, "", strlen(paramValue)) == 0) ? 1 : 0;
 
     if (stmtManager->params[index].paramsIsNull == 0) {
         if (atof(paramValue) == 0 && paramValue[0] != '0') {
@@ -104,10 +116,22 @@ void bindParamDouble(App *app, int index, MySqlStmtManager *stmtManager, char *p
         }
     }
     stmtManager->buffersBind[index].buffer = (void *)&stmtManager->params[index].paramDouble;
-    stmtManager->buffersBind[index].is_null = (my_bool*)&stmtManager->params[index].paramsIsNull;
+    if (stmtManager->params[index].paramsIsNull == 1) {
+        stmtManager->buffersBind[index].is_null = (my_bool*)&stmtManager->params[index].paramsIsNull;
+    } else {
+        stmtManager->buffersBind[index].is_null = 0;
+    }
+
     stmtManager->buffersBind[index].length = 0;
 }
 
+int *checkIfParamIsNull(MySqlParamsBind *param) {
+    int *isNull;
+
+    if (param->paramsIsNull == 0) {
+
+    }
+}
 //
 //int *getArrayTypeParams(App *app, MySqlTable *tables, int numberTables, char **paramsName, int numberParams) {
 //    int typeField;
