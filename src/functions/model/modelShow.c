@@ -8,44 +8,22 @@
 #include <stdio.h>
 #include <string.h>
 #include "../../headers/model/modelShow.h"
+#include "../../headers/model/modelSelect.h"
+
 #define MAX_CURRENT_VALUE 1000
-/*
-@TODO : Mettre en place un affichage bien structuré en prenant en compte la taille max de chaque colonne et nom de colonne
-*/
 
-void showQueryResult(char ****resultQuery, unsigned int *numberFields, unsigned int *numberRows, char **fieldsList) {
+void showQueryResult(App *app) {
+    SelectQuery *selectQuery = &app->model.query.selectQuery;
+    int numberFields = selectQuery->numberFields;
+    int numberRows = selectQuery->numberRows;
+    char ***resultQuery = NULL;
+    int *maxLengthsFields;
+    int i, j, k;
 
-    if (fieldsList != NULL) {
-        addFieldsToResult(resultQuery, &fieldsList, &numberRows);
-    }
+    copyListQuerySelect(app, &resultQuery, selectQuery);
 
-    showWellResult(*resultQuery, *numberFields, *numberRows, fieldsList);
-}
-
-void addFieldsToResult(char ****resultQuery, char ***fieldsList, unsigned int **numberRows) {
-    char ***inter;
-    int i;
-
-    inter = malloc(sizeof(char**) * (++**numberRows));
-    inter = fieldsList;
-
-    for (i = 0; i < (**numberRows); i++) {
-
-        inter[i + 1] = (*resultQuery)[i];
-    }
-
-    free(*resultQuery);
-
-    (*resultQuery) = inter;
-}
-
-void showWellResult(char ***resultQuery, int numberFields, int numberRows, char **fieldsList) {
-    int *maxLengthsFields = getMaxLengthOfEachFields(resultQuery, numberFields, numberRows, fieldsList);
-    int i;
-    int j;
-    int z;
-
-    addSpaceToGetSameLengthPerField(&resultQuery, numberFields, numberRows, maxLengthsFields);
+    maxLengthsFields = getMaxLengthOfEachFields(app, resultQuery, numberFields, numberRows);
+    addSpaceToGetSameLengthPerField(app, &resultQuery, numberFields, numberRows, maxLengthsFields);
 
     for (i = 0; i < numberRows; i++) {
         printf("|");
@@ -53,24 +31,28 @@ void showWellResult(char ***resultQuery, int numberFields, int numberRows, char 
             printf(" %s |", resultQuery[i][j]);
         }
         printf("\n");
-        if (i == 0) {
-            for (j = 0; j < numberFields; j++) {
-                for (z = 0; z < maxLengthsFields[j]; z++) {
-                    printf("_");
-                }
-                printf("___");
+
+        for (j = 0; j < numberFields; j++) {
+            for (k = 0; k < maxLengthsFields[j]; k++) {
+                printf("_");
             }
-            printf("\n");
+            printf("___");
         }
+        printf("\n");
+
     }
 
     free(maxLengthsFields);
+
+    freeResultStringTable(resultQuery, numberFields, numberRows);
 }
 
-int *getMaxLengthOfEachFields(char ***resultQuery, int numberFields, int numberRows, char **fieldsList) {
+int *getMaxLengthOfEachFields(App *app, char ***resultQuery, int numberFields, int numberRows) {
     int i;
     int j;
     int *maxLengthsFields = malloc(sizeof(int) * numberFields);
+    verifyPointer(app, maxLengthsFields, "Problem memory allocation in maxLengthsFields\n");
+
     if (maxLengthsFields == NULL) {
         printf("problem of calloc for maxLengthsFields");
         exit(EXIT_FAILURE);
@@ -89,7 +71,27 @@ int *getMaxLengthOfEachFields(char ***resultQuery, int numberFields, int numberR
     return maxLengthsFields;
 }
 
-void addSpaceToGetSameLengthPerField(char ****resultQuery, int numberFields, int numberRows, int *maxLengthsFields) {
+void copyListQuerySelect(App *app, char ****resultQuery,SelectQuery *selectQuery){
+    int i, j;
+    int numberRows = selectQuery->numberRows;
+    int numberFields = selectQuery->numberFields;
+    char ***listToCopy = selectQuery->listColumnsRows;
+
+    *resultQuery = malloc(sizeof(char**) * numberRows);
+    verifyPointer(app, *resultQuery, "Problem memory allocation for resultQuery in copyListQuerySelect\n");
+    for (i = 0; i < numberRows; i++){
+
+        (*resultQuery)[i] = malloc(sizeof(char*) * numberFields);
+        verifyPointer(app, (*resultQuery)[i], "Problem memory allocation for resultQuery[i] in copyListQuerySelect\n");
+        for (j = 0; j < numberFields; j++) {
+
+            (*resultQuery)[i][j] = malloc(sizeof(char) * (strlen(listToCopy[i][j]) + 1));
+            strcpy((*resultQuery)[i][j], listToCopy[i][j]);
+        }
+    }
+}
+
+void addSpaceToGetSameLengthPerField(App *app, char ****resultQuery, int numberFields, int numberRows, int *maxLengthsFields) {
     int i;
     int j;
     int diffLength;

@@ -1,5 +1,5 @@
 /*
-** Filename : mysqlCommon.h
+** Filename : modelCommon.c
 **
 ** Made by  : Masataka ISHII
 **
@@ -8,15 +8,15 @@
 
 #ifndef MYSQL_COMMON_FUNCTIONS
 #include "../struct.h"
-#include <windows.h>
-#include <winsock2.h>
-#include <mysql.h>
+#include "../common.h"
+#include "modelQuit.h"
 
-void dbConnect(App *app);
-void checkMYSQLError(void *functionResult, MYSQL* mysql);
-char **getFieldsNameType(App *app, const char *table, unsigned int* numberFields);
-char **fetchFieldsNameType(MYSQL_RES *result, unsigned int numberFields);
+void verifyMYSQLIntResult(App *app, int result);
+void verifyMYSQLRes(App *app, MYSQL_RES *result);
+void verifyPointerForQueryStmt(App *app, MySqlStmtManager *stmtManager, void *pointer, const char *message);
+void verifyResultFile(App *app, int result, int nmemb, const char *message);
+Varchar *getFieldsName(App *app, Varchar table, unsigned int* numberFields, unsigned int **listMysqlType);
+Varchar *fetchFieldsName(App *app, MYSQL_RES *result, unsigned int numberFields, unsigned int **listMysqlType);
 char ***mallocStringTable(unsigned int numberRows,unsigned int numberFields);
-void freeResultStringTable(char* ***stringTable, unsigned int numberFields, unsigned int numberRows);
-void freeFieldsList(char* **fieldsList, unsigned int numberFields);
+
 #endif // MYSQL_COMMON_FUNCTIONS

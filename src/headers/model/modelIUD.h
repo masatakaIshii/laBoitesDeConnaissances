@@ -5,9 +5,14 @@
 **
 ** Description  : insert, update and delete functions used API C MySQL for select data in database
 */
-#include "modelCommon.h"
 
 #ifndef MYSQL_IUD_FUNCTIONS
-int queryIUD(MYSQL*mysql, const char *currentQuery);
+#include <stdio.h>
+#include "modelCommon.h"
+#include "modelBindHelper.h"
+#include "modelQuit.h"
+
+int queryIUD(App *app, const char *currentQuery);
+int sendPreparedQueryIUD(App *app, const char *currentQuery);
 
 #endif // MYSQL_IUD_FUNCTIONS

@@ -1,3 +1,4 @@
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -5,7 +6,8 @@
 #include <mysql.h>
 #include "../headers/common.h"
 #include "../headers/play.h"
-#include "../headers/model/modelCommon.h"
+#include "../headers/model/modelInit.h"
+#include "../headers/model/modelQuit.h"
 
 int mainEventLoop(App *app) {
     SDL_Event event;
@@ -77,6 +79,7 @@ void createRect(App *app, int width, int height, int x, int y, Uint8* color) {
     SDL_RenderFillRect(app->renderer, &rect);
 }
 
+
 int inRect(SDL_Rect rect, int clicX, int clicY){
     int x, y;
 
@@ -92,14 +95,16 @@ int inRect(SDL_Rect rect, int clicX, int clicY){
 }
 
 void verifyPointer(App *app, void *pointer, char *message) {
+
     if (!pointer) {
-        printf("%s %s\n", message, SDL_GetError());
         // On ferme la SDL et on sort du programme
+        printf("%s\n", message);
         quitApp(app);
         exit(EXIT_FAILURE);
     }
 }
 
+<<<<<<< HEAD
 void loadConfig(Config *config) {
     char *ptr = NULL;
     char line[200];
@@ -169,10 +174,13 @@ void loadApp(App *app) {
     loadColors(&colors);
     app->colors = colors;
 
-    // Connexion ï¿½ la base de donnï¿½es
-    mysql_init(&app->mysql);
+    // Connexion à la base de données , initialisation et chargement
+
+    InitModel(&app->model);
 
     dbConnect(app);
+
+    loadFileModelTables(app);
 }
 
 void quitApp(App *app){
@@ -180,6 +188,5 @@ void quitApp(App *app){
     SDL_DestroyWindow(app->screen);
     SDL_Quit();
 
-    //deconnexion de la base de donnï¿½es
-    mysql_close(&app->mysql);
+    quitModel(&app->model);
 }
