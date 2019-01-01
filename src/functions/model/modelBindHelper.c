@@ -30,22 +30,18 @@ void loadBindParams(App *app, MySqlStmtManager *stmtManager, char **paramsValues
         typeParam = stmtManager->buffersBind[i].buffer_type;
         if (typeParam == MYSQL_TYPE_BLOB || typeParam == MYSQL_TYPE_STRING || typeParam == MYSQL_TYPE_VAR_STRING){
             bindParamString(app, i, stmtManager, paramsValues[i]);
-            printf("bindParamsString : %s\n", paramsValues[i]);
         }
 
         if (typeParam == MYSQL_TYPE_LONG || typeParam == MYSQL_TYPE_SHORT || typeParam == MYSQL_TYPE_TINY) {
             bindParamInt(app, i, stmtManager, paramsValues[i]);
-            printf("bindParamInt : %s\n", paramsValues[i]);
         }
 
         if (typeParam == MYSQL_TYPE_DATE || typeParam == MYSQL_TYPE_DATETIME || typeParam == MYSQL_TYPE_TIMESTAMP) {
             bindParamDate(app, i, stmtManager, paramsValues[i]);
-            printf("bindParamDate : %s\n", paramsValues[i]);
         }
 
         if (typeParam == MYSQL_TYPE_DOUBLE) {
             bindParamDouble(app, i, stmtManager, paramsValues[i]);
-            printf("bindParamDouble : %s\n", paramsValues[i]);
         }
     }
 }
@@ -125,13 +121,6 @@ void bindParamDouble(App *app, int index, MySqlStmtManager *stmtManager, char *p
     stmtManager->buffersBind[index].length = 0;
 }
 
-int *checkIfParamIsNull(MySqlParamsBind *param) {
-    int *isNull;
-
-    if (param->paramsIsNull == 0) {
-
-    }
-}
 //
 //int *getArrayTypeParams(App *app, MySqlTable *tables, int numberTables, char **paramsName, int numberParams) {
 //    int typeField;

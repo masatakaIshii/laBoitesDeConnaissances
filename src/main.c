@@ -52,11 +52,12 @@ int main(int argc, char **argv) {
 //    printf("number of row affected : %d\n", rowAffected);
 
     char *tables[100] = {"box"};
-    char *paramsValues[100] = {"tata", "3"};
-    char *preparedQueryIUD = "UPDATE box SET box.name = ? WHERE box.id = ?";
+    char *paramsValues[100] = {"32"};
+    char *preparedQueryIUD = "DELETE FROM box WHERE id = ?";
     int result = 0;
 
     setPreparedQuery(&app, preparedQueryIUD, tables, 1);
+
     setBindParams(&app, paramsValues);
 
     result = sendPreparedQueryIUD(&app, preparedQueryIUD);

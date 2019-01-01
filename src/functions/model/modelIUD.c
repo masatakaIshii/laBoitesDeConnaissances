@@ -33,13 +33,6 @@ int sendPreparedQueryIUD(App *app, const char *currentQuery) {
 
     MySqlStmtManager *stmtManager = &app->model.query.stmtManager;
 
-    printf("numberParams :%d\n", stmtManager->numberParams);
-    for (i = 0; i < stmtManager->numberParams; i++) {
-        printf("stmtManager->buffersBind[%d].buffer : %s\n", i, stmtManager->buffersBind[i].buffer);
-        printf("stmtManager->buffersBind[%d].buffer_length : %u\n", i, stmtManager->buffersBind[i].buffer_length);
-        printf("stmtManager->buffersBind[%d].length : %p\n", i, stmtManager->buffersBind[i].length);
-        printf("stmtManager->buffersBind[%d].buffer : %p\n", i, stmtManager->buffersBind[i].buffer);
-    }
     if (strncmp(stmtManager->currentQuery, currentQuery, strlen(currentQuery) + 1) != 0) {
         printf("Error[MYSQL] : problem in sendPreparedQueryIUD, currentQuery is not attempt\n");
         printf("currentQuery : %s\n", currentQuery);
@@ -56,48 +49,8 @@ int sendPreparedQueryIUD(App *app, const char *currentQuery) {
 
     affectedRow = mysql_stmt_affected_rows(stmtManager->stmt);
     if (affectedRow <= 0){
-        printf("Error[MYSQL] : less than 1 row is affected\n");
-        quitApp(app);
-        exit(EXIT_FAILURE);
+        printf("Warning[MYSQL] : none row affected\n");
     }
-
-    //loadStmtManager(app, stmt, numberTables, numberParams, currentQuery);
-//
-//    printf("stmt.numberParams : %d\n", stmt.numberParams);
-//    printf("stmt.numberParams : %d\n", stmt.);
-    //readAndGetNumberAndNamesAndStructTables(app, &app->model);
-
-
-
-    //loadBindParams(app, &stmtManager, paramsName, paramsValues);
-
-    //printf("numberfield : %d\n", stmtManager.tables.numberField);
-    //loadParams(app, &stmtManager, );
-
-    /*
-    TODO :
-        il faut check si loadTablesStruct fonctionne
-        faire fonctioins :
-            loadParamBind(app, &stmtManager, paramsNames);
-            loadBufferBind(app, &stmtManager);
-        puis executer;
-    */
-    //int *arrayTypeParams = getArrayTypeParams(app, &stmtManager, paramsName);
-    //int arrayLengthsParams = getArrayLengthParams(app, tables, numberTables, paramsName, numberParams, arrayTypeParams);
-
-
-    //MYSQL_BIND *params = bindParams(app, tables, numberTables, paramsName, paramsValues, numberParams);
-
-
-    /*
-    verify if '?' in currentQuery correspond to numberValues
-    specialParamValues = escape special char for paramValues
-    getTable by currentQuery;
-
-
-
-    */
-    //quitStmtManager(&stmtManager);
 
     return affectedRow;
 }

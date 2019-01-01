@@ -163,7 +163,10 @@ void loadStmtManagerBindTypes(App *app, Model *model) {
     memset(stmtManager->buffersBind, 0, sizeof(MYSQL_BIND));
     verifyPointer(app, stmtManager->buffersBind, "Problem malloc stmtManager->params in loadStmtManagerParams");
     for (i = 0; i < stmtManager->numberParams; i++) {
+
         stmtManager->buffersBind[i].buffer_type = getTypeField(stmtManager->paramsNames[i], model, stmtManager);
+
+
     }
 }
 
@@ -176,8 +179,9 @@ int getTypeField(Varchar paramName, Model *model, MySqlStmtManager *stmtManager)
     int i;
     int j;
 
-    if (numberTables > 1) {
+    if (stmtManager->numberTables > 1) {
         getProperFieldAndTable(paramName, table);
+
     } else {
         strcpy(table, tablesNames[0]);
     }
