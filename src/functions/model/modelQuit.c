@@ -127,28 +127,38 @@ void quitStmtManager(MySqlStmtManager *stmtManager) {
         mysql_stmt_close(stmtManager->stmt);
         stmtManager->ifStmtIsInit = 0;
     }
-
+    if (stmtManager->currentQuery != NULL){
+        free(stmtManager->currentQuery);
+    }
     if (stmtManager->numberParams != 0) {
-        if (stmtManager->paramsNames != NULL) {
-            free(stmtManager->paramsNames);
-            printf("ca free stmtManager->paramsNames\n");
-        }
-        if (stmtManager->params != NULL) {
-            free(stmtManager->params);
-            printf("ca free stmtManager->params\n");
-        }
-        if (stmtManager->buffersBind != NULL) {
-            free(stmtManager->buffersBind);
-            printf("ca free stmtManager->params\n");
-        }
+        quitStmtParams(stmtManager);
         stmtManager->numberParams = 0;
     }
-
     if (stmtManager->numberTables != 0) {
         if (stmtManager->tablesNames != NULL) {
             free(stmtManager->tablesNames);
-            printf("ca free stmtManager->tablesNames\n");
         }
         stmtManager->numberTables = 0;
+    }
+}
+
+void quitStmtParams(MySqlStmtManager *stmtManager) {
+    int i;
+    int type;
+
+    if (stmtManager->paramsNames != NULL) {
+        free(stmtManager->paramsNames);
+    }
+    if (stmtManager->params != NULL) {
+        for (i = 0; i < stmtManager->numberParams; i++) {
+            type = stmtManager->buffersBind[i].buffer_type;
+            if (type == MYSQL_TYPE_STRING || type == MYSQL_TYPE_VAR_STRING || type == MYSQL_TYPE_BLOB) {
+                free(stmtManager->params[i].paramsString);
+            }
+        }
+        free(stmtManager->params);
+    }
+    if (stmtManager->buffersBind != NULL) {
+        free(stmtManager->buffersBind);
     }
 }

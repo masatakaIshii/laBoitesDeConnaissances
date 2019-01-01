@@ -37,6 +37,7 @@ void InitModel(Model *model) {
     model->query.selectQuery.result = NULL;
     model->query.selectQuery.resultWithFieldsList = 0;
 
+    model->query.stmtManager.currentQuery = NULL;
     model->query.stmtManager.buffersBind = NULL;
     model->query.stmtManager.params = NULL;
     model->query.stmtManager.numberParams = 0;
@@ -112,7 +113,6 @@ void loadTablesStructByQuery(App *app, Model *model) {
 
         model->tables[i].numberField = numberFields;
     }
-
 }
 
 /**

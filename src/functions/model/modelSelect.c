@@ -15,7 +15,6 @@
 *@param (unsigned ind*) numberRows - pointer of number of rows
 *@return (char ***) resultQuery - columns and rows of selection of query
 */
-
 void getSelectQuery (App *app, const char *currentQuery) {
 
     SelectQuery *selectQuery = &app->model.query.selectQuery;
@@ -158,7 +157,6 @@ void addFieldsToResult(App *app) {
             inter[i] = copyListString(app, selectQuery->listColumnsRows[i - 1], selectQuery->numberFields);
         }
     }
-
 
     freeResultStringTable(selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows - 1);
     selectQuery->listColumnsRows = inter;

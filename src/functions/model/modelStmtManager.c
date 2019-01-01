@@ -19,8 +19,8 @@
 void setPreparedQuery(App *app, char *query, char **tablesNames, int numberTables){
 
     MySqlStmtManager *stmtManager = &app->model.query.stmtManager;
-    stmtInitialisation(app, stmtManager);
 
+    stmtInitialisation(app, stmtManager);
     if (mysql_stmt_prepare(stmtManager->stmt, query, strlen(query))){
 
         printf("Error [MYSQL_STMT] in preparation of stmt : %s\n" , mysql_stmt_error(stmtManager->stmt));
@@ -28,8 +28,12 @@ void setPreparedQuery(App *app, char *query, char **tablesNames, int numberTable
         exit(EXIT_FAILURE);
     }
 
+    stmtManager->currentQuery = malloc(sizeof(char) * (strlen(query) + 1));
+    strcpy(stmtManager->currentQuery, query);
+
     //load numberParams, numberTables, tables and params names in stmtManager
     loadStmtManager(app, stmtManager, tablesNames, numberTables);
+
     getParamsNames(app, stmtManager, query, stmtManager->numberParams);
 
     //load app->model.tables
@@ -37,23 +41,17 @@ void setPreparedQuery(App *app, char *query, char **tablesNames, int numberTable
 
     loadStmtManagerBindTypes(app, &app->model);
 
-    /*
-    TODO : remplir dans stmtManager la partie MySqlParamsBind par rapport aux types des params :
-    - malloc la structure param en fonction de son nombre
-    - déterminer le type de param par rapport à son nom, grâce à MysqlTablesStruct
-    - après avoir trouver le type, remplir en fonction sa structure param
-    */
-
+    freeStructTableMysql(&app->model);
 }
 
 void loadStmtManager(App *app,MySqlStmtManager * stmtManager, char **tablesNames, int numberTables) {
-
     int i;
 
     stmtManager->numberParams = mysql_stmt_param_count(stmtManager->stmt);
     stmtManager->numberTables = numberTables;
 
     stmtManager->tablesNames = malloc(sizeof(Varchar) * stmtManager->numberTables);
+
     for (i = 0; i < stmtManager->numberTables; i++){
         strcpy(stmtManager->tablesNames[i], tablesNames[i]);
     }
@@ -162,6 +160,7 @@ void loadStmtManagerBindTypes(App *app, Model *model) {
     MySqlStmtManager *stmtManager = &model->query.stmtManager;
 
     stmtManager->buffersBind = malloc(sizeof(MYSQL_BIND) * stmtManager->numberParams);
+    memset(stmtManager->buffersBind, 0, sizeof(MYSQL_BIND));
     verifyPointer(app, stmtManager->buffersBind, "Problem malloc stmtManager->params in loadStmtManagerParams");
     for (i = 0; i < stmtManager->numberParams; i++) {
         stmtManager->buffersBind[i].buffer_type = getTypeField(stmtManager->paramsNames[i], model, stmtManager);

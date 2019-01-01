@@ -13,6 +13,6 @@
 #include "modelQuit.h"
 
 int queryIUD(App *app, const char *currentQuery);
-int sendPreparedQueryIUD(App *app, const char *currentQuery, char **tableNames, int numberTables, char **paramsName, char **paramsValues,  int numberParams);
+int sendPreparedQueryIUD(App *app, const char *currentQuery);
 
 #endif // MYSQL_IUD_FUNCTIONS

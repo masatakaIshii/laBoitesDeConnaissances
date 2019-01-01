@@ -10,7 +10,7 @@
 #include "../struct.h"
 #include "../common.h"
 
-int *getArrayTypeParams(App *app, MySqlTable *tables, int numberTables, char **paramsName, int numberParams);
+void setBindParams(App *app, char **paramsValues);
 
 void loadBindParams(App *app, MySqlStmtManager *stmtManager, char **paramsValues);
 
@@ -23,7 +23,5 @@ int *getArrayLengthParams(App *app, MySqlTable *tables, int numberTables, char *
 
 MYSQL_BIND *bindParams(App *app, MySqlTable *tables, int numberTables, char **paramsName, char **paramsValues,  int numberParams);
 MYSQL_BIND bindOneParam(App *app, char *paramsName, char *paramsValues, MySqlTable *tables, int numberTables);
-
-
 
 #endif // MYSQL_BINDHELPER_FUNCTIONS

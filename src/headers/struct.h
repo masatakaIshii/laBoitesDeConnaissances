@@ -59,6 +59,7 @@ typedef struct MySqlParamsBind {
 typedef struct MySqlStmtManager {
     MYSQL_STMT *stmt;
     short ifStmtIsInit;
+    char *currentQuery;
     Varchar *tablesNames;
     int numberTables;
     Varchar *paramsNames;

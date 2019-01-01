@@ -15,6 +15,7 @@ void freeStructTableMysql(Model *model);
 
 void quitModel(Model *model);
 void quitStmtManager(MySqlStmtManager *stmtManager);
+void quitStmtParams(MySqlStmtManager *stmtManager);
 void quitSelectQuery(SelectQuery *selectQuery);
 
 #endif // MYSQL_QUIT_FUNCTIONS

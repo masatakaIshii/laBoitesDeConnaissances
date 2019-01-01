@@ -9,8 +9,7 @@
 #include "headers/model/modelBindHelper.h"
 #include "headers/model/modelVerificator.h"
 #include "headers/model/modelStmtManager.h"
-
-
+#include "headers/model/modelBindHelper.h"
 
 int main(int argc, char **argv) {
 
@@ -48,24 +47,21 @@ int main(int argc, char **argv) {
 //    showQueryResult(&app);
 //
 //    freeSelectQuery(&app);
-//
-//    int rowAffected = queryIUD(&app, "UPDATE box SET name = 'the box', modified_date = '28-12-24 00:00:00' WHERE id = 3");
+
+//    int rowAffected = queryIUD(&app, "UPDATE box, list SET box.name = 'toto', list.name='titi' WHERE box.id = 3 AND list.id = 1");
 //    printf("number of row affected : %d\n", rowAffected);
 
-    char *tables[100] = {"box", "list"};
-    char *paramsValues[100] = {"toto", "tata", "this is THE box", "2"};
-    char *preparedQueryIUD = "UPDATE box, list SET box.name = ?, list.name = ? WHERE box.description = ? AND list.id = ?";
+    char *tables[100] = {"box"};
+    char *paramsValues[100] = {"tata", "3"};
+    char *preparedQueryIUD = "UPDATE box SET box.name = ? WHERE box.id = ?";
     int result = 0;
 
-    setPreparedQuery(&app, preparedQueryIUD, tables, 2);
-
-    printf("numberParams : %d\n", app.model.query.stmtManager.numberParams);
+    setPreparedQuery(&app, preparedQueryIUD, tables, 1);
     setBindParams(&app, paramsValues);
-    //result = sendPreparedQueryIUD(&app, preparedQueryIUD);
 
+    result = sendPreparedQueryIUD(&app, preparedQueryIUD);
 
     quitApp(&app);
-
 
     return returnStat;
 }
