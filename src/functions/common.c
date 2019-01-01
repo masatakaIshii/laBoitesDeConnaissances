@@ -104,7 +104,6 @@ void verifyPointer(App *app, void *pointer, char *message) {
     }
 }
 
-<<<<<<< HEAD
 void loadConfig(Config *config) {
     char *ptr = NULL;
     char line[200];

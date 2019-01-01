@@ -34,34 +34,31 @@ int main(int argc, char **argv) {
     returnStat = mainEventLoop(&app);
 
     /*mysql test*/
-//    char * query = "SELECT box.name, list.name, list.description FROM box, list WHERE list.id = 1 AND box.id = 1";
-//
-//    getSelectQuery(&app, query);
-//
-//    addFieldsToResult(&app); //@TODO : trouver bug dans cette fonction
-//
-//    removeFieldsInResult(&app);
-//
-//    addFieldsToResult(&app);
-//
-//    showQueryResult(&app);
-//
-//    freeSelectQuery(&app);
-
-//    int rowAffected = queryIUD(&app, "UPDATE box, list SET box.name = 'toto', list.name='titi' WHERE box.id = 3 AND list.id = 1");
-//    printf("number of row affected : %d\n", rowAffected);
-
+    //Select query
+/*
+    char * query = "SELECT box.name, list.name, list.description FROM box, list WHERE list.id = 1 AND box.id = 1";
+    getSelectQuery(&app, query);
+    addFieldsToResult(&app);
+    removeFieldsInResult(&app);
+    showQueryResult(&app);
+    freeSelectQuery(&app);
+*/
+    //process for query IUD
+/*
+    int rowAffected = queryIUD(&app, "UPDATE box, list SET box.name = 'toto', list.name='titi' WHERE box.id = 3 AND list.id = 1");
+    printf("number of row affected : %d\n", rowAffected);
+*/
+    //process for prepared query IUD
+/*
     char *tables[100] = {"box"};
     char *paramsValues[100] = {"32"};
     char *preparedQueryIUD = "DELETE FROM box WHERE id = ?";
     int result = 0;
 
     setPreparedQuery(&app, preparedQueryIUD, tables, 1);
-
     setBindParams(&app, paramsValues);
-
     result = sendPreparedQueryIUD(&app, preparedQueryIUD);
-
+*/
     quitApp(&app);
 
     return returnStat;

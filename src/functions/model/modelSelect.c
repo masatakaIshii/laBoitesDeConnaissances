@@ -220,4 +220,5 @@ char **copyListString(App *app, char **listString, unsigned int numberFields) {
 
     return copyList;
 }
+
 //TODO : prepared query select
