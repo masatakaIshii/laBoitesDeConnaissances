@@ -26,10 +26,14 @@ int queryIUD(App *app, const char *currentQuery) {
     return affectedRows;
 }
 
-
+/**
+*@brief for execute query IUD and check affected row
+*
+*@param (App *) app - structure of application
+*@param (const char *) currentQuery - string of query
+*/
 int sendPreparedQueryIUD(App *app, const char *currentQuery) {
     int affectedRow = 0;
-    int i;
 
     MySqlStmtManager *stmtManager = &app->model.query.stmtManager;
 
@@ -41,8 +45,10 @@ int sendPreparedQueryIUD(App *app, const char *currentQuery) {
         exit(EXIT_FAILURE);
     }
 
+    MYSQL_TIME *time = &stmtManager->params[0].paramsDateTime;
+
     if (mysql_stmt_execute(stmtManager->stmt)) {
-        printf("Error[MYSQL] : %s\n", mysql_stmt_error(stmtManager->stmt));
+        printf("Error[MYSQL] in mysql_stmt_execute : %s\n", mysql_stmt_error(stmtManager->stmt));
         quitApp(app);
         exit(EXIT_FAILURE);
     }

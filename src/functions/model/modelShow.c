@@ -21,7 +21,6 @@ void showQueryResult(App *app) {
     int i, j, k;
 
     copyListQuerySelect(app, &resultQuery, selectQuery);
-
     maxLengthsFields = getMaxLengthOfEachFields(app, resultQuery, numberFields, numberRows);
     addSpaceToGetSameLengthPerField(app, &resultQuery, numberFields, numberRows, maxLengthsFields);
 
@@ -39,11 +38,9 @@ void showQueryResult(App *app) {
             printf("___");
         }
         printf("\n");
-
     }
 
     free(maxLengthsFields);
-
     freeResultStringTable(resultQuery, numberFields, numberRows);
 }
 

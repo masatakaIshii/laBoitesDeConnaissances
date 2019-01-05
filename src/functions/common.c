@@ -94,7 +94,7 @@ int inRect(SDL_Rect rect, int clicX, int clicY){
     return 0;
 }
 
-void verifyPointer(App *app, void *pointer, char *message) {
+void verifyPointer(App *app, void *pointer, const char *message) {
 
     if (!pointer) {
         // On ferme la SDL et on sort du programme

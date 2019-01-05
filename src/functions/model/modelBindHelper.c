@@ -24,10 +24,14 @@ void loadBindParams(App *app, MySqlStmtManager *stmtManager, char **paramsValues
     int i;
     enum_field_types typeParam;
 
+    printf("\nin loadBindParams\n");
     stmtManager->params = malloc(sizeof(MySqlParamsBind) * stmtManager->numberParams);
     for (i = 0; i < stmtManager->numberParams; i++) {
 
         typeParam = stmtManager->buffersBind[i].buffer_type;
+
+        printf("stmtManager->paramsNames[%d] : %s\n", i, stmtManager->paramsNames[i]);
+        printf("typeParam : %d\n", typeParam);
         if (typeParam == MYSQL_TYPE_BLOB || typeParam == MYSQL_TYPE_STRING || typeParam == MYSQL_TYPE_VAR_STRING){
             bindParamString(app, i, stmtManager, paramsValues[i]);
         }
@@ -44,6 +48,7 @@ void loadBindParams(App *app, MySqlStmtManager *stmtManager, char **paramsValues
             bindParamDouble(app, i, stmtManager, paramsValues[i]);
         }
     }
+
 }
 
 void bindParamString(App *app, int index, MySqlStmtManager *stmtManager, char *paramValue) {
@@ -62,14 +67,14 @@ void bindParamString(App *app, int index, MySqlStmtManager *stmtManager, char *p
     }
     stmtManager->buffersBind[index].length = &stmtManager->params[index].paramsLengths;
 
-    printf("buffer : %s\n", stmtManager->buffersBind[index].buffer);
+    printf("buffer : %s\n", (char *)stmtManager->buffersBind[index].buffer);
 }
 
 void bindParamInt(App *app, int index, MySqlStmtManager *stmtManager, char *paramValue) {
     stmtManager->params[index].paramsIsNull = (strncmp(paramValue, "", strlen(paramValue)) == 0) ? 1 : 0;
     stmtManager->params[index].paramNumber = atoi(paramValue);
 
-    if (stmtManager->params[index].paramsIsNull == 1) {
+    if (stmtManager->params[index].paramsIsNull == 0) {
         if (atoi(paramValue) == 0 && paramValue[0] != '0') {
             printf("Problem with paramValue and its type\n");
             quitApp(app);
@@ -92,6 +97,8 @@ void bindParamDate(App *app, int index, MySqlStmtManager *stmtManager, char *par
     if (stmtManager->params[index].paramsIsNull == 0){
         sscanf(paramValue, "%u-%u-%u %u:%u:%u", &time->year, &time->month, &time->day, &time->hour, &time->minute, &time->second);
     }
+    time->second_part = 0;
+
     stmtManager->buffersBind[index].buffer = (void *)time;
     if (stmtManager->params[index].paramsIsNull == 1) {
         stmtManager->buffersBind[index].is_null = (my_bool*)&stmtManager->params[index].paramsIsNull;

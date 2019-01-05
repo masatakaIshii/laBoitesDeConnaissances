@@ -109,11 +109,18 @@ void quitSelectQuery(SelectQuery *selectQuery) {
         numberRows = selectQuery->numberRows;
         numberFields = selectQuery->numberFields;
         freeResultStringTable(selectQuery->listColumnsRows, numberFields, numberRows);
+    }
+    if (selectQuery->resultWithFieldsList != 0){
         if (selectQuery->listFields != NULL) {
             freeListString(&selectQuery->listFields);
         }
+        if (selectQuery->result != NULL) {
+            mysql_free_result(selectQuery->result);
+            selectQuery->result = NULL;
+        }
         selectQuery->resultWithFieldsList = 0;
     }
+
 }
 
 /**
@@ -160,5 +167,21 @@ void quitStmtParams(MySqlStmtManager *stmtManager) {
     }
     if (stmtManager->buffersBind != NULL) {
         free(stmtManager->buffersBind);
+    }
+}
+
+void quitInsertParamFinder(InsertParamFinder *paramFinder) {
+
+    if (paramFinder->indexsOfQParenthesis != NULL) {
+        free(paramFinder->indexsOfQParenthesis);
+        printf("free(paramFinder->indexsOfQParenthesis)\n");
+    }
+    if (paramFinder->listContentParenthesis != NULL) {
+        free(paramFinder->listContentParenthesis);
+        printf("free(paramFinder->listContentParenthesis)\n");
+    }
+    if (paramFinder->listFieldsParenthesis != NULL) {
+        free(paramFinder->listFieldsParenthesis);
+        printf("free(paramFinder->listFieldsParenthesis)\n");
     }
 }

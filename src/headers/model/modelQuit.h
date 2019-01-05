@@ -18,5 +18,7 @@ void quitStmtManager(MySqlStmtManager *stmtManager);
 void quitStmtParams(MySqlStmtManager *stmtManager);
 void quitSelectQuery(SelectQuery *selectQuery);
 
+void quitInsertParamFinder(InsertParamFinder *paramFinder);
+
 #endif // MYSQL_QUIT_FUNCTIONS
 

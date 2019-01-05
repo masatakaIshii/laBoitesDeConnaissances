@@ -229,6 +229,7 @@ void readAndGetStructTables(App *app, Model *model, FILE *fp) {
 }
 
 /**
+
 *@brief Function for the initialization of prepared query
 *
 *@param app : structure of application which content MYSQL variable
@@ -241,5 +242,14 @@ void stmtInitialisation(App *app, MySqlStmtManager *stmtManager) {
     app->model.query.stmtManager.ifStmtIsInit = 1;
 }
 
+
+void initInsertParamFinder(InsertParamFinder *paramFinder) {
+
+    paramFinder->listBeforeWordValues = 0;
+    paramFinder->numberFields = 0;
+    paramFinder->indexsOfQParenthesis = NULL;
+    paramFinder->listFieldsParenthesis = NULL;
+    paramFinder->listContentParenthesis = NULL;
+}
 
 

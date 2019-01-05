@@ -10,6 +10,7 @@
 #include "headers/model/modelVerificator.h"
 #include "headers/model/modelStmtManager.h"
 #include "headers/model/modelBindHelper.h"
+#include "headers/model/modelParamFinder.h"
 
 int main(int argc, char **argv) {
 
@@ -49,16 +50,32 @@ int main(int argc, char **argv) {
     printf("number of row affected : %d\n", rowAffected);
 */
     //process for prepared query IUD
-/*
-    char *tables[100] = {"box"};
-    char *paramsValues[100] = {"32"};
-    char *preparedQueryIUD = "DELETE FROM box WHERE id = ?";
+
+    char *tables[100] = {"card"};
+    char *paramsValues[100] = {"first_card", "first question ", "first answer", "2019-01-01 00:00:13"};
+    char *preparedQueryIUD = "INSERT INTO card (name, question, answer, created_date) VALUES (?, ?, ?, NOW())";
+//    char *paramValues[100] = {"toto", "3"};
+//    char *preparedQueryIUD = "UPDATE list SET list.name = ? WHERE id = ?";
     int result = 0;
 
     setPreparedQuery(&app, preparedQueryIUD, tables, 1);
-    setBindParams(&app, paramsValues);
-    result = sendPreparedQueryIUD(&app, preparedQueryIUD);
-*/
+    //setBindParams(&app, paramsValues);
+
+    //result = sendPreparedQueryIUD(&app, preparedQueryIUD);
+
+    // process for prepared query select
+//    char *tables[100] = {"box", "list"};
+//    int numberTables = 2;
+//    char *paramsValues[100] = {"1", "1"};
+//    char *preparedQuerySelect = "SELECT box.name, list.name FROM box, list WHERE box.id_box_parent = ? AND list.id_box = ?";
+//
+//    setPreparedQuery(&app, preparedQuerySelect, tables, numberTables);
+//
+//    setBindParams(&app, paramsValues);
+//
+//    getPreparedSelectQuery(&app, preparedQuerySelect);
+
+
     quitApp(&app);
 
     return returnStat;
