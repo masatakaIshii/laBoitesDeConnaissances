@@ -13,8 +13,12 @@
 
 void verifyMYSQLIntResult(App *app, int result);
 void verifyMYSQLRes(App *app, MYSQL_RES *result);
+
 void verifyPointerForQueryStmt(App *app, MySqlStmtManager *stmtManager, void *pointer, const char *message);
+void verifyStmtIntResult(App *app, MySqlStmtManager *stmtManager, char *message, int result);
+
 void verifyResultFile(App *app, int result, int nmemb, const char *message);
+
 Varchar *getFieldsName(App *app, Varchar table, unsigned int* numberFields, unsigned int **listMysqlType);
 Varchar *fetchFieldsName(App *app, MYSQL_RES *result, unsigned int numberFields, unsigned int **listMysqlType);
 char ***mallocStringTable(unsigned int numberRows,unsigned int numberFields);

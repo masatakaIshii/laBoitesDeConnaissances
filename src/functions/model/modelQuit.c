@@ -10,6 +10,7 @@
 
 void freeSelectQuery(App *app) {
     SelectQuery *selectQuery = &app->model.query.selectQuery;
+
     if (selectQuery != NULL) {
         freeResultStringTable(selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows);
         selectQuery->listColumnsRows = NULL;
@@ -106,10 +107,15 @@ void quitSelectQuery(SelectQuery *selectQuery) {
     unsigned int numberFields = 0;
 
     if (selectQuery->listColumnsRows != NULL) {
+
         numberRows = selectQuery->numberRows;
         numberFields = selectQuery->numberFields;
+
         freeResultStringTable(selectQuery->listColumnsRows, numberFields, numberRows);
+
+        selectQuery->listColumnsRows = NULL;
     }
+
     if (selectQuery->resultWithFieldsList != 0){
         if (selectQuery->listFields != NULL) {
             freeListString(&selectQuery->listFields);
@@ -156,17 +162,22 @@ void quitStmtParams(MySqlStmtManager *stmtManager) {
     if (stmtManager->paramsNames != NULL) {
         free(stmtManager->paramsNames);
     }
+
     if (stmtManager->params != NULL) {
+
         for (i = 0; i < stmtManager->numberParams; i++) {
             type = stmtManager->buffersBind[i].buffer_type;
-            if (type == MYSQL_TYPE_STRING || type == MYSQL_TYPE_VAR_STRING || type == MYSQL_TYPE_BLOB) {
+            if ((type == MYSQL_TYPE_STRING || type == MYSQL_TYPE_VAR_STRING || type == MYSQL_TYPE_BLOB) && stmtManager->BindInOut == BIND_INPUT) {
                 free(stmtManager->params[i].paramsString);
             }
         }
         free(stmtManager->params);
+        stmtManager->params = NULL;
     }
+
     if (stmtManager->buffersBind != NULL) {
         free(stmtManager->buffersBind);
+        stmtManager->buffersBind = NULL;
     }
 }
 
@@ -174,14 +185,13 @@ void quitInsertParamFinder(InsertParamFinder *paramFinder) {
 
     if (paramFinder->indexsOfQParenthesis != NULL) {
         free(paramFinder->indexsOfQParenthesis);
-        printf("free(paramFinder->indexsOfQParenthesis)\n");
     }
     if (paramFinder->listContentParenthesis != NULL) {
         free(paramFinder->listContentParenthesis);
-        printf("free(paramFinder->listContentParenthesis)\n");
     }
     if (paramFinder->listFieldsParenthesis != NULL) {
         free(paramFinder->listFieldsParenthesis);
-        printf("free(paramFinder->listFieldsParenthesis)\n");
     }
+    paramFinder->listBeforeWordValues = 0;
+    paramFinder->numberFields = 0;
 }

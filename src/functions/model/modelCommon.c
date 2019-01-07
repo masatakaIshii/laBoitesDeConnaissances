@@ -24,6 +24,15 @@ void verifyPointerForQueryStmt(App *app, MySqlStmtManager *stmtManager, void *po
     }
 }
 
+void verifyStmtIntResult(App *app, MySqlStmtManager *stmtManager, char *message, int result) {
+    if (result != 0) {
+        printf("%s\n", message);
+        printf("Error[MYSQL_STMT] : %s\n", mysql_stmt_error(stmtManager->stmt));
+        quitApp(app);
+        exit(EXIT_FAILURE);
+    }
+}
+
 void verifyResultFile(App *app, int result, int nmemb, const char *message) {
     if (result != nmemb){
         printf("%s", message);

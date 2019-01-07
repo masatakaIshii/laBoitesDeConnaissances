@@ -34,14 +34,14 @@ void getSelectQuery (App *app, const char *currentQuery) {
     selectQuery->numberFields = mysql_num_fields(selectQuery->result);
     selectQuery->numberRows = mysql_num_rows(selectQuery->result);
 
-    fetchFieldsOfQuerySelect(app, selectQuery);
+    fetchFieldsOfQuerySelect(app, selectQuery, NULL);
 
     fetchQuerySelect(app, selectQuery);
 
     mysql_free_result(selectQuery->result);
 }
 
-void fetchFieldsOfQuerySelect(App *app, SelectQuery *selectQuery) {
+void fetchFieldsOfQuerySelect(App *app, SelectQuery *selectQuery, int **listFieldsTypes) {
 
     int i;
     short moreThanOneTable = 0;
@@ -49,12 +49,14 @@ void fetchFieldsOfQuerySelect(App *app, SelectQuery *selectQuery) {
     MYSQL_FIELD *fields = mysql_fetch_fields(selectQuery->result);
 
     selectQuery->listFields = malloc(sizeof(Varchar) * selectQuery->numberFields);
+    if (listFieldsTypes != NULL) {
+        (*listFieldsTypes) = malloc(sizeof(int) * selectQuery->numberFields);
+    }
 
-    verifyPointer(app, selectQuery->listFields, "Problem memory allocation at selectQuery->listFieldss");
+    verifyPointer(app, selectQuery->listFields, "Problem memory allocation at selectQuery->listFields");
 
     moreThanOneTable = checkIfQueryConcernMoreThan1Table(fields, selectQuery->numberFields);
 
-    //printf("\nfetchFieldsOfQuerySelect\n");
     for (i = 0; i < selectQuery->numberFields; i++) {
 
         if (moreThanOneTable) {
@@ -62,9 +64,13 @@ void fetchFieldsOfQuerySelect(App *app, SelectQuery *selectQuery) {
             strcat(temp, ".");
             //selectQuery->listFields[i] = malloc(sizeof(char) * (strlen(fields[i].name) + strlen(fields[i].name) + 1));
             strcpy(selectQuery->listFields[i], strcat(temp, fields[i].name));
+
         } else {
             //selectQuery->listFields[i] = malloc(sizeof(char) * (strlen(fields[i].name) + 1));
             strcpy(selectQuery->listFields[i], fields[i].name);
+        }
+        if (listFieldsTypes != NULL) {
+            (*listFieldsTypes)[i] = fields[i].type;
         }
     }
 }
@@ -118,7 +124,6 @@ void fetchQuerySelect(App *app, SelectQuery *selectQuery) {
 
         fetchOneRowQuerySelect(app, selectQuery, lengths, row, i);
 
-        printf("\n");
         i++;
     }
 }
@@ -143,46 +148,66 @@ void fetchOneRowQuerySelect(App *app, SelectQuery *selectQuery, unsigned long *l
 
 void getPreparedSelectQuery(App *app, const char *currentQuery) {
 
-/**
-*@todo : get fields of select Query with mysql_stmt_result_metadata, and get fields type
-*@todo : In bindHelper, bind param after get those fields type and put address of appropriate variable (for type text, think to create typedef TEXT char[MAX_TEXT])
-*@todo : execute, store stmt;
-*@todo : fetch result and get listColumnsRows of all result;
-*/
-    int check = 0;
     SelectQuery *selectQuery = &app->model.query.selectQuery;
     MySqlStmtManager *stmtManager = &app->model.query.stmtManager;
 
-    check = mysql_stmt_execute(stmtManager->stmt);
-    verifyMYSQLIntResult(app, check);
+    executeBindInputAndGetResult(app, stmtManager, selectQuery);
+
+    if (stmtManager->params != NULL) {
+        quitStmtParams(stmtManager);
+    } else {
+        printf("Error : the prepared query have to bind the parameter before to get result.\n");
+        quitApp(app);
+        exit(EXIT_FAILURE);
+    }
 
     fetchFieldsSelectQueryPrepared(app, stmtManager, selectQuery);
 
     bindSelectQueryPrepared(app, stmtManager, selectQuery);
 
-    quitSelectQuery(selectQuery);
+    fetchStmtToFillSelectQuery(app, stmtManager, selectQuery);
+
+    /**
+    *@todo : -fill the selectQuery list number row and listColumnsRows
+    */
+    mysql_stmt_free_result(stmtManager->stmt);
+}
+
+void executeBindInputAndGetResult(App *app, MySqlStmtManager *stmtManager, SelectQuery *selectQuery) {
+    int check = 0;
+
+    check = mysql_stmt_execute(stmtManager->stmt);
+    verifyMYSQLIntResult(app, check);
+
+    selectQuery->result = mysql_stmt_result_metadata(stmtManager->stmt);
+    verifyPointer(app, selectQuery->result, mysql_stmt_error(stmtManager->stmt));
 }
 
 void fetchFieldsSelectQueryPrepared(App *app, MySqlStmtManager *stmtManager, SelectQuery *selectQuery) {
-    int check = 0;
-    selectQuery->result = mysql_stmt_result_metadata(stmtManager->stmt);
-    verifyPointer(app, selectQuery->result, mysql_stmt_error(stmtManager->stmt));
+    int *listFieldsTypes;
 
-    check = mysql_stmt_store_result(stmtManager->stmt);
-    verifyMYSQLIntResult(app, check);
+    //printf("stmtManager->stmt.fields[0].table : %s\n", stmtManager->stmt->fields[0].table);
 
     selectQuery->numberFields = mysql_stmt_field_count(stmtManager->stmt);
 
     selectQuery->numberRows = mysql_stmt_num_rows(stmtManager->stmt);
 
-    fetchFieldsOfQuerySelect(app, selectQuery);
+    fetchFieldsOfQuerySelect(app, selectQuery, &listFieldsTypes);
 
-    selectQuery->resultWithFieldsList = 1;
+    initBufferTypeAndPutFieldsTypes(app, &stmtManager->buffersBind, selectQuery->numberFields, listFieldsTypes);
+
+    free(listFieldsTypes);
 }
 
-void bindSelectQueryPrepared(App *app, MySqlStmtManager *stmtManager, SelectQuery *selectQuery) {
-    if (stmtManager->buffersBind != NULL) {
-        quitStmtParams(stmtManager);
+void initBufferTypeAndPutFieldsTypes(App *app, MYSQL_BIND **bufferBind, unsigned int numberFields, int *listFieldsTypes) {
+    int i;
+
+    (*bufferBind) = malloc(sizeof(MYSQL_BIND) * numberFields);
+    verifyPointer(app, (*bufferBind), "Problem malloc (*bufferBind) in initBufferTypeAndPutFieldsTypes\n");
+
+    memset(*bufferBind, 0, sizeof(*bufferBind[0]));
+    for (i = 0; i < numberFields; i++) {
+        (*bufferBind)[i].buffer_type = listFieldsTypes[i];
     }
 }
 

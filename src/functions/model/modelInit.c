@@ -46,6 +46,8 @@ void InitModel(Model *model) {
     model->query.stmtManager.ifStmtIsInit = 0;
     model->query.stmtManager.tablesNames = NULL;
     model->query.stmtManager.paramsNames = NULL;
+
+    initInsertParamFinder(&model->query.paramFinder);
 }
 
 void initTables(MySqlTable *tables) {

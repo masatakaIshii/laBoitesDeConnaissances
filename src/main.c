@@ -11,6 +11,7 @@
 #include "headers/model/modelStmtManager.h"
 #include "headers/model/modelBindHelper.h"
 #include "headers/model/modelParamFinder.h"
+#include "headers/model/modelFetchSelectHelper.h"
 
 int main(int argc, char **argv) {
 
@@ -35,46 +36,59 @@ int main(int argc, char **argv) {
     returnStat = mainEventLoop(&app);
 
     /*mysql test*/
-    //Select query
-/*
-    char * query = "SELECT box.name, list.name, list.description FROM box, list WHERE list.id = 1 AND box.id = 1";
-    getSelectQuery(&app, query);
-    addFieldsToResult(&app);
-    removeFieldsInResult(&app);
-    showQueryResult(&app);
-    freeSelectQuery(&app);
-*/
-    //process for query IUD
-/*
-    int rowAffected = queryIUD(&app, "UPDATE box, list SET box.name = 'toto', list.name='titi' WHERE box.id = 3 AND list.id = 1");
-    printf("number of row affected : %d\n", rowAffected);
-*/
-    //process for prepared query IUD
+    /*Select query*/
 
-    char *tables[100] = {"card"};
-    char *paramsValues[100] = {"first_card", "first question ", "first answer", "2019-01-01 00:00:13"};
-    char *preparedQueryIUD = "INSERT INTO card (name, question, answer, created_date) VALUES (?, ?, ?, NOW())";
-//    char *paramValues[100] = {"toto", "3"};
-//    char *preparedQueryIUD = "UPDATE list SET list.name = ? WHERE id = ?";
-    int result = 0;
+//    char * query = "SELECT box.name, list.name, list.description FROM box, list WHERE list.id = 1 AND box.id = 1";
+//    getSelectQuery(&app, query);
+//    addFieldsToResult(&app);
+//    removeFieldsInResult(&app);
+//    showQueryResult(&app);
+//    freeSelectQuery(&app);
 
-    setPreparedQuery(&app, preparedQueryIUD, tables, 1);
-    //setBindParams(&app, paramsValues);
+    /*process for query IUD*/
 
-    //result = sendPreparedQueryIUD(&app, preparedQueryIUD);
+//    int rowAffected = queryIUD(&app, "UPDATE box, list SET box.name = 'toto', list.name='titi' WHERE box.id = 3 AND list.id = 1");
+//    printf("number of row affected : %d\n", rowAffected);
 
-    // process for prepared query select
-//    char *tables[100] = {"box", "list"};
-//    int numberTables = 2;
-//    char *paramsValues[100] = {"1", "1"};
-//    char *preparedQuerySelect = "SELECT box.name, list.name FROM box, list WHERE box.id_box_parent = ? AND list.id_box = ?";
+    /*process for prepared query IUD*/
+
+//    char *tables[100] = {"list", "box"};
+//    char *paramsValues[100] = {"tez", "zet", "5", "3"};
+//    char *preparedQueryIUD = "UPDATE list, box SET list.name = ?, box.name = ? WHERE list.id = ? AND box.id = ?";
+//    int result = 0;
 //
-//    setPreparedQuery(&app, preparedQuerySelect, tables, numberTables);
-//
+//    setPreparedQuery(&app, preparedQueryIUD, tables, 2);
 //    setBindParams(&app, paramsValues);
 //
-//    getPreparedSelectQuery(&app, preparedQuerySelect);
+//    result = sendPreparedQueryIUD(&app, preparedQueryIUD);
 
+    /*same for insert query*/
+
+//    char *tables[100] = {"card"};
+//    char *paramsValues[100] = {"the_card ", "second answer", "2019-01-01 10:00:13"};
+//    char *preparedQueryIUD = "INSERT INTO card (name, answer, created_date, modified_date ) VALUES (?, ?, ?, NOW())";
+//    int result = 0;
+//
+//    setPreparedQuery(&app, preparedQueryIUD, tables, 1);
+//    setBindParams(&app, paramsValues);
+//
+//    result = sendPreparedQueryIUD(&app, preparedQueryIUD);
+
+    /* process for prepared query select*/
+    char *tables[100] = {"box", "list"};
+    int numberTables = 2;
+    char *paramsValues[100] = {"1", "1"};
+    char *preparedQuerySelect = "SELECT box.name, list.name FROM box, list WHERE box.id_box_parent = ? AND list.id_box = ?";
+
+    setPreparedQuery(&app, preparedQuerySelect, tables, numberTables);
+
+    setBindParams(&app, paramsValues);
+
+    getPreparedSelectQuery(&app, preparedQuerySelect);
+
+    addFieldsToResult(&app);
+
+    showQueryResult(&app);
 
     quitApp(&app);
 

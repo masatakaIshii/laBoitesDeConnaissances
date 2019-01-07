@@ -45,8 +45,6 @@ int sendPreparedQueryIUD(App *app, const char *currentQuery) {
         exit(EXIT_FAILURE);
     }
 
-    MYSQL_TIME *time = &stmtManager->params[0].paramsDateTime;
-
     if (mysql_stmt_execute(stmtManager->stmt)) {
         printf("Error[MYSQL] in mysql_stmt_execute : %s\n", mysql_stmt_error(stmtManager->stmt));
         quitApp(app);

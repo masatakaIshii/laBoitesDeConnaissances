@@ -18,34 +18,18 @@ void getParamsNames(App *app, MySqlStmtManager *stmtManager, char *query, int nu
 }
 
 void getParamsNamesInsert(App *app, MySqlStmtManager *stmtManager, char *query, int numberParams){
-    InsertParamFinder paramFinder;
+    InsertParamFinder *paramFinder = &app->model.query.paramFinder;
     MySqlTable *tables = app->model.tables;
 
-    initInsertParamFinder(&paramFinder);
-    loadInsertParamFinder(app, &paramFinder, query, numberParams);
+    loadInsertParamFinder(app, paramFinder, query, numberParams);
 
-
-    if (paramFinder.listBeforeWordValues == 0) {
-        getParamNameByMysqlTable(app, &paramFinder, stmtManager, tables);
+    if (paramFinder->listBeforeWordValues == 0) {
+        getParamNameByMysqlTable(app, paramFinder, stmtManager, tables);
     } else {
-
+        getParamNameByListFieldsNames(app, paramFinder, stmtManager);
     }
 
-//    int i;
-//    for (i = 0; i < stmtManager->numberParams; i++) {
-//        printf("stmtManager->paramsNames[%d] : %s\n", i, stmtManager->paramsNames[i]);
-//    }
-//    indexString = strrchr(query, '(');
-//    if (indexString == NULL){
-//        printf("Problem for strchr in indexString in main\n");
-//        exit(EXIT_FAILURE);
-//    }
-//
-//    printf("%s\n", indexString + 1);
-//    min = indexString - query + 1;
-
-
-    quitInsertParamFinder(&paramFinder);
+    quitInsertParamFinder(paramFinder);
 }
 
 
@@ -55,14 +39,12 @@ void loadInsertParamFinder(App *app, InsertParamFinder *paramFinder, char *query
 
     //verify if query content 'VALUES'
     paramFinder->listBeforeWordValues = (ifColumnsNamesBeforeValues(queryWithoutWordNow)) ? 1 : 0;
-    printf("paramFinder->listBeforeWordValues : %d\n", paramFinder->listBeforeWordValues);
 
     if (paramFinder->listBeforeWordValues == 0){
         loadIndexAndStringsParenthesis(app, paramFinder, queryWithoutWordNow, numberParams);
     } else {
         loadIndexAndStringsAndFieldsParenthesis(app, paramFinder, queryWithoutWordNow, numberParams);
     }
-    printf("queryWithoutWordNow : %s\n", queryWithoutWordNow);
 
     free(queryWithoutWordNow);
 }
@@ -73,6 +55,7 @@ void loadInsertParamFinder(App *app, InsertParamFinder *paramFinder, char *query
 *@param (char *) query - insert query
 */
 short ifColumnsNamesBeforeValues(char *query) {
+
     char *parenthesis;      //address where the parenthesis '(' is situated in query
     char *valuesWord;       //address where "VALUES" is situated in query
     int difference;         //difference of address of parenthesis and address of valuesWord
@@ -96,38 +79,15 @@ short ifColumnsNamesBeforeValues(char *query) {
 */
 void loadIndexAndStringsParenthesis(App *app, InsertParamFinder *paramFinder, char *query, int numberParams){
 
-    char *temp = getStrBtw2rChr(app, query, '(', ')', 0);
+    char *temp = getStrBtw2rChr(app, query, '(', ')', 0); // get string in parenthesis
 
-    getListContentAndNumberFields(app, paramFinder, temp, ',');
+    getListStringAndNumberFields(app, &paramFinder->listContentParenthesis, temp, ',', &paramFinder->numberFields);
 
     searchAndGetIndexWhereQMark(app, paramFinder, numberParams);
 
     free(temp);
 }
 
-void getListContentAndNumberFields(App *app, InsertParamFinder *paramFinder, char *strToSplit, char delimiter) {
-    char *indexDelimiter;   // address that content delimiter
-    Varchar strToReduce;    // string that it is reduced to each demiliter found
-    Varchar strInElement;   // string between the begin of strToReduce  and delimiter
-
-    strcpy(strToReduce, strToSplit);
-    while(1){
-
-        indexDelimiter = strchr(strToReduce, delimiter);
-
-        strncpy(strInElement, (const char*)strToReduce, indexDelimiter - strToReduce + 1);
-        strInElement[indexDelimiter - strToReduce] = '\0';
-
-        addStringInList(app, strInElement, &paramFinder->listContentParenthesis, &paramFinder->numberFields);
-
-        strcpy(strToReduce, indexDelimiter + 1);
-
-        if (strchr(strToReduce, delimiter) == NULL){
-            addStringInList(app, strToReduce, &paramFinder->listContentParenthesis, &paramFinder->numberFields);
-            break;
-        }
-    }
-}
 
 void searchAndGetIndexWhereQMark(App *app, InsertParamFinder *paramFinder, int numberParams) {
     int i = 0;
@@ -177,13 +137,57 @@ void loadIndexAndStringsAndFieldsParenthesis(App *app, InsertParamFinder *paramF
     char *strFieldsNames = getStrBtw2Chr(app, query, '(', ')', 0);
     char *strValues = getStrBtw2rChr(app, query, '(', ')', 0);
 
-    //getListContentAndNumberFields(app, paramFinder, query, ',');
+    getListStringAndNumberFields(app, &paramFinder->listContentParenthesis, strValues, ',', &paramFinder->numberFields);
 
-    free(temp1);
-    free(temp2);
+    getListStringAndNumberFields(app, &paramFinder->listFieldsParenthesis, strFieldsNames, ',', NULL);
 
+    removeSpacesToEachVarcharInList(app, paramFinder->listFieldsParenthesis, paramFinder->numberFields);
+
+    searchAndGetIndexWhereQMark(app, paramFinder, numberParams);
+
+    free(strFieldsNames);
+    free(strValues);
 }
 
+void removeSpacesToEachVarcharInList(App *app, Varchar *listVarchar, int numberFields) {
+    int i;
+    char *addressSpace;
+    int length;
+    Varchar temp;
+
+    for (i = 0; i < numberFields; i++) {
+
+       while(strchr(listVarchar[i], ' ') != NULL) {
+            addressSpace = strchr(listVarchar[i], ' ');
+            if (addressSpace != NULL) {
+
+                if (strncmp(listVarchar[i], addressSpace, strlen(listVarchar[i] + 1)) == 0) {
+                    strcpy(temp, listVarchar[i]);
+                    strcpy(listVarchar[i], temp + 1);
+                } else if (listVarchar[i][strlen(listVarchar[i]) - 1] == ' '){
+                    length = strlen(listVarchar[i]) - 1;
+                    listVarchar[i][length] = '\0';
+                } else {
+                    printf("Error : Field's name of param content space. It's forbidden\n");
+                    quitApp(app);
+                }
+            }
+        }
+    }
+}
+
+void getParamNameByListFieldsNames(App *app, InsertParamFinder *paramFinder, MySqlStmtManager *stmtManager) {
+
+    int i;
+    int concernIndex;
+
+    stmtManager->paramsNames = malloc(sizeof(Varchar) * stmtManager->numberParams);
+    for (i = 0; i < stmtManager->numberParams; i++) {
+
+        concernIndex = paramFinder->indexsOfQParenthesis[i];
+        strcpy(stmtManager->paramsNames[i], paramFinder->listFieldsParenthesis[concernIndex]);
+    }
+}
 
 char *strReplace(App *app, char *stringToCheck, char *strRemove, char charReplace) {
     int i;
@@ -218,7 +222,7 @@ char *getStrBtw2rChr(App *app, char *stringToCheck, char firstChar, char lastCha
     char *result;
 
 
-    if (firstChar != NULL){
+    if (firstChar != 0){
         indexString = strrchr(stringToCheck, firstChar);
         verifyPointer(app, indexString, "Problem for strrchr indexString in loadInsertParamFinder");
         min = indexString - stringToCheck + ((includeChars) ? 0 : 1);
@@ -227,7 +231,7 @@ char *getStrBtw2rChr(App *app, char *stringToCheck, char firstChar, char lastCha
     }
 
 
-    if (lastChar != NULL) {
+    if (lastChar != 0) {
         indexString = strrchr(stringToCheck, lastChar);
         verifyPointer(app, indexString, "Problem for strrchr indexString in loadInsertParamFinder");
         max = indexString - stringToCheck + ((includeChars) ? 1 : 0);
@@ -255,7 +259,7 @@ char *getStrBtw2Chr(App *app, char *stringToCheck, char firstChar, char lastChar
     char *indexString;
     char *result;
 
-    if (firstChar != NULL){
+    if (firstChar != 0){
         indexString = strchr(stringToCheck, firstChar);
         verifyPointer(app, indexString, "Problem for strchr indexString in loadInsertParamFinder");
         min = indexString - stringToCheck + ((includeChars) ? 0 : 1);
@@ -263,7 +267,7 @@ char *getStrBtw2Chr(App *app, char *stringToCheck, char firstChar, char lastChar
         min = 0;
     }
 
-    if (lastChar != NULL) {
+    if (lastChar != 0) {
         indexString = strchr(stringToCheck, lastChar);
         verifyPointer(app, indexString, "Problem for strchr indexString in loadInsertParamFinder");
         max = indexString - stringToCheck + ((includeChars) ? 1 : 0);
@@ -305,7 +309,7 @@ void getParamsNamesSelectUpdateDelete(App *app, MySqlStmtManager  *stmtManager, 
         temp2[strchr(temp1, '?') - temp1] = '\0';
 
         getBeginAndEndOfParamName(temp2, &min, &max);
-        printf("pointer of name : %p\n", name);
+
         mySubVarchar(name, temp2, min, max);
         addStringInList(app, name, &stmtManager->paramsNames, &currentLenght);
 
@@ -350,10 +354,33 @@ void getBeginAndEndOfParamName(char *query, int *min, int *max) {
 void mySubVarchar(Varchar newString, const char* stringToSub, int minIndex, int maxIndex) {
     int length = maxIndex - minIndex + 1;
 
-    printf("pointeur of newString : %p\n", newString);
-
     strncpy(newString, stringToSub + minIndex, length);
     *(newString + length) = '\0';
+}
+
+void getListStringAndNumberFields(App *app, Varchar **listFields, char *strToSplit, char delimiter, int *numberFields) {
+    char *indexDelimiter;   // address that content delimiter
+    Varchar strToReduce;    // string that it is reduced to each demiliter found
+    Varchar strInElement;   // string between the begin of strToReduce  and delimiter
+    int currentNumber = 0;
+
+    strcpy(strToReduce, strToSplit);
+    while(1){
+
+        indexDelimiter = strchr(strToReduce, delimiter);
+
+        strncpy(strInElement, (const char*)strToReduce, indexDelimiter - strToReduce + 1);
+        strInElement[indexDelimiter - strToReduce] = '\0';
+
+        addStringInList(app, strInElement, listFields, (numberFields == NULL) ? &currentNumber : numberFields);
+
+        strcpy(strToReduce, indexDelimiter + 1);
+
+        if (strchr(strToReduce, delimiter) == NULL){
+            addStringInList(app, strToReduce, listFields, (numberFields == NULL) ? &currentNumber : numberFields);
+            break;
+        }
+    }
 }
 
 void addStringInList(App *app, Varchar paramName, Varchar **listString, int *currentLength) {
@@ -361,7 +388,6 @@ void addStringInList(App *app, Varchar paramName, Varchar **listString, int *cur
     int length = *currentLength;
     int i;
 
-    //printf("\n in addStringInlist\n");
     if ((*listString) == NULL) {
         inter = malloc(sizeof(Varchar));
         verifyPointer(app, inter, "Problem malloc inter in addStringInList\n");

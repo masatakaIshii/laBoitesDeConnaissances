@@ -12,6 +12,11 @@
 #define MAX_TEXT 1000
 #define free(ptr) free(ptr), ptr=NULL
 
+typedef enum BindType{
+    BIND_INPUT,
+    BIND_OUTPUT
+}BindType;
+
 typedef struct Colors {
     Uint8 blue[4];
     Uint8 lightblue[4];
@@ -36,35 +41,37 @@ typedef char Text[MAX_TEXT];
 *@var (unsigned int *) listFieldsTypes : la liste des type MYSQL_TYPE_ correspondant chaque index au nom du champ concerné
 */
 typedef struct MySqlTable {
-    Varchar tableName;
-    Varchar *listFieldsNames;
-    int numberField;
-    unsigned int *listFieldsTypes;
+    Varchar         tableName;
+    Varchar         *listFieldsNames;
+    int             numberField;
+    unsigned int    *listFieldsTypes;
 } MySqlTable;
 
 /* Query to the database*/
 //Les structures pour la partie bind
 typedef struct MySqlParamsBind {
-    int paramsTypes;
-    char *paramsString;
-    int paramsStrLen;
-    int paramNumber;
-    double paramDouble;
-    MYSQL_TIME paramsDateTime;
-    int paramsIsNull;
-    unsigned long paramsLengths;
+    int             paramsTypes;
+    char            *paramsString;
+    int             paramsStrLen;
+    int             paramNumber;
+    double          paramDouble;
+    MYSQL_TIME      paramsDateTime;
+    short           paramsIsNull;
+    unsigned long   paramsLengths;
+    short           paramError;
 } MySqlParamsBind;
 
 typedef struct MySqlStmtManager {
-    MYSQL_STMT *stmt;
-    short ifStmtIsInit;
-    char *currentQuery;
-    Varchar *tablesNames;
-    int numberTables;
-    Varchar *paramsNames;
-    int numberParams;
+    MYSQL_STMT      *stmt;
+    short           ifStmtIsInit;
+    char            *currentQuery;
+    Varchar         *tablesNames;
+    int             numberTables;
+    Varchar         *paramsNames;
+    int             numberParams;
     MySqlParamsBind *params;
-    MYSQL_BIND *buffersBind;
+    MYSQL_BIND      *buffersBind;
+    BindType        BindInOut;
 } MySqlStmtManager;
 
 // Concernant les requêtes préparées
@@ -79,27 +86,13 @@ typedef struct MySqlStmtManager {
 *@var (short) - resultWithFieldsList : bool if listColumnsRows content list of fields
 */
 typedef struct SelectQuery {
-    MYSQL_RES *result;
-    char ***listColumnsRows;
-    Varchar *listFields;
-    unsigned int numberFields;
-    unsigned int numberRows;
-    short resultWithFieldsList;
+    MYSQL_RES       *result;
+    char            ***listColumnsRows;
+    Varchar         *listFields;
+    unsigned int    numberFields;
+    unsigned int    numberRows;
+    short           resultWithFieldsList;
 } SelectQuery;
-
-typedef struct Query {
-    MySqlStmtManager stmtManager;
-    SelectQuery selectQuery;
-} Query;
-
-typedef struct Model {
-    MYSQL *mysql;
-    short ifMysqlIsInit;
-    MySqlTable *tables;
-    Varchar *listAllTables;
-    int numberAllTables;
-    Query query;
-} Model;
 
 /**
 *@struct InsertParamFinder : to help to get fields of params values
@@ -111,20 +104,37 @@ typedef struct Model {
 */
 typedef struct InsertParamFinder{
     Varchar *listContentParenthesis;
-    short listBeforeWordValues;
-    int numberFields;
-    int *indexsOfQParenthesis;
+    short   listBeforeWordValues;
+    int     numberFields;
+    int     *indexsOfQParenthesis;
     Varchar *listFieldsParenthesis;
 
 }InsertParamFinder;
 
+typedef struct Query {
+    MySqlStmtManager    stmtManager;
+    SelectQuery         selectQuery;
+    InsertParamFinder   paramFinder;
+} Query;
+
+typedef struct Model {
+    MYSQL       *mysql;
+    short       ifMysqlIsInit;
+    MySqlTable  *tables;
+    Varchar     *listAllTables;
+    int         numberAllTables;
+    Query       query;
+} Model;
+
+
+
 /* --App-- */
 typedef struct App {
-    SDL_Window *screen;
-    SDL_Renderer *renderer;
-    Colors colors;
-    Config config;
-    Model model;
+    SDL_Window      *screen;
+    SDL_Renderer    *renderer;
+    Colors          colors;
+    Config          config;
+    Model           model;
 } App;
 
 

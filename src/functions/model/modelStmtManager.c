@@ -40,7 +40,7 @@ void setPreparedQuery(App *app, char *query, char **tablesNames, int numberTable
 
     getParamsNames(app, stmtManager, query, stmtManager->numberParams);
 
-    //loadStmtManagerBindTypes(app, &app->model);
+    loadStmtManagerBindTypes(app, &app->model);
 
     freeStructTableMysql(&app->model);
 }
@@ -58,9 +58,7 @@ void loadStmtManager(App *app,MySqlStmtManager * stmtManager, char **tablesNames
     }
 }
 
-/*
-TODO : adapter cette fonction pour la requête préparée
-*/
+/* thinking if loadStmtManagerBindTypes have to be in modelBindHelper.c or not */
 void loadStmtManagerBindTypes(App *app, Model *model) {
 
     int i;
@@ -69,16 +67,16 @@ void loadStmtManagerBindTypes(App *app, Model *model) {
     stmtManager->buffersBind = malloc(sizeof(MYSQL_BIND) * stmtManager->numberParams);
     memset(stmtManager->buffersBind, 0, sizeof(MYSQL_BIND));
     verifyPointer(app, stmtManager->buffersBind, "Problem malloc stmtManager->params in loadStmtManagerParams");
-    for (i = 0; i < stmtManager->numberParams; i++) {
 
+    for (i = 0; i < stmtManager->numberParams; i++) {
         stmtManager->buffersBind[i].buffer_type = getTypeField(stmtManager->paramsNames[i], model, stmtManager);
-        //printf("stmtManager->buffersBind[%d].buffer_type : %d\n", i, stmtManager->buffersBind[i].buffer_type);
     }
 }
 
 int getTypeField(Varchar paramName, Model *model, MySqlStmtManager *stmtManager) {
     MySqlTable *tables = model->tables;
     Varchar table;
+    Varchar checkSplitParamName;
     int typeField = -1;
     Varchar *tablesNames = stmtManager->tablesNames;
     int numberTables = model->numberAllTables;
@@ -86,7 +84,11 @@ int getTypeField(Varchar paramName, Model *model, MySqlStmtManager *stmtManager)
     int j;
 
     if (stmtManager->numberTables > 1) {
+        strcpy(checkSplitParamName, paramName);
         getProperFieldAndTable(paramName, table);
+        if (strncmp(checkSplitParamName, paramName, strlen(paramName)) == 0) {
+            printf("Warning : in modelStmtManager.c, the paramName go to getProperFieldAndTable but still doesn't change : %s\n", paramName);
+        }
 
     } else {
         strcpy(table, tablesNames[0]);
@@ -95,6 +97,7 @@ int getTypeField(Varchar paramName, Model *model, MySqlStmtManager *stmtManager)
     for (i = 0; i < numberTables; i++) {
         if (strncmp(table, tables[i].tableName, strlen(table) + 1) == 0) {
             for (j = 0; j < tables[i].numberField; j++) {
+
                 if (strncmp(paramName, tables[i].listFieldsNames[j], strlen(paramName) + 1) == 0) {
                     typeField = tables[i].listFieldsTypes[j];
                 }
