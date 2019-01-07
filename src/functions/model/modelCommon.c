@@ -1,100 +1,122 @@
 /*
-** Filename : mysqlCommon.c
+** Filename : modelCommon.c
 **
 ** Made by  : Masataka ISHII
 **
 ** Description  : common functions used API C MySQL
 */
-#include <stdio.h>
 #include "../../headers/model/modelCommon.h"
-#include "../../headers/common.h"
-#include <mysql.h>
-#include <SDL2/SDL.h>
+#include "../../headers/struct.h"
 
-void dbConnect(App *app) {
-
-    mysql_options(&app->mysql, MYSQL_READ_DEFAULT_GROUP, "option");
-
-    mysql_real_connect(&app->mysql, "127.0.0.1", "root", "root", "the_box_of_knowledge", 0, NULL, 0);
-    if (!(&app->mysql)) {
-        printf("%s", mysql_error(&app->mysql));
+void verifyMYSQLIntResult(App *app, int result) {
+    if (result != 0) {
+        printf("%s", mysql_error(app->model.mysql));
+        quitApp(app);
+        exit(EXIT_FAILURE);
     }
 }
 
-char **getFieldsNameType(App *app, const char *table, unsigned int* numberFields) {
-    char **fieldsNameType;
+void verifyPointerForQueryStmt(App *app, MySqlStmtManager *stmtManager, void *pointer, const char *message) {
+    if (pointer == NULL) {
+        printf("%s", message);
+        quitApp(app);
+        exit(EXIT_FAILURE);
+    }
+}
+
+void verifyResultFile(App *app, int result, int nmemb, const char *message) {
+    if (result != nmemb){
+        printf("%s", message);
+        quitApp(app);
+        exit(EXIT_FAILURE);
+    }
+}
+
+/**
+*@brief To get array of fields name, possible to get unsigned int listMysqlType
+*
+*@param app : structure that content MYSQL's variable to get list
+*@param table : name of table for get its fields
+*@param numberFields : number fields of table
+*@return fieldsName
+*/
+Varchar *getFieldsName(App *app, Varchar table, unsigned int* numberFields, unsigned int **listMysqlType) {
+    Varchar *fieldsName;
     MYSQL_RES *resultFields;
     unsigned int fieldsCount;
 
-    resultFields = mysql_list_fields(&app->mysql, table, NULL);
-    verifyPointer(app, resultFields, mysql_error(&app->mysql));
+    //result of table if is correct
+    resultFields = mysql_list_fields(app->model.mysql, table, NULL);
+    verifyPointer(app, resultFields, mysql_error(app->model.mysql));
 
     fieldsCount = mysql_num_fields(resultFields);
 
-    if (numberFields != NULL) {
-        *numberFields = fieldsCount;
-    }
+    // if address of numberFields is call in function, get number of fields
+    *numberFields = fieldsCount;
 
-    printf("Number of columns : %d\n", fieldsCount);
+    fieldsName = fetchFieldsName(app, resultFields, fieldsCount, listMysqlType);
 
-    fieldsNameType = fetchFieldsNameType(resultFields, fieldsCount);
-
-    return fieldsNameType;
+    return fieldsName;
 }
 
-char **fetchFieldsNameType(MYSQL_RES *result, unsigned int numberFields){
-    char **fieldsNameType;
+/**
+*@brief Fetch values of query and copy to list of field, can fetch also int list of field type
+*
+*@param result : result of query
+*@param numberFields : number of field of the list
+*@param listMysqlType : int list that content type of field
+*@return fieldsName
+*/
+Varchar *fetchFieldsName(App *app, MYSQL_RES *result, unsigned int numberFields, unsigned int **listMysqlType){
+    Varchar *fieldsName;
     MYSQL_FIELD *fetchField;
     int i;
 
-    fieldsNameType = malloc(sizeof(char*) * numberFields);
-    for (i = 0; i < numberFields; i++) {
-        fetchField = mysql_fetch_field_direct(result, i);
-        fieldsNameType[i] = malloc(sizeof(char) * fetchField->name_length);
-        strcpy(fieldsNameType[i], fetchField->name);
+    fieldsName = malloc(sizeof(Varchar) * numberFields);
+    verifyPointer(app, fieldsName, "Problem memory allocation for fieldsName");
+
+    //check if listMysql address is call in parameter
+    if (listMysqlType != NULL) {
+        *listMysqlType = malloc(sizeof(unsigned int) * numberFields);
+        verifyPointer(app, listMysqlType, "problem memory allocation for listMysqlType");
     }
 
-    return fieldsNameType;
+    //fetch value and copy to list, possible to fetch also type in listMysqlType
+    for (i = 0; i < numberFields; i++) {
+        fetchField = mysql_fetch_field_direct(result, i);
+
+        if (listMysqlType != NULL) {
+            (*listMysqlType)[i] = (unsigned int)fetchField->type;
+        }
+        strcpy(fieldsName[i], fetchField->name);
+    }
+
+    return fieldsName;
 }
 
+/**
+*@brief Malloc of table content rows and fields
+*
+*@param numberRows : number rows that to content table
+*@param numberFields : number fields that to content table
+*@return stringTable
+*/
 char ***mallocStringTable(unsigned int numberRows,unsigned int numberFields) {
     char *** stringTable;
     int i;
 
-    stringTable = malloc(sizeof(char**) * numberRows);
+    stringTable = calloc(0, sizeof(char**) * numberRows);
     if (stringTable == NULL) {
-        printf("Memory allocation problem in numberRows");
+        printf("Memory allocation problem for stringTable");
         exit(1);
     }
     for (i = 0; i < numberRows; i++) {
-        *(stringTable + i) = malloc(sizeof(char*) * numberFields);
+        *(stringTable + i) = calloc(0, sizeof(char*) * numberFields);
         if (*(stringTable + i) == NULL) {
-            printf("Memory allocation problem in numberFields");
+            printf("Memory allocation problem for *(stringTable + i)");
             exit(1);
         }
     }
 
     return stringTable;
-}
-
-void freeFieldsList(char* **fieldsList, unsigned int numberFields) {
-    int i;
-
-    for (i = 0; i < numberFields; i++) {
-        free((*fieldsList)[i]);
-    }
-    free(*fieldsList);
-}
-
-void freeResultStringTable(char* ***stringTable, unsigned int numberFields, unsigned int numberRows) {
-    int i;
-    int j;
-
-    for (i = 0; i < numberRows; i++) {
-        for (j = 0; j < numberFields; j++) {
-            free((*stringTable)[i][j]);
-        }
-        free((*stringTable)[i]);
-    }
-    free(*stringTable);
 }

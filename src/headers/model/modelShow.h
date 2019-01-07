@@ -7,12 +7,13 @@
 */
 
 #ifndef MYSQL_SHOW_FUNCTIONS
+#include "../common.h"
 #include "modelCommon.h"
+#include "modelQuit.h"
 
-void showQueryResult(char ****resultQuery, unsigned int *numberFields, unsigned int *numberRows, char **fieldsList);
-void addFieldsToResult(char* ***resultQuery, char* **fieldsList, unsigned int* *numberRows);
-void showWellResult(char ***resultQuery, int numberFields, int numberRows, char **fieldsList);
-int *getMaxLengthOfEachFields(char ***resultQuery, int numberFields, int numberRows, char **fieldsList);
-void addSpaceToGetSameLengthPerField(char ****resultQuery, int numberFields, int numberRows, int *maxLengthsFields);
+void showQueryResult(App *app);
+int *getMaxLengthOfEachFields(App *app, char ***resultQuery, int numberFields, int numberRows);
+void copyListQuerySelect(App *app, char ****resultQuery,SelectQuery *selectQuery);
+void addSpaceToGetSameLengthPerField(App *app, char ****resultQuery, int numberFields, int numberRows, int *maxLengthsFields);
 char *getSpaces(int numberSpace);
 #endif // MYSQL_SHOW_FUNCTIONS
