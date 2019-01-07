@@ -15,7 +15,7 @@ void dbConnect(App *app) {
 
     mysql_options(&app->mysql, MYSQL_READ_DEFAULT_GROUP, "option");
 
-    mysql_real_connect(&app->mysql, "127.0.0.1", "root", "root", "the_box_of_knowledge", 0, NULL, 0);
+    mysql_real_connect(&app->mysql, "127.0.0.1", "root", "", "the_box_of_knowledge", 0, NULL, 0);
     if (!(&app->mysql)) {
         printf("%s", mysql_error(&app->mysql));
     }

@@ -20,7 +20,7 @@
 *
 * Pour utiliser inRect():
 *
-* displayMenu() doit agir sur un tableau de structure Rect avec toutes les zones clicables dedans
+* displayMenu() doit agir sur un tableau de structure SDL_Rect avec toutes les zones clicables dedans
 * check la position avec inRect() grace a ce tableau
 *
 */

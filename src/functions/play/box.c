@@ -58,6 +58,7 @@ void playMode(App *app){
                 }
             break;
         }
+        // AFFICHAGE DE LA SIDEBAR DISPLAYSIDEBAR()
         displayHomePlay(app, page, pageButtons, boxButtons, &nbOfBox);
     }
 }

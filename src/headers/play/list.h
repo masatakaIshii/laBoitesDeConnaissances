@@ -7,4 +7,5 @@
 */
 
 void listMenu(App *app, int page, int i);
-void displayHomeBox(App *app);
+void displayHomeBox(App *app, SDL_Rect *listButtons);
+int createListPage(App *app, SDL_Rect *buttons, char *list, int size);
