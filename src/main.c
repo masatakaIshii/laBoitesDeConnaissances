@@ -23,25 +23,19 @@ int main(int argc, char **argv) {
     freopen("CON", "w", stderr);
 
     // Start SDL
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+    if(SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("Unable to init SDL: %s\n", SDL_GetError());
         return EXIT_FAILURE;
     }
+    /*if(TTF_Init() < 0) {
+        fprintf(stderr, "Unable to init SDL_ttf: %s\n", TTF_GetError());
+        return EXIT_FAILURE;
+    }*/
 
     loadApp(&app);
 
     returnStat = mainEventLoop(&app);
 
-    /*mysql test*/
- /*   unsigned int numberFields;
-    unsigned int numberRows;
-    char ***resultQuery = querySelect(&app, "SELECT * FROM user", &numberFields, &numberRows);
-    char **resultFieldsInfo = getFieldsNameType(&app, "user", NULL);
-
-    showQueryResult(&resultQuery, &numberFields, &numberRows, resultFieldsInfo);
-
-    freeResultStringTable(&resultQuery, numberFields, numberRows);
-*/
     quitApp(&app);
 
     return returnStat;

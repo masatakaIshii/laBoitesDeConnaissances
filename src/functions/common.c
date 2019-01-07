@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <mysql.h>
 #include "../headers/common.h"
 #include "../headers/play/box.h"
@@ -222,6 +223,7 @@ void loadApp(App *app) {
 void quitApp(App *app){
     SDL_DestroyRenderer(app->renderer);
     SDL_DestroyWindow(app->screen);
+    //TTF_Quit();
     SDL_Quit();
 
     //deconnexion de la base de donnees

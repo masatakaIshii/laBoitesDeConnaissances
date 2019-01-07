@@ -80,7 +80,7 @@ void displayHomePlay(App *app, int page, SDL_Rect *pageButtons, SDL_Rect *boxBut
     else
         pageButtons[0] = nullBtn;
 
-    if(63 * (page+1) < sizeof(box))
+    if(24 * (page+1) < sizeof(box))
         pageButtons[1] = createRect(app, app->config.height / 12, app->config.height / 24, (app->config.width / 12) * 6, (app->config.height / 12) * 11, app->colors.green);
     else
         pageButtons[1] = nullBtn;
@@ -89,14 +89,14 @@ void displayHomePlay(App *app, int page, SDL_Rect *pageButtons, SDL_Rect *boxBut
 }
 
 int createBoxPage(App *app, SDL_Rect *buttons, char *box, int size, int page){
-    int x, y, i = 63 * page;
+    int x, y, i = 24 * page;
     int xBox = 0, yBox = 0;
 
-    for(x = 0; x < 7; x++){
-        for(y = 0; y < 9; y++){
-            xBox = ((app->config.height / 12) * y) + 10*y + app->config.width/4;
-            yBox = ((app->config.height / 12) * x) + 10*x + app->config.height/6;
-            buttons[i] = createRect(app, app->config.height / 12, app->config.height / 12, xBox, yBox, app->colors.green);
+    for(x = 0; x < 4; x++){
+        for(y = 0; y < 6; y++){
+            xBox = ((app->config.height / 6) * y) + 10*y + app->config.width/5;
+            yBox = ((app->config.height / 6) * x) + 10*x + app->config.height/6;
+            buttons[i] = createRect(app, app->config.height / 6, app->config.height / 6, xBox, yBox, app->colors.green);
             i++;
             if(i >= size)
                 break;
@@ -105,5 +105,5 @@ int createBoxPage(App *app, SDL_Rect *buttons, char *box, int size, int page){
             break;
     }
 
-    return i - 63 * page; // Retourne le nombre d'elements sur la page
+    return i - 24 * page; // Retourne le nombre d'elements sur la page
 }

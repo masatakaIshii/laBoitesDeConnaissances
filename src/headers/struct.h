@@ -2,6 +2,7 @@
 #define _STRUCTURE
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <mysql.h>
 
 #define WINDOW_POS_X    200

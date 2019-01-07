@@ -7,3 +7,4 @@
 */
 
 void listMenu(App *app, int page, int i);
+void displayHomeBox(App *app);
