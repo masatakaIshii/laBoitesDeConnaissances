@@ -14,38 +14,20 @@
 
 void showQueryResult(App *app) {
 
-    SelectQuery *selectQuery = &app->model.query.selectQuery;
-    int numberFields = selectQuery->numberFields;
-    int numberRows = selectQuery->numberRows;
-    char ***resultQuery = NULL;
+    SelectQuery *selectQuery    = &app->model.query.selectQuery;
+    int numberFields            = selectQuery->numberFields;
+    int numberRows              = selectQuery->numberRows;
     int *maxLengthsFields;
-    int i, j, k;
 
-    copyListQuerySelect(app, &resultQuery, selectQuery);
-    maxLengthsFields = getMaxLengthOfEachFields(app, resultQuery, numberFields, numberRows);
-    addSpaceToGetSameLengthPerField(app, &resultQuery, numberFields, numberRows, maxLengthsFields);
+    maxLengthsFields = getMaxLengthOfEachFields(app, selectQuery->listColumnsRows, numberFields, numberRows);
 
-    for (i = 0; i < numberRows; i++) {
-        printf("|");
-        for (j = 0; j < numberFields; j++) {
-            printf(" %s |", resultQuery[i][j]);
-        }
-        printf("\n");
-
-        for (j = 0; j < numberFields; j++) {
-            for (k = 0; k < maxLengthsFields[j]; k++) {
-                printf("_");
-            }
-            printf("___");
-        }
-        printf("\n");
-    }
+    showAppropriateQueryResult(selectQuery, maxLengthsFields, numberFields, numberRows);
 
     free(maxLengthsFields);
-    freeResultStringTable(resultQuery, numberFields, numberRows);
 }
 
 int *getMaxLengthOfEachFields(App *app, char ***resultQuery, int numberFields, int numberRows) {
+
     int i;
     int j;
     int *maxLengthsFields = malloc(sizeof(int) * numberFields);
@@ -69,58 +51,29 @@ int *getMaxLengthOfEachFields(App *app, char ***resultQuery, int numberFields, i
     return maxLengthsFields;
 }
 
-void copyListQuerySelect(App *app, char ****resultQuery,SelectQuery *selectQuery){
-    int i, j;
-    int numberRows = selectQuery->numberRows;
-    int numberFields = selectQuery->numberFields;
-    char ***listToCopy = selectQuery->listColumnsRows;
+void showAppropriateQueryResult(SelectQuery *selectQuery, int *maxLengthsFields, int numberFields, int numberRows) {
 
-    *resultQuery = malloc(sizeof(char**) * numberRows);
-    verifyPointer(app, *resultQuery, "Problem memory allocation for resultQuery in copyListQuerySelect\n");
-    for (i = 0; i < numberRows; i++){
-
-        (*resultQuery)[i] = malloc(sizeof(char*) * numberFields);
-        verifyPointer(app, (*resultQuery)[i], "Problem memory allocation for resultQuery[i] in copyListQuerySelect\n");
-        for (j = 0; j < numberFields; j++) {
-
-            (*resultQuery)[i][j] = malloc(sizeof(char) * (strlen(listToCopy[i][j]) + 1));
-            strcpy((*resultQuery)[i][j], listToCopy[i][j]);
-        }
-    }
-}
-
-void addSpaceToGetSameLengthPerField(App *app, char ****resultQuery, int numberFields, int numberRows, int *maxLengthsFields) {
-    int i;
-    int j;
     int diffLength;
-    char currentValue[MAX_CURRENT_VALUE];
-    char *spaces;
+    int i, j, k;
 
-    for (i = 0; i < numberFields; i++) {
-        diffLength = 0;
-        for (j = 0; j < numberRows; j++) {
-            if (maxLengthsFields[i] > strlen((*resultQuery)[j][i])) {
-                strcpy(currentValue, (*resultQuery)[j][i]);
-
-                diffLength = maxLengthsFields[i] - strlen(currentValue);
-
-                spaces = getSpaces(diffLength);
-
-                (*resultQuery)[j][i] = realloc((*resultQuery)[j][i], sizeof(char) * (maxLengthsFields[i] + 1));
-                strcat((*resultQuery)[j][i], spaces);
+    for (i = 0; i < numberRows; i++) {
+        printf("|");
+        for (j = 0; j < numberFields; j++) {
+            printf(" %s ", selectQuery->listColumnsRows[i][j]);
+            diffLength = maxLengthsFields[j] - strlen(selectQuery->listColumnsRows[i][j]);
+            for (k = 0; k < diffLength; k++) {
+                printf(" ");
             }
+            printf("|");
         }
+        printf("\n");
+
+        for (j = 0; j < numberFields; j++) {
+            for (k = 0; k < maxLengthsFields[j]; k++) {
+                printf("_");
+            }
+            printf("___");
+        }
+        printf("\n");
     }
-}
-
-char *getSpaces(int numberSpace) {
-    int i;
-    char *spaces = malloc(sizeof (char) * numberSpace);
-
-    for (i = 0; i < numberSpace; i++) {
-        spaces[i] = ' ';
-    }
-    spaces[numberSpace] = '\0';
-
-    return spaces;
 }

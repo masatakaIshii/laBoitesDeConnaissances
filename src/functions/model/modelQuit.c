@@ -12,7 +12,7 @@ void freeSelectQuery(App *app) {
     SelectQuery *selectQuery = &app->model.query.selectQuery;
 
     if (selectQuery != NULL) {
-        freeResultStringTable(selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows);
+        freeResultStringTable(&selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows);
         selectQuery->listColumnsRows = NULL;
         freeListString(&selectQuery->listFields);
         selectQuery->listFields = NULL;
@@ -40,7 +40,7 @@ void freeListString(Varchar **fieldsList) {
 *@param numberFields : number of field of table
 *@param numberRows : number of rows of table
 */
-void freeResultStringTable(char ***stringTable, unsigned int numberFields, unsigned int numberRows) {
+void freeResultStringTable(char ****stringTable, unsigned int numberFields, unsigned int numberRows) {
     int i;
     int j;
 
@@ -48,11 +48,11 @@ void freeResultStringTable(char ***stringTable, unsigned int numberFields, unsig
         for (i = 0; i < numberRows; i++) {
 
             for (j = 0; j < numberFields; j++) {
-                free(stringTable[i][j]);
+                free((*stringTable)[i][j]);
             }
-            free(stringTable[i]);
+            free((*stringTable)[i]);
         }
-        free(stringTable);
+        free(*stringTable);
     }
 }
 
@@ -91,7 +91,7 @@ void quitModel(Model *model) {
 
     if (model->tables != NULL) {
         freeStructTableMysql(model);
-        //remove(numberNamesStructTables);
+        remove("numberNamesStructTables");
     }
 
     if (model->ifMysqlIsInit != 0) {
@@ -101,17 +101,32 @@ void quitModel(Model *model) {
 
 }
 
+void quitPreparedIUD(App *app) {
+    MySqlStmtManager *stmtManager = &app->model.query.stmtManager;
+
+    quitStmtManager(stmtManager);
+}
+
+void quitPreparedSelectQuery(App *app) {
+
+    SelectQuery *selectQuery        = &app->model.query.selectQuery;
+    MySqlStmtManager *stmtManager   = &app->model.query.stmtManager;
+
+    quitStmtManager(stmtManager);
+    quitSelectQuery(selectQuery);
+}
+
 void quitSelectQuery(SelectQuery *selectQuery) {
 
-    unsigned int numberRows = 0;
-    unsigned int numberFields = 0;
+    unsigned int numberRows     = 0;
+    unsigned int numberFields   = 0;
 
     if (selectQuery->listColumnsRows != NULL) {
 
         numberRows = selectQuery->numberRows;
         numberFields = selectQuery->numberFields;
 
-        freeResultStringTable(selectQuery->listColumnsRows, numberFields, numberRows);
+        freeResultStringTable(&selectQuery->listColumnsRows, numberFields, numberRows);
 
         selectQuery->listColumnsRows = NULL;
     }
@@ -145,6 +160,7 @@ void quitStmtManager(MySqlStmtManager *stmtManager) {
     }
     if (stmtManager->numberParams != 0) {
         quitStmtParams(stmtManager);
+        quitStmtBind(stmtManager);
         stmtManager->numberParams = 0;
     }
     if (stmtManager->numberTables != 0) {
@@ -174,6 +190,9 @@ void quitStmtParams(MySqlStmtManager *stmtManager) {
         free(stmtManager->params);
         stmtManager->params = NULL;
     }
+}
+
+void quitStmtBind(MySqlStmtManager *stmtManager) {
 
     if (stmtManager->buffersBind != NULL) {
         free(stmtManager->buffersBind);

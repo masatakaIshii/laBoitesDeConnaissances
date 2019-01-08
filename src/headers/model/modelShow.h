@@ -13,7 +13,6 @@
 
 void showQueryResult(App *app);
 int *getMaxLengthOfEachFields(App *app, char ***resultQuery, int numberFields, int numberRows);
-void copyListQuerySelect(App *app, char ****resultQuery,SelectQuery *selectQuery);
-void addSpaceToGetSameLengthPerField(App *app, char ****resultQuery, int numberFields, int numberRows, int *maxLengthsFields);
-char *getSpaces(int numberSpace);
+void showAppropriateQueryResult(SelectQuery *selectQuery, int *maxLengthsFields, int numberFields, int numberRows);
+
 #endif // MYSQL_SHOW_FUNCTIONS

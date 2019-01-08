@@ -15,6 +15,10 @@ void setBindParams(App *app, char **paramsValues) {
 
     stmtManager->BindInOut = bindIO;
 
+    if (stmtManager->params != NULL) {
+        quitStmtParams(stmtManager);
+    }
+
     loadBindParams(app, stmtManager, bindIO, paramsValues);
 
     result = mysql_stmt_bind_param(stmtManager->stmt, stmtManager->buffersBind);

@@ -100,15 +100,14 @@ void copyDateTimeToString(App *app, char **stringToFill, int index, MySqlStmtMan
 void copyStringAfterFetchLength(App *app, char **stringToFill, int index, MySqlStmtManager *stmtManager) {
     unsigned long length = stmtManager->params[index].paramsLengths;
 
-    if (length > 0) {
-        *stringToFill = malloc(sizeof(char) * length + 1);
-        verifyPointer(app, *stringToFill, "Problem malloc *stringToFill in copyStringAfterFetchLength\n");
+    *stringToFill = malloc(length + 1);
+    verifyPointer(app, *stringToFill, "Problem malloc *stringToFill in copyStringAfterFetchLength\n");
 
-        stmtManager->buffersBind[index].buffer = *stringToFill;
-        stmtManager->buffersBind[index].buffer_length = length + 1;
-        mysql_stmt_fetch_column(stmtManager->stmt, &stmtManager->buffersBind[index], index, 0);
-        (*stringToFill)[length] = '\0';
-    }
+    stmtManager->buffersBind[index].buffer = *stringToFill;
+    stmtManager->buffersBind[index].buffer_length = length + 1;
+    mysql_stmt_fetch_column(stmtManager->stmt, &stmtManager->buffersBind[index], index, 0);
+    (*stringToFill)[length] = '\0';
+
 }
 //
 //int getLengthStringOfInt (int intNumber) {

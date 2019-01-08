@@ -234,7 +234,7 @@ void addFieldsToResult(App *app) {
         }
     }
 
-    freeResultStringTable(selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows - 1);
+    freeResultStringTable(&selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows - 1);
     selectQuery->listColumnsRows = inter;
 
     selectQuery->resultWithFieldsList = 1;
@@ -258,7 +258,7 @@ void removeFieldsInResult(App *app) {
         inter[i] = copyListString(app, selectQuery->listColumnsRows[i + 1], selectQuery->numberFields);
     }
 
-    freeResultStringTable(selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows + 1);
+    freeResultStringTable(&selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows + 1);
     selectQuery->listColumnsRows = inter;
 
     selectQuery->resultWithFieldsList = 0;
