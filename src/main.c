@@ -22,6 +22,9 @@ int main(int argc, char **argv) {
     int returnStat = NULL;
 
     // Start SDL
+    freopen("CON", "w", stdout);
+    freopen("CON", "r", stdin);
+    freopen("CON", "w", stderr);
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("Unable to init SDL: %s\n", SDL_GetError());
@@ -31,6 +34,30 @@ int main(int argc, char **argv) {
     loadApp(&app);
 
     returnStat = mainEventLoop(&app);
+
+    /* process for prepared query select*/
+    char *tables2[100] = {"box", "list"};
+    int numberTables = 2;
+    char *paramsValues2[100] = {"1", "1"};
+    char *preparedQuerySelect = "SELECT box.name, list.name FROM box, list WHERE box.id_box_parent = ? AND list.id_box = ? ORDER BY list.name";
+
+    setPreparedQuery(&app, preparedQuerySelect, tables2, numberTables);
+
+    setBindParams(&app, paramsValues2);
+
+    getPreparedSelectQuery(&app, preparedQuerySelect);
+
+    addFieldsToResult(&app);
+
+    showQueryResult(&app);
+
+    printf("\n");
+
+    removeFieldsInResult(&app);
+
+    showQueryResult(&app);
+
+    quitPreparedSelectQuery(&app);
 
     quitApp(&app);
 

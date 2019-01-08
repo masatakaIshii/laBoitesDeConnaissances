@@ -1,5 +1,5 @@
 /*
-** Filename : mysqlShow.c
+** Filename : mysqlShow.h
 **
 ** Made by  : Masataka ISHII
 **
@@ -14,5 +14,5 @@
 void showQueryResult(App *app);
 int *getMaxLengthOfEachFields(App *app, char ***resultQuery, int numberFields, int numberRows);
 void showAppropriateQueryResult(SelectQuery *selectQuery, int *maxLengthsFields, int numberFields, int numberRows);
-
+void showLign(SelectQuery *selectQuery, int *maxLengthsFields, int numberFields);
 #endif // MYSQL_SHOW_FUNCTIONS

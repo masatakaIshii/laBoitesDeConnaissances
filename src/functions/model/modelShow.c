@@ -56,7 +56,10 @@ void showAppropriateQueryResult(SelectQuery *selectQuery, int *maxLengthsFields,
     int diffLength;
     int i, j, k;
 
+    showLign(selectQuery, maxLengthsFields, numberFields);
+
     for (i = 0; i < numberRows; i++) {
+
         printf("|");
         for (j = 0; j < numberFields; j++) {
             printf(" %s ", selectQuery->listColumnsRows[i][j]);
@@ -67,13 +70,20 @@ void showAppropriateQueryResult(SelectQuery *selectQuery, int *maxLengthsFields,
             printf("|");
         }
         printf("\n");
-
-        for (j = 0; j < numberFields; j++) {
-            for (k = 0; k < maxLengthsFields[j]; k++) {
-                printf("_");
-            }
-            printf("___");
-        }
-        printf("\n");
+        showLign(selectQuery, maxLengthsFields, numberFields);
     }
+}
+
+void showLign(SelectQuery *selectQuery, int *maxLengthsFields, int numberFields) {
+
+    int i;
+    int j;
+
+    for (i = 0; i < numberFields; i++) {
+        for (j = 0; j < maxLengthsFields[i]; j++) {
+            printf("_");
+        }
+        printf("___");
+    }
+    printf("\n");
 }
