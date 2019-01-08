@@ -6,8 +6,8 @@
 #include <mysql.h>
 #include "../headers/common.h"
 #include "../headers/play.h"
-#include "../headers/model/modelInit.h"
-#include "../headers/model/modelQuit.h"
+#include "../headers/model/modelHelper/modelInit.h"
+#include "../headers/model/modelHelper/modelQuit.h"
 
 int mainEventLoop(App *app) {
     SDL_Event event;
@@ -94,7 +94,7 @@ int inRect(SDL_Rect rect, int clicX, int clicY){
     return 0;
 }
 
-void verifyPointer(App *app, void *pointer, char *message) {
+void verifyPointer(App *app, void *pointer, const char *message) {
 
     if (!pointer) {
         // On ferme la SDL et on sort du programme

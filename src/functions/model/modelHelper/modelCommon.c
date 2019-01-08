@@ -5,8 +5,8 @@
 **
 ** Description  : common functions used API C MySQL
 */
-#include "../../headers/model/modelCommon.h"
-#include "../../headers/struct.h"
+
+#include "../../../headers/model/modelHelper/modelCommon.h"
 
 void verifyMYSQLIntResult(App *app, int result) {
     if (result != 0) {
@@ -19,6 +19,15 @@ void verifyMYSQLIntResult(App *app, int result) {
 void verifyPointerForQueryStmt(App *app, MySqlStmtManager *stmtManager, void *pointer, const char *message) {
     if (pointer == NULL) {
         printf("%s", message);
+        quitApp(app);
+        exit(EXIT_FAILURE);
+    }
+}
+
+void verifyStmtIntResult(App *app, MySqlStmtManager *stmtManager, char *message, int result) {
+    if (result != 0) {
+        printf("%s\n", message);
+        printf("Error[MYSQL_STMT] : %s\n", mysql_stmt_error(stmtManager->stmt));
         quitApp(app);
         exit(EXIT_FAILURE);
     }
@@ -119,4 +128,38 @@ char ***mallocStringTable(unsigned int numberRows,unsigned int numberFields) {
     }
 
     return stringTable;
+}
+
+
+char **copyListFields(App *app, Varchar *listFields, unsigned int numberFields) {
+    char **copyList;
+    int i;
+
+    copyList = malloc(sizeof(char *) * numberFields);
+    verifyPointer(app, copyList, "Problem malloc in copyList in function copyListFields\n");
+
+    for (i = 0; i < numberFields; i++) {
+        copyList[i] = malloc(sizeof(char) * (strlen(listFields[i]) + 1));
+        verifyPointer(app, copyList[i], "Problem malloc in copyList[i], in function copyListFields\n");
+        strcpy(copyList[i], (listFields[i] == NULL) ? "" : listFields[i]);
+    }
+
+    return copyList;
+}
+
+char **copyListString(App *app, char **listString, unsigned int numberFields) {
+    char **copyList;
+    int i;
+
+    copyList = malloc(sizeof(char*) * numberFields);
+    verifyPointer(app, copyList, "Problem malloc in copyList in the function copyListString\n");
+
+    for (i = 0; i < numberFields; i++) {
+
+        copyList[i] = malloc(sizeof(char) * (strlen(listString[i]) + 1));
+        verifyPointer(app, copyList[i], "Problem malloc in copyList[i] in the function copyListString\n");
+        strcpy(copyList[i], (listString[i] == NULL) ? "" : listString[i]);
+    }
+
+    return copyList;
 }

@@ -6,12 +6,13 @@
 ** Description  : functions to free all memory allocation concern to MYSQL API
 */
 
-#include "../../headers/model/modelQuit.h"
+#include "../../../headers/model/modelHelper/modelQuit.h"
 
 void freeSelectQuery(App *app) {
     SelectQuery *selectQuery = &app->model.query.selectQuery;
+
     if (selectQuery != NULL) {
-        freeResultStringTable(selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows);
+        freeResultStringTable(&selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows);
         selectQuery->listColumnsRows = NULL;
         freeListString(&selectQuery->listFields);
         selectQuery->listFields = NULL;
@@ -39,7 +40,7 @@ void freeListString(Varchar **fieldsList) {
 *@param numberFields : number of field of table
 *@param numberRows : number of rows of table
 */
-void freeResultStringTable(char ***stringTable, unsigned int numberFields, unsigned int numberRows) {
+void freeResultStringTable(char ****stringTable, unsigned int numberFields, unsigned int numberRows) {
     int i;
     int j;
 
@@ -47,11 +48,11 @@ void freeResultStringTable(char ***stringTable, unsigned int numberFields, unsig
         for (i = 0; i < numberRows; i++) {
 
             for (j = 0; j < numberFields; j++) {
-                free(stringTable[i][j]);
+                free((*stringTable)[i][j]);
             }
-            free(stringTable[i]);
+            free((*stringTable)[i]);
         }
-        free(stringTable);
+        free(*stringTable);
     }
 }
 
@@ -90,7 +91,7 @@ void quitModel(Model *model) {
 
     if (model->tables != NULL) {
         freeStructTableMysql(model);
-        //remove(numberNamesStructTables);
+        remove("numberNamesStructTables");
     }
 
     if (model->ifMysqlIsInit != 0) {
@@ -100,20 +101,47 @@ void quitModel(Model *model) {
 
 }
 
+void quitPreparedIUD(App *app) {
+    MySqlStmtManager *stmtManager = &app->model.query.stmtManager;
+
+    quitStmtManager(stmtManager);
+}
+
+void quitPreparedSelectQuery(App *app) {
+
+    SelectQuery *selectQuery        = &app->model.query.selectQuery;
+    MySqlStmtManager *stmtManager   = &app->model.query.stmtManager;
+
+    quitStmtManager(stmtManager);
+    quitSelectQuery(selectQuery);
+}
+
 void quitSelectQuery(SelectQuery *selectQuery) {
 
-    unsigned int numberRows = 0;
-    unsigned int numberFields = 0;
+    unsigned int numberRows     = 0;
+    unsigned int numberFields   = 0;
 
     if (selectQuery->listColumnsRows != NULL) {
+
         numberRows = selectQuery->numberRows;
         numberFields = selectQuery->numberFields;
-        freeResultStringTable(selectQuery->listColumnsRows, numberFields, numberRows);
+
+        freeResultStringTable(&selectQuery->listColumnsRows, numberFields, numberRows);
+
+        selectQuery->listColumnsRows = NULL;
+    }
+
+    if (selectQuery->resultWithFieldsList != 0){
         if (selectQuery->listFields != NULL) {
             freeListString(&selectQuery->listFields);
         }
+        if (selectQuery->result != NULL) {
+            mysql_free_result(selectQuery->result);
+            selectQuery->result = NULL;
+        }
         selectQuery->resultWithFieldsList = 0;
     }
+
 }
 
 /**
@@ -132,6 +160,7 @@ void quitStmtManager(MySqlStmtManager *stmtManager) {
     }
     if (stmtManager->numberParams != 0) {
         quitStmtParams(stmtManager);
+        quitStmtBind(stmtManager);
         stmtManager->numberParams = 0;
     }
     if (stmtManager->numberTables != 0) {
@@ -149,16 +178,39 @@ void quitStmtParams(MySqlStmtManager *stmtManager) {
     if (stmtManager->paramsNames != NULL) {
         free(stmtManager->paramsNames);
     }
+
     if (stmtManager->params != NULL) {
+
         for (i = 0; i < stmtManager->numberParams; i++) {
             type = stmtManager->buffersBind[i].buffer_type;
-            if (type == MYSQL_TYPE_STRING || type == MYSQL_TYPE_VAR_STRING || type == MYSQL_TYPE_BLOB) {
+            if ((type == MYSQL_TYPE_STRING || type == MYSQL_TYPE_VAR_STRING || type == MYSQL_TYPE_BLOB) && stmtManager->BindInOut == BIND_INPUT) {
                 free(stmtManager->params[i].paramsString);
             }
         }
         free(stmtManager->params);
+        stmtManager->params = NULL;
     }
+}
+
+void quitStmtBind(MySqlStmtManager *stmtManager) {
+
     if (stmtManager->buffersBind != NULL) {
         free(stmtManager->buffersBind);
+        stmtManager->buffersBind = NULL;
     }
+}
+
+void quitInsertParamFinder(InsertParamFinder *paramFinder) {
+
+    if (paramFinder->indexsOfQParenthesis != NULL) {
+        free(paramFinder->indexsOfQParenthesis);
+    }
+    if (paramFinder->listContentParenthesis != NULL) {
+        free(paramFinder->listContentParenthesis);
+    }
+    if (paramFinder->listFieldsParenthesis != NULL) {
+        free(paramFinder->listFieldsParenthesis);
+    }
+    paramFinder->listBeforeWordValues = 0;
+    paramFinder->numberFields = 0;
 }

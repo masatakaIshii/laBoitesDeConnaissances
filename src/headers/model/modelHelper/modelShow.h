@@ -1,5 +1,5 @@
 /*
-** Filename : mysqlShow.c
+** Filename : mysqlShow.h
 **
 ** Made by  : Masataka ISHII
 **
@@ -7,13 +7,12 @@
 */
 
 #ifndef MYSQL_SHOW_FUNCTIONS
-#include "../common.h"
+#include "../../common.h"
 #include "modelCommon.h"
 #include "modelQuit.h"
 
 void showQueryResult(App *app);
 int *getMaxLengthOfEachFields(App *app, char ***resultQuery, int numberFields, int numberRows);
-void copyListQuerySelect(App *app, char ****resultQuery,SelectQuery *selectQuery);
-void addSpaceToGetSameLengthPerField(App *app, char ****resultQuery, int numberFields, int numberRows, int *maxLengthsFields);
-char *getSpaces(int numberSpace);
+void showAppropriateQueryResult(SelectQuery *selectQuery, int *maxLengthsFields, int numberFields, int numberRows);
+void showLign(SelectQuery *selectQuery, int *maxLengthsFields, int numberFields);
 #endif // MYSQL_SHOW_FUNCTIONS

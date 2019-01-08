@@ -5,8 +5,7 @@
 **
 ** Description  : insert, update and delete functions used API C MySQL for select data in database
 */
-#include "../../headers/model/modelIUD.h"
-#include "../../headers/model/modelInit.h"
+#include "../../../headers/model/modelHelper/modelIUD.h"
 
 /**
 *@brief to send simple INSERT, UPDATE or DELETE query
@@ -26,10 +25,14 @@ int queryIUD(App *app, const char *currentQuery) {
     return affectedRows;
 }
 
-
+/**
+*@brief for execute query IUD and check affected row
+*
+*@param (App *) app - structure of application
+*@param (const char *) currentQuery - string of query
+*/
 int sendPreparedQueryIUD(App *app, const char *currentQuery) {
     int affectedRow = 0;
-    int i;
 
     MySqlStmtManager *stmtManager = &app->model.query.stmtManager;
 
@@ -42,7 +45,7 @@ int sendPreparedQueryIUD(App *app, const char *currentQuery) {
     }
 
     if (mysql_stmt_execute(stmtManager->stmt)) {
-        printf("Error[MYSQL] : %s\n", mysql_stmt_error(stmtManager->stmt));
+        printf("Error[MYSQL] in mysql_stmt_execute : %s\n", mysql_stmt_error(stmtManager->stmt));
         quitApp(app);
         exit(EXIT_FAILURE);
     }

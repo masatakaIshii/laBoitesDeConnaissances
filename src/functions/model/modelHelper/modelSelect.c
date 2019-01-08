@@ -5,7 +5,8 @@
 **
 ** Description  : select functions used API C MySQL for select data in database
 */
-#include "../../headers/model/modelSelect.h"
+#include "../../../headers/model/modelHelper/modelSelect.h"
+/* --Select Query-- */
 /**
 *@brief To connect to the database and get result of select query
 *
@@ -29,19 +30,18 @@ void getSelectQuery (App *app, const char *currentQuery) {
     selectQuery->result = mysql_store_result(app->model.mysql);
     verifyPointer(app, selectQuery->result, mysql_error(app->model.mysql));
 
-
     //get number of fields and row in result of query
     selectQuery->numberFields = mysql_num_fields(selectQuery->result);
     selectQuery->numberRows = mysql_num_rows(selectQuery->result);
 
-    fetchFieldsOfQuerySelect(app, selectQuery);
+    fetchFieldsOfQuerySelect(app, selectQuery, NULL);
 
     fetchQuerySelect(app, selectQuery);
 
     mysql_free_result(selectQuery->result);
 }
 
-void fetchFieldsOfQuerySelect(App *app, SelectQuery *selectQuery) {
+void fetchFieldsOfQuerySelect(App *app, SelectQuery *selectQuery, int **listFieldsTypes) {
 
     int i;
     short moreThanOneTable = 0;
@@ -49,12 +49,14 @@ void fetchFieldsOfQuerySelect(App *app, SelectQuery *selectQuery) {
     MYSQL_FIELD *fields = mysql_fetch_fields(selectQuery->result);
 
     selectQuery->listFields = malloc(sizeof(Varchar) * selectQuery->numberFields);
+    if (listFieldsTypes != NULL) {
+        (*listFieldsTypes) = malloc(sizeof(int) * selectQuery->numberFields);
+    }
 
-    verifyPointer(app, selectQuery->listFields, "Problem memory allocation at selectQuery->listFieldss");
+    verifyPointer(app, selectQuery->listFields, "Problem memory allocation at selectQuery->listFields");
 
     moreThanOneTable = checkIfQueryConcernMoreThan1Table(fields, selectQuery->numberFields);
 
-    //printf("\nfetchFieldsOfQuerySelect\n");
     for (i = 0; i < selectQuery->numberFields; i++) {
 
         if (moreThanOneTable) {
@@ -62,15 +64,22 @@ void fetchFieldsOfQuerySelect(App *app, SelectQuery *selectQuery) {
             strcat(temp, ".");
             //selectQuery->listFields[i] = malloc(sizeof(char) * (strlen(fields[i].name) + strlen(fields[i].name) + 1));
             strcpy(selectQuery->listFields[i], strcat(temp, fields[i].name));
-            printf("selectQuery->listFields[%d] : %s\n", i, selectQuery->listFields[i]);
+
         } else {
             //selectQuery->listFields[i] = malloc(sizeof(char) * (strlen(fields[i].name) + 1));
             strcpy(selectQuery->listFields[i], fields[i].name);
-            printf("selectQuery->listFields[%d] : %s\n", i, selectQuery->listFields[i]);
+        }
+        if (listFieldsTypes != NULL) {
+            (*listFieldsTypes)[i] = fields[i].type;
         }
     }
 }
-
+/**
+*@brief Check if all fields have "table.field" form
+*
+*@param (MYSQL_FIELD *)fields - all fields infos of result of select query
+*@param (int) numberFields - number fields of the result of select query
+*/
 short checkIfQueryConcernMoreThan1Table(MYSQL_FIELD *fields, int numberFields) {
     int i;
     char table[100];
@@ -115,7 +124,6 @@ void fetchQuerySelect(App *app, SelectQuery *selectQuery) {
 
         fetchOneRowQuerySelect(app, selectQuery, lengths, row, i);
 
-        printf("\n");
         i++;
     }
 }
@@ -132,6 +140,74 @@ void fetchOneRowQuerySelect(App *app, SelectQuery *selectQuery, unsigned long *l
         selectQuery->listColumnsRows[i][j] = malloc(sizeof(char) * (lengths[j] + 1));
         verifyPointer(app, selectQuery->listColumnsRows[i][j], "problem of allocation memory selectQuery->listColumnsRows[i][j]");
         sprintf(selectQuery->listColumnsRows[i][j],(row[j] != NULL)?row[j]:"");
+    }
+}
+
+
+/* --Prepared Select Query-- */
+
+void getPreparedSelectQuery(App *app, const char *currentQuery) {
+
+    SelectQuery *selectQuery = &app->model.query.selectQuery;
+    MySqlStmtManager *stmtManager = &app->model.query.stmtManager;
+
+    executeBindInputAndGetResult(app, stmtManager, selectQuery);
+
+    if (stmtManager->params != NULL) {
+        quitStmtParams(stmtManager);
+    } else {
+        printf("Error : the prepared query have to bind the parameter before to get result.\n");
+        quitApp(app);
+        exit(EXIT_FAILURE);
+    }
+
+    fetchFieldsSelectQueryPrepared(app, stmtManager, selectQuery);
+
+    bindSelectQueryPrepared(app, stmtManager, selectQuery);
+
+    fetchStmtToFillSelectQuery(app, stmtManager, selectQuery);
+
+    /**
+    *@todo : -fill the selectQuery list number row and listColumnsRows
+    */
+    mysql_stmt_free_result(stmtManager->stmt);
+}
+
+void executeBindInputAndGetResult(App *app, MySqlStmtManager *stmtManager, SelectQuery *selectQuery) {
+    int check = 0;
+
+    check = mysql_stmt_execute(stmtManager->stmt);
+    verifyMYSQLIntResult(app, check);
+
+    selectQuery->result = mysql_stmt_result_metadata(stmtManager->stmt);
+    verifyPointer(app, selectQuery->result, mysql_stmt_error(stmtManager->stmt));
+}
+
+void fetchFieldsSelectQueryPrepared(App *app, MySqlStmtManager *stmtManager, SelectQuery *selectQuery) {
+    int *listFieldsTypes;
+
+    //printf("stmtManager->stmt.fields[0].table : %s\n", stmtManager->stmt->fields[0].table);
+
+    selectQuery->numberFields = mysql_stmt_field_count(stmtManager->stmt);
+
+    selectQuery->numberRows = mysql_stmt_num_rows(stmtManager->stmt);
+
+    fetchFieldsOfQuerySelect(app, selectQuery, &listFieldsTypes);
+
+    initBufferTypeAndPutFieldsTypes(app, &stmtManager->buffersBind, selectQuery->numberFields, listFieldsTypes);
+
+    free(listFieldsTypes);
+}
+
+void initBufferTypeAndPutFieldsTypes(App *app, MYSQL_BIND **bufferBind, unsigned int numberFields, int *listFieldsTypes) {
+    int i;
+
+    (*bufferBind) = malloc(sizeof(MYSQL_BIND) * numberFields);
+    verifyPointer(app, (*bufferBind), "Problem malloc (*bufferBind) in initBufferTypeAndPutFieldsTypes\n");
+
+    memset(*bufferBind, 0, sizeof(*bufferBind[0]));
+    for (i = 0; i < numberFields; i++) {
+        (*bufferBind)[i].buffer_type = listFieldsTypes[i];
     }
 }
 
@@ -158,7 +234,7 @@ void addFieldsToResult(App *app) {
         }
     }
 
-    freeResultStringTable(selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows - 1);
+    freeResultStringTable(&selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows - 1);
     selectQuery->listColumnsRows = inter;
 
     selectQuery->resultWithFieldsList = 1;
@@ -182,43 +258,11 @@ void removeFieldsInResult(App *app) {
         inter[i] = copyListString(app, selectQuery->listColumnsRows[i + 1], selectQuery->numberFields);
     }
 
-    freeResultStringTable(selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows + 1);
+    freeResultStringTable(&selectQuery->listColumnsRows, selectQuery->numberFields, selectQuery->numberRows + 1);
     selectQuery->listColumnsRows = inter;
 
     selectQuery->resultWithFieldsList = 0;
 }
 
-char **copyListFields(App *app, Varchar *listFields, unsigned int numberFields) {
-    char **copyList;
-    int i;
-
-    copyList = malloc(sizeof(char *) * numberFields);
-    verifyPointer(app, copyList, "Problem malloc in copyList in function copyListFields\n");
-
-    for (i = 0; i < numberFields; i++) {
-        copyList[i] = malloc(sizeof(char) * (strlen(listFields[i]) + 1));
-        verifyPointer(app, copyList[i], "Problem malloc in copyList[i], in function copyListFields\n");
-        strcpy(copyList[i], (listFields[i] == NULL) ? "" : listFields[i]);
-    }
-
-    return copyList;
-}
-
-char **copyListString(App *app, char **listString, unsigned int numberFields) {
-    char **copyList;
-    int i;
-
-    copyList = malloc(sizeof(char*) * numberFields);
-    verifyPointer(app, copyList, "Problem malloc in copyList in the function copyListString\n");
-
-    for (i = 0; i < numberFields; i++) {
-
-        copyList[i] = malloc(sizeof(char) * (strlen(listString[i]) + 1));
-        verifyPointer(app, copyList[i], "Problem malloc in copyList[i] in the function copyListString\n");
-        strcpy(copyList[i], (listString[i] == NULL) ? "" : listString[i]);
-    }
-
-    return copyList;
-}
 
 //TODO : prepared query select

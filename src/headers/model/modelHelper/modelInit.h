@@ -7,8 +7,8 @@
 */
 
 #ifndef MODEL_INIT_FUNCTIONS
-#include "../struct.h"
-#include "../common.h"
+#include "../../struct.h"
+#include "../../common.h"
 #include "modelCommon.h"
 
 void dbConnect(App *app);
@@ -25,4 +25,5 @@ void readAndGetNumberAndNamesAndStructTables(App *app, Model *model);
 void readAndGetStructTables(App *app, Model *model, FILE *fp);
 
 void stmtInitialisation(App *app, MySqlStmtManager *stmtManager);
+void initInsertParamFinder(InsertParamFinder *paramFinder);
 #endif // MODEL_INIT_FUNCTIONS
