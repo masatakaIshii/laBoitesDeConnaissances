@@ -5,7 +5,7 @@
 **
 ** Description  : select functions used API C MySQL for select data in database
 */
-#include "../../headers/model/modelSelect.h"
+#include "../../../headers/model/modelHelper/modelSelect.h"
 /* --Select Query-- */
 /**
 *@brief To connect to the database and get result of select query

@@ -5,8 +5,8 @@
 **
 ** Description  : common functions used API C MySQL
 */
-#include "../../headers/model/modelCommon.h"
-#include "../../headers/struct.h"
+
+#include "../../../headers/model/modelHelper/modelCommon.h"
 
 void verifyMYSQLIntResult(App *app, int result) {
     if (result != 0) {

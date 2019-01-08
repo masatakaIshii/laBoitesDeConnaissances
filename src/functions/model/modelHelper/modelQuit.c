@@ -6,7 +6,7 @@
 ** Description  : functions to free all memory allocation concern to MYSQL API
 */
 
-#include "../../headers/model/modelQuit.h"
+#include "../../../headers/model/modelHelper/modelQuit.h"
 
 void freeSelectQuery(App *app) {
     SelectQuery *selectQuery = &app->model.query.selectQuery;

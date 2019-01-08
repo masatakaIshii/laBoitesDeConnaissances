@@ -6,8 +6,8 @@
 ** Description  : set stmtManager's structure functions that uses API C MySQL
 */
 #ifndef MODEL_STMT_MANAGER
-#include "../struct.h"
-#include "../common.h"
+#include "../../struct.h"
+#include "../../common.h"
 #include "modelCommon.h"
 #include "modelInit.h"
 #include "modelParamFinder.h"

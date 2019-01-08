@@ -7,7 +7,7 @@
 */
 
 #ifndef MODEL_FETCH_SELECT_HELPER
-#include "../struct.h"
+#include "../../struct.h"
 #include "modelCommon.h"
 
 void fetchStmtToFillSelectQuery(App *app, MySqlStmtManager *stmtManager, SelectQuery *selectQuery);

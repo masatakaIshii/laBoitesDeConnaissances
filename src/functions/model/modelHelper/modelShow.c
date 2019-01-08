@@ -7,8 +7,7 @@
 */
 #include <stdio.h>
 #include <string.h>
-#include "../../headers/model/modelShow.h"
-#include "../../headers/model/modelSelect.h"
+#include "../../../headers/model/modelHelper/modelShow.h"
 
 #define MAX_CURRENT_VALUE 1000
 

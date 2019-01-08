@@ -6,7 +6,7 @@
 ** Description  : init and load functions that uses API C MySQL
 */
 
-#include "../../headers/model/modelInit.h"
+#include "../../../headers/model/modelHelper/modelInit.h"
 
 void dbConnect(App *app) {
 

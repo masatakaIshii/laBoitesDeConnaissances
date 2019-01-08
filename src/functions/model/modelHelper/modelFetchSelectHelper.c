@@ -6,7 +6,7 @@
 ** Description  : functions to fetch query and fill structure of SelectQuery
 */
 
-#include "../../headers/model/modelFetchSelectHelper.h"
+#include "../../../headers/model/modelHelper/modelFetchSelectHelper.h"
 
 void fetchStmtToFillSelectQuery(App *app, MySqlStmtManager *stmtManager, SelectQuery *selectQuery){
 

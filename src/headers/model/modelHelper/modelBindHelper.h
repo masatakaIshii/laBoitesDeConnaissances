@@ -7,10 +7,11 @@
 */
 
 #ifndef MYSQL_BINDHELPER_FUNCTIONS
-#include "../struct.h"
-#include "../common.h"
-#include "modelCommon.h"
+
+#include "../../struct.h"
+#include "../../common.h"
 #include "modelQuit.h"
+#include "modelCommon.h"
 
 void setBindParams(App *app, char **paramsValues);
 

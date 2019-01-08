@@ -7,8 +7,8 @@
 */
 
 #ifndef MYSQL_COMMON_FUNCTIONS
-#include "../struct.h"
-#include "../common.h"
+#include "../../struct.h"
+#include "../../common.h"
 #include "modelQuit.h"
 
 void verifyMYSQLIntResult(App *app, int result);

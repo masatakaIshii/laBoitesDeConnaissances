@@ -5,8 +5,7 @@
 **
 ** Description  : functions to get fields names of parameters of query
 */
-#include "../../headers/model/modelParamFinder.h"
-
+#include "../../../headers/model/modelHelper/modelParamFinder.h"
 
 void getParamsNames(App *app, MySqlStmtManager *stmtManager, char *query, int numberParams) {
 

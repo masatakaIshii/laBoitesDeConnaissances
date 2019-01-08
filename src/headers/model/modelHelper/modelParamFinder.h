@@ -7,8 +7,8 @@
 */
 
 #ifndef MODEL_PARAM_FINDER
-#include "../struct.h"
-#include "../common.h"
+#include "../../struct.h"
+#include "../../common.h"
 #include "modelCommon.h"
 #include "modelInit.h"
 #include "modelQuit.h"

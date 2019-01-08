@@ -5,8 +5,7 @@
 **
 ** Description  : insert, update and delete functions used API C MySQL for select data in database
 */
-#include "../../headers/model/modelIUD.h"
-#include "../../headers/model/modelInit.h"
+#include "../../../headers/model/modelHelper/modelIUD.h"
 
 /**
 *@brief to send simple INSERT, UPDATE or DELETE query

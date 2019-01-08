@@ -7,8 +7,8 @@
 */
 
 #ifndef MODEL_INIT_FUNCTIONS
-#include "../struct.h"
-#include "../common.h"
+#include "../../struct.h"
+#include "../../common.h"
 #include "modelCommon.h"
 
 void dbConnect(App *app);

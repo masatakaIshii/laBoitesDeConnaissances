@@ -6,7 +6,7 @@
 ** Description  : functions to free all memory allocation concern to MYSQL API
 */
 #ifndef MYSQL_QUIT_FUNCTIONS
-#include "../struct.h"
+#include "../../struct.h"
 
 void freeSelectQuery(App *app);
 void freeResultStringTable(char ****stringTable, unsigned int numberFields, unsigned int numberRows);

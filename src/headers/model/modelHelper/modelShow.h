@@ -7,7 +7,7 @@
 */
 
 #ifndef MYSQL_SHOW_FUNCTIONS
-#include "../common.h"
+#include "../../common.h"
 #include "modelCommon.h"
 #include "modelQuit.h"
 

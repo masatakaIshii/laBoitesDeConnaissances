@@ -6,7 +6,7 @@
 ** Description  : functions used API C MySQL for bind input and output prepared queries
 */
 
-#include "../../headers/model/modelBindHelper.h"
+#include "../../../headers/model/modelHelper/modelBindHelper.h"
 
 void setBindParams(App *app, char **paramsValues) {
     int                 result = 0;

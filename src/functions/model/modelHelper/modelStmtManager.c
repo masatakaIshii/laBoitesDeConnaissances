@@ -6,7 +6,7 @@
 ** Description  : set stmtManager's structure functions that uses API C MySQL
 */
 
-#include "../../headers/model/modelStmtManager.h"
+#include "../../../headers/model/modelHelper/modelStmtManager.h"
 /**
 *@brief setPreparedQuery : for fill the structure stmtManager with the exception of *bufferBind
 *

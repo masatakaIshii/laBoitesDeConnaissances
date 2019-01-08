@@ -7,7 +7,7 @@
 */
 #ifndef MYSQL_SELECT_FUNCTIONS
 #include "modelCommon.h"
-#include "../struct.h"
+#include "../../struct.h"
 #include "modelFetchSelectHelper.h"
 
 void getSelectQuery (App *app, const char *currentQuery);

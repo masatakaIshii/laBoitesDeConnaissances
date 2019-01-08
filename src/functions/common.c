@@ -6,8 +6,8 @@
 #include <mysql.h>
 #include "../headers/common.h"
 #include "../headers/play.h"
-#include "../headers/model/modelInit.h"
-#include "../headers/model/modelQuit.h"
+#include "../headers/model/modelHelper/modelInit.h"
+#include "../headers/model/modelHelper/modelQuit.h"
 
 int mainEventLoop(App *app) {
     SDL_Event event;
