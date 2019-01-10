@@ -4,10 +4,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <winsock2.h>
 #include <mysql.h>
+
 #define WINDOW_POS_X    200
 #define WINDOW_POS_Y    100
+#define SCREEN_FORMAT   1.95
 #define MAX_VARCHAR 255
 #define MAX_TEXT 1000
 #define free(ptr) free(ptr), ptr=NULL
@@ -34,11 +37,11 @@ typedef struct Config {
 typedef char Varchar[MAX_VARCHAR];
 typedef char Text[MAX_TEXT];
 /**
-*@struct MySqlTable : pour avoir les informations d'une table, nécessaire lors d'une requête préparée
-*@var (char) tableName : le nom de la table dans une base de données
+*@struct MySqlTable : pour avoir les informations d'une table, nï¿½cessaire lors d'une requï¿½te prï¿½parï¿½e
+*@var (char) tableName : le nom de la table dans une base de donnï¿½es
 *@var (char **) listFieldsNames : la liste des champs de la table
 *@var (int) numberField : le nombre de champs de la table
-*@var (unsigned int *) listFieldsTypes : la liste des type MYSQL_TYPE_ correspondant chaque index au nom du champ concerné
+*@var (unsigned int *) listFieldsTypes : la liste des type MYSQL_TYPE_ correspondant chaque index au nom du champ concernï¿½
 */
 typedef struct MySqlTable {
     Varchar         tableName;
@@ -74,7 +77,7 @@ typedef struct MySqlStmtManager {
     BindType        BindInOut;
 } MySqlStmtManager;
 
-// Concernant les requêtes préparées
+// Concernant les requï¿½tes prï¿½parï¿½es
 /**
 *@struct SelectQuery : to get informations of select query
 *

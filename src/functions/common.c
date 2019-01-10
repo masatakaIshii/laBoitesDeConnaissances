@@ -1,15 +1,35 @@
+/*
+** Filename : common.c
+**
+** Made by  : Baptiste LEGO
+**
+** Description  : common functions used in App
+*/
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <mysql.h>
 #include "../headers/common.h"
-#include "../headers/play.h"
+#include "../headers/play/box.h"
 #include "../headers/model/modelHelper/modelInit.h"
 #include "../headers/model/modelHelper/modelQuit.h"
 
+/*
+*
+* Pour utiliser inRect():
+*
+* displayMenu() doit agir sur un tableau de structure SDL_Rect avec toutes les zones clicables dedans
+* check la position avec inRect() grace a ce tableau
+*
+*/
+
+
+
 int mainEventLoop(App *app) {
+    SDL_Rect buttons[2];
     SDL_Event event;
     int done = 0;
 
@@ -37,34 +57,49 @@ int mainEventLoop(App *app) {
                 if (event.key.keysym.scancode == SDL_SCANCODE_2)
                     // Fonction CREATE
             break;
+
+            case SDL_MOUSEBUTTONDOWN:
+                if(event.button.button == SDL_BUTTON_LEFT){
+                    // MODE PLAY
+                    if(inRect(buttons[0] , event.button.x, event.button.y))
+                        playMode(app);
+                    // MODE CREATE
+                    else if(inRect(buttons[1] , event.button.x, event.button.y))
+                        // Fonction CREATE
+                        playMode(app);
+                }
+            break;
         }
-        displayMenu(app);
+        displayMenu(app, buttons);
     }
 
-    return 2;
+    return EXIT_FAILURE;
 }
 
-void displayMenu(App *app) {
+void displayMenu(App *app, SDL_Rect *buttons) {
     // On set la couleur du fond d'ecran
     SDL_SetRenderDrawColor(app->renderer, app->colors.blue[0], app->colors.blue[1], app->colors.blue[2], app->colors.blue[3]);
     SDL_RenderClear(app->renderer);
+
     // On creer le boutton Play
-    createRect(app, app->config.width / 3, app->config.height / 1.5, app->config.width / 12, app->config.height / 4, app->colors.green);
+    buttons[0] = createRect(app, app->config.width / 3, app->config.height / 1.5, app->config.width / 12, app->config.height / 4, app->colors.green);
     // On creer le boutton Create
-    createRect(app, app->config.width / 3, app->config.height / 1.5, (app->config.width / 12) * 7, app->config.height / 4, app->colors.yellow);
+    buttons[1] = createRect(app, app->config.width / 3, app->config.height / 1.5, (app->config.width / 12) * 7, app->config.height / 4, app->colors.yellow);
+
     // Actualisation de l'ecran
     SDL_RenderPresent(app->renderer);
 }
 
 void resizeScreen(App *app, int height) {
     // On charge la nouvelle config
-    //loadConfig(&(app->config));
+    app->config.height = height;
+    app->config.width = height * SCREEN_FORMAT;
 
-    // On redimensionne la fenï¿½tre
+    // On redimensionne la fenetre
     SDL_SetWindowSize(app->screen, app->config.width, app->config.height);
 }
 
-void createRect(App *app, int width, int height, int x, int y, Uint8* color) {
+SDL_Rect createRect(App *app, int width, int height, int x, int y, Uint8* color) {
     // Definition du rectangle
     SDL_Rect rect;
     rect.x = x;
@@ -77,6 +112,8 @@ void createRect(App *app, int width, int height, int x, int y, Uint8* color) {
 
     // Creation du rectangle en couleur
     SDL_RenderFillRect(app->renderer, &rect);
+
+    return rect;
 }
 
 
@@ -104,7 +141,12 @@ void verifyPointer(App *app, void *pointer, const char *message) {
     }
 }
 
-void loadConfig(Config *config) {
+void loadDefaultConfig(Config *config){
+    config->height = 480;
+    config->width = config->height * SCREEN_FORMAT;
+}
+
+void loadConfigFile(Config *config) {
     char *ptr = NULL;
     char line[200];
     char param[200];
@@ -117,16 +159,18 @@ void loadConfig(Config *config) {
 
     while(fgets(line, 200, file) != NULL) {
         ptr = strchr(line, '=');
-        strcpy(value, ptr + 1);
-        strncpy(param, line, ptr - line);
-        param[ptr-line] = '\0';
+        if(ptr != NULL){
+            strcpy(value, ptr + 1);
+            strncpy(param, line, ptr - line);
+            param[ptr-line] = '\0';
 
-        if(strcmp(param, "windowHeight") == 0){
-            config->height = (int)strtol(value, NULL, 0);
-            config->width = config->height * 1.95; // Largeur intialise au format 16/9 suivant la hauteur
+            if(strcmp(param, "windowHeight") == 0){
+                config->height = (int)strtol(value, NULL, 0);
+                config->width = config->height * SCREEN_FORMAT; // Largeur intialise au format defini suivant la hauteur
+            }
+            //else if(strcmp(param, "color1") == 0)
+                // Set la couleur ici
         }
-        //else if(strcmp(param, "color1") == 0)
-            // Set la couleur ici
     }
 
     fclose(file);
@@ -152,7 +196,8 @@ void loadColors(Colors *colors) {
 void loadApp(App *app) {
     // On charge la config
     Config config;
-    loadConfig(&config);
+    loadDefaultConfig(&config); // Chargement d'une config par dÃ©faut si tout les parametres ne sont pas renseigner dans le fichier
+    loadConfigFile(&config); //Charge le
     app->config = config;
 
     // On creer la fenetre
@@ -173,7 +218,7 @@ void loadApp(App *app) {
     loadColors(&colors);
     app->colors = colors;
 
-    // Connexion à la base de données , initialisation et chargement
+    // Connexion ï¿½ la base de donnï¿½es , initialisation et chargement
 
     InitModel(&app->model);
 
@@ -185,6 +230,7 @@ void loadApp(App *app) {
 void quitApp(App *app){
     SDL_DestroyRenderer(app->renderer);
     SDL_DestroyWindow(app->screen);
+    //TTF_Quit();
     SDL_Quit();
 
     quitModel(&app->model);

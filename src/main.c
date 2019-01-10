@@ -1,6 +1,15 @@
+/*
+** Filename : main.c
+**
+** Made by  : Baptiste LEGO
+**
+** Description  : main function start and quit App
+*/
+
+#include <stdlib.h>
+#include <stdio.h>
 #include "headers/struct.h"
 #include "headers/common.h"
-#include "headers/play.h"
 #include "headers/model/modelHelper/modelCommon.h"
 #include "headers/model/modelHelper/modelQuit.h"
 #include "headers/model/modelHelper/modelSelect.h"
@@ -11,6 +20,7 @@
 #include "headers/model/modelHelper/modelBindHelper.h"
 #include "headers/model/modelHelper/modelParamFinder.h"
 #include "headers/model/modelHelper/modelFetchSelectHelper.h"
+#include "headers/play/box.h"
 
 int main(int argc, char **argv) {
 
@@ -20,15 +30,19 @@ int main(int argc, char **argv) {
 
     int returnStat = NULL;
 
-    // Start SDL
     freopen("CON", "w", stdout);
     freopen("CON", "r", stdin);
     freopen("CON", "w", stderr);
 
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+    // Start SDL
+    if(SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("Unable to init SDL: %s\n", SDL_GetError());
         return EXIT_FAILURE;
     }
+    /*if(TTF_Init() < 0) {
+        fprintf(stderr, "Unable to init SDL_ttf: %s\n", TTF_GetError());
+        return EXIT_FAILURE;
+    }*/
 
     loadApp(&app);
 

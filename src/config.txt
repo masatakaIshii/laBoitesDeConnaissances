@@ -1,1 +1,2 @@
-windowHeight=200
+windowHeight=480
+elementsInTheBox=30
