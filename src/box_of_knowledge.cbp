@@ -49,16 +49,34 @@
 		<Unit filename="functions/common.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="functions/model/modelCommon.c">
+		<Unit filename="functions/model/modelHelper/modelBindHelper.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="functions/model/modelIUD.c">
+		<Unit filename="functions/model/modelHelper/modelCommon.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="functions/model/modelSelect.c">
+		<Unit filename="functions/model/modelHelper/modelFetchSelectHelper.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="functions/model/modelShow.c">
+		<Unit filename="functions/model/modelHelper/modelIUD.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="functions/model/modelHelper/modelInit.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="functions/model/modelHelper/modelParamFinder.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="functions/model/modelHelper/modelQuit.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="functions/model/modelHelper/modelSelect.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="functions/model/modelHelper/modelShow.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="functions/model/modelHelper/modelStmtManager.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="functions/play/box.c">
@@ -68,10 +86,16 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="headers/common.h" />
-		<Unit filename="headers/model/modelCommon.h" />
-		<Unit filename="headers/model/modelIUD.h" />
-		<Unit filename="headers/model/modelSelect.h" />
-		<Unit filename="headers/model/modelShow.h" />
+		<Unit filename="headers/model/modelHelper/modelBindHelper.h" />
+		<Unit filename="headers/model/modelHelper/modelCommon.h" />
+		<Unit filename="headers/model/modelHelper/modelFetchSelectHelper.h" />
+		<Unit filename="headers/model/modelHelper/modelIUD.h" />
+		<Unit filename="headers/model/modelHelper/modelInit.h" />
+		<Unit filename="headers/model/modelHelper/modelParamFinder.h" />
+		<Unit filename="headers/model/modelHelper/modelQuit.h" />
+		<Unit filename="headers/model/modelHelper/modelSelect.h" />
+		<Unit filename="headers/model/modelHelper/modelShow.h" />
+		<Unit filename="headers/model/modelHelper/modelStmtManager.h" />
 		<Unit filename="headers/play/box.h" />
 		<Unit filename="headers/play/list.h" />
 		<Unit filename="headers/struct.h" />

@@ -14,32 +14,20 @@
 #include "../../headers/play/list.h"
 
 void listMenu(App *app, int page, int i){
-    SDL_Rect listButtons[24];
-
-    printf("Affichage de la boite %d\n", (i+page) + page*23);
+    int idList = (int)strtol(app->model.query.selectQuery.listColumnsRows[(i+page) + page*9][0], NULL, 0);
+    SDL_Rect *listButtons = NULL;
     SDL_Event event;
     int done = 0;
 
+    printf("Id de la boite: %d\n", idList);
+    // Getting data
+    // getList(idList);
+    // listbuttons = malloc()
+
     while (!done) {
         SDL_WaitEvent(&event);
+        commonEvents(app, event, &done);
         switch (event.type) {
-            // On quitte le programme
-            case SDL_QUIT:
-                quitApp(app);
-                exit(EXIT_SUCCESS);
-            break;
-
-            case SDL_WINDOWEVENT:
-                if(event.window.event == SDL_WINDOWEVENT_RESIZED)
-                    resizeScreen(app, event.window.data2);
-            break;
-
-            case SDL_KEYDOWN:
-                if (event.key.keysym.sym == SDLK_ESCAPE) {
-                    done = 1; // On quitte la boucle et on retourne au menu principal
-                }
-            break;
-
             case SDL_MOUSEBUTTONDOWN:
                 if(event.button.button == SDL_BUTTON_LEFT){
                     // Affichage d'une liste
