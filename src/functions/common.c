@@ -26,8 +26,6 @@
 *
 */
 
-
-
 int mainEventLoop(App *app) {
     SDL_Rect buttons[2];
     SDL_Event event;
@@ -35,21 +33,9 @@ int mainEventLoop(App *app) {
 
     while (!done) {
         SDL_WaitEvent(&event);
+        commonEvents(app, event, &done);
         switch (event.type){
-            // Quitte le programme
-            case SDL_QUIT:
-                return EXIT_SUCCESS;
-
-            // Redimensionnement de la fenetre
-            case SDL_WINDOWEVENT:
-                if(event.window.event == SDL_WINDOWEVENT_RESIZED)
-                    resizeScreen(app, event.window.data2);
-            break;
-
             case SDL_KEYDOWN:
-                // Quitte le programme
-                if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-                    return EXIT_SUCCESS;
                 // MODE PLAY
                 if (event.key.keysym.scancode == SDL_SCANCODE_1)
                     playMode(app);
@@ -74,6 +60,22 @@ int mainEventLoop(App *app) {
     }
 
     return EXIT_FAILURE;
+}
+
+void commonEvents(App *app, SDL_Event event, int *done){
+    // Quitte le programme
+    if(event.type == SDL_QUIT){
+        quitApp(app);
+        exit(EXIT_SUCCESS);
+    }
+
+    // Retour
+    if(event.type == SDL_KEYDOWN && event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+        *done = 1;
+
+    // Redimensionnement de la fenetre
+    if(event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED)
+        resizeScreen(app, event.window.data2);
 }
 
 void displayMenu(App *app, SDL_Rect *buttons) {

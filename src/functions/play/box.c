@@ -12,45 +12,38 @@
 #include "../../headers/common.h"
 #include "../../headers/play/box.h"
 #include "../../headers/play/list.h"
+#include "../../headers/model/boxModel.h"
 
 void playMode(App *app){
+    // Variables
     SDL_Event event;
     SDL_Rect pageButtons[2];
-    SDL_Rect boxButtons[130];
+    SDL_Rect *boxButtons = NULL;
     int nbOfBox = 0;
-    int done = 0;
+    int nbTotalOfBox = 0;
     int page = 0;
+    int done = 0;
     int i = 0;
 
+    // Getting data
+    getBoxes(app);
+    nbTotalOfBox = app->model.query.selectQuery.numberRows;
+    boxButtons = malloc(nbTotalOfBox * sizeof(SDL_Rect));
+
+    // Event loop
     while (!done) {
         SDL_WaitEvent(&event);
+        commonEvents(app, event, &done);
         switch (event.type) {
-            // On quitte le programme
-            case SDL_QUIT:
-                quitApp(app);
-                exit(EXIT_SUCCESS);
-            break;
-
-            case SDL_WINDOWEVENT:
-                if(event.window.event == SDL_WINDOWEVENT_RESIZED)
-                    resizeScreen(app, event.window.data2);
-            break;
-
-            case SDL_KEYDOWN:
-                if (event.key.keysym.sym == SDLK_ESCAPE) {
-                    done = 1; // On quitte la boucle et on retourne au menu principal
-                }
-            break;
-
             case SDL_MOUSEBUTTONDOWN:
                 if(event.button.button == SDL_BUTTON_LEFT){
-                    // Changement de page
+                    // Change the page
                     if(inRect(pageButtons[0] , event.button.x, event.button.y))
                         page--;
                     else if(inRect(pageButtons[1] , event.button.x, event.button.y))
                         page++;
 
-                    // Affichage d'une boite
+                    // Display a box
                     for(i = 0; i < nbOfBox; i++){
                         if(inRect(boxButtons[i], event.button.x, event.button.y))
                             listMenu(app, page, i);
@@ -58,30 +51,29 @@ void playMode(App *app){
                 }
             break;
         }
-        // AFFICHAGE DE LA SIDEBAR DISPLAYSIDEBAR()
-        displayHomePlay(app, page, pageButtons, boxButtons, &nbOfBox);
+        displayHomePlay(app, page, pageButtons, boxButtons, &nbOfBox, nbTotalOfBox);
     }
+
+    free(boxButtons);
 }
 
-void displayHomePlay(App *app, int page, SDL_Rect *pageButtons, SDL_Rect *boxButtons, int *nbOfBox){
-    // Récuperer le nombre de boites et le nombre de listes par boite dans la bdd (count sur les listes + nom de la boite)
+void displayHomePlay(App *app, int page, SDL_Rect *pageButtons, SDL_Rect *boxButtons, int *nbOfBoxInPage, int nbTotalOfBox){
     SDL_Rect nullBtn = {0};
-    char box[130];
 
-    // On set la couleur du fond d'ecran
+    // Set background color
     SDL_SetRenderDrawColor(app->renderer, app->colors.blue[0], app->colors.blue[1], app->colors.blue[2], app->colors.blue[3]);
     SDL_RenderClear(app->renderer);
 
-    // Creation des boites
-    *nbOfBox = createBoxPage(app, boxButtons, box, sizeof(box), page);
+    // Creating boxes
+    *nbOfBoxInPage = createBoxPage(app, boxButtons, nbTotalOfBox, page);
 
-    // Conditions pour les boutons de pages
+    // Conditions for page buttons
     if(page != 0)
         pageButtons[0] = createRect(app, app->config.height / 12, app->config.height / 24, (app->config.width / 12) * 5, (app->config.height / 12) * 11, app->colors.green);
     else
         pageButtons[0] = nullBtn;
 
-    if(24 * (page+1) < sizeof(box))
+    if(10 * (page+1) < nbTotalOfBox)
         pageButtons[1] = createRect(app, app->config.height / 12, app->config.height / 24, (app->config.width / 12) * 6, (app->config.height / 12) * 11, app->colors.green);
     else
         pageButtons[1] = nullBtn;
@@ -89,15 +81,15 @@ void displayHomePlay(App *app, int page, SDL_Rect *pageButtons, SDL_Rect *boxBut
     SDL_RenderPresent(app->renderer);
 }
 
-int createBoxPage(App *app, SDL_Rect *buttons, char *box, int size, int page){
-    int x, y, i = 24 * page;
+int createBoxPage(App *app, SDL_Rect *buttons, int size, int page){
+    int x, y, i = 10 * page;
     int xBox = 0, yBox = 0;
 
-    for(x = 0; x < 4; x++){
-        for(y = 0; y < 6; y++){
-            xBox = ((app->config.height / 6) * y) + 10*y + app->config.width/5;
-            yBox = ((app->config.height / 6) * x) + 10*x + app->config.height/6;
-            buttons[i] = createRect(app, app->config.height / 6, app->config.height / 6, xBox, yBox, app->colors.green);
+    for(x = 0; x < 5; x++){
+        for(y = 0; y < 2; y++){
+            xBox = ((app->config.width / 3) * y) + 10*y + app->config.width/5;
+            yBox = ((app->config.height / 8) * x) + 10*x + app->config.height/6;
+            buttons[i] = createRect(app, app->config.height / 8, app->config.height / 8, xBox, yBox, app->colors.green);
             i++;
             if(i >= size)
                 break;
@@ -106,5 +98,5 @@ int createBoxPage(App *app, SDL_Rect *buttons, char *box, int size, int page){
             break;
     }
 
-    return i - 24 * page; // Retourne le nombre d'elements sur la page
+    return i - 10 * page; // Return number of elements printed
 }
