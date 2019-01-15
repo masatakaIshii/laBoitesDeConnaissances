@@ -16,7 +16,6 @@ void freeStructTableMysql(Model *model);
 void quitModel(Model *model);
 
 void quitPreparedIUD(App *app);
-void quitPreparedSelectQuery(App *app);
 
 void quitStmtManager(MySqlStmtManager *stmtManager);
 void quitStmtParams(MySqlStmtManager *stmtManager);

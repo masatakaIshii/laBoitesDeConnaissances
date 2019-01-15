@@ -16,8 +16,9 @@
 *@param (unsigned ind*) numberRows - pointer of number of rows
 *@return (char ***) resultQuery - columns and rows of selection of query
 */
-void getSelectQuery (App *app, const char *currentQuery) {
+SelectQuery getSelectQuery (App *app, const char *currentQuery) {
 
+    SelectQuery newSelectQuery;
     SelectQuery *selectQuery = &app->model.query.selectQuery;
     int checkResult = 0; // check if mysql_query is success => 0, or fail => =!0
 
@@ -28,6 +29,7 @@ void getSelectQuery (App *app, const char *currentQuery) {
     selectQuery->listFields = NULL;
 
     selectQuery->result = mysql_store_result(app->model.mysql);
+    selectQuery->mysqlResultBool = 1;
     verifyPointer(app, selectQuery->result, mysql_error(app->model.mysql));
 
     //get number of fields and row in result of query
@@ -39,6 +41,11 @@ void getSelectQuery (App *app, const char *currentQuery) {
     fetchQuerySelect(app, selectQuery);
 
     mysql_free_result(selectQuery->result);
+    selectQuery->mysqlResultBool = 1;
+    newSelectQuery = copySelectQuery(app, selectQuery);
+
+    quitSelectQuery(selectQuery);
+    return newSelectQuery;
 }
 
 void fetchFieldsOfQuerySelect(App *app, SelectQuery *selectQuery, int **listFieldsTypes) {
@@ -146,12 +153,13 @@ void fetchOneRowQuerySelect(App *app, SelectQuery *selectQuery, unsigned long *l
 
 /* --Prepared Select Query-- */
 
-void getPreparedSelectQuery(App *app, const char *currentQuery) {
+SelectQuery getPreparedSelectQuery(App *app, const char *currentQuery) {
 
     SelectQuery *selectQuery = &app->model.query.selectQuery;
     MySqlStmtManager *stmtManager = &app->model.query.stmtManager;
-
+    SelectQuery newSelectQuery;
     executeBindInputAndGetResult(app, stmtManager, selectQuery);
+
 
     if (stmtManager->params != NULL) {
         quitStmtParams(stmtManager);
@@ -167,10 +175,14 @@ void getPreparedSelectQuery(App *app, const char *currentQuery) {
 
     fetchStmtToFillSelectQuery(app, stmtManager, selectQuery);
 
-    /**
-    *@todo : -fill the selectQuery list number row and listColumnsRows
-    */
+    newSelectQuery = copySelectQuery(app, selectQuery);
+
     mysql_stmt_free_result(stmtManager->stmt);
+    selectQuery->mysqlResultBool = 0;
+
+    quitSelectQuery(selectQuery);
+
+    return newSelectQuery;
 }
 
 void executeBindInputAndGetResult(App *app, MySqlStmtManager *stmtManager, SelectQuery *selectQuery) {
@@ -180,7 +192,9 @@ void executeBindInputAndGetResult(App *app, MySqlStmtManager *stmtManager, Selec
     verifyMYSQLIntResult(app, check);
 
     selectQuery->result = mysql_stmt_result_metadata(stmtManager->stmt);
+    selectQuery->resultWithFieldsList=1;
     verifyPointer(app, selectQuery->result, mysql_stmt_error(stmtManager->stmt));
+
 }
 
 void fetchFieldsSelectQueryPrepared(App *app, MySqlStmtManager *stmtManager, SelectQuery *selectQuery) {
@@ -211,8 +225,8 @@ void initBufferTypeAndPutFieldsTypes(App *app, MYSQL_BIND **bufferBind, unsigned
     }
 }
 
-void addFieldsToResult(App *app) {
-    SelectQuery *selectQuery = &app->model.query.selectQuery;
+void addFieldsToSelectQuery(App *app, SelectQuery *selectQuery) {
+
     char ***inter;
     int i;
     //printf("\nin addFieldsToResult\n");
@@ -240,8 +254,7 @@ void addFieldsToResult(App *app) {
     selectQuery->resultWithFieldsList = 1;
 }
 
-void removeFieldsInResult(App *app) {
-    SelectQuery *selectQuery = &app->model.query.selectQuery;
+void removeFieldsToSelectQuery(App *app, SelectQuery *selectQuery) {
     char ***inter;
     int i;
 
@@ -264,5 +277,48 @@ void removeFieldsInResult(App *app) {
     selectQuery->resultWithFieldsList = 0;
 }
 
+SelectQuery copySelectQuery(App *app, SelectQuery *selectQuery) {
 
-//TODO : prepared query select
+    SelectQuery newSelectQuery;
+
+    newSelectQuery.listColumnsRows = copyListColumnsRows(app, selectQuery->listColumnsRows, selectQuery->numberRows, selectQuery->numberFields);
+    newSelectQuery.listFields = copyVarcharListFields(app, selectQuery->listFields, selectQuery->numberFields);
+    newSelectQuery.numberFields = selectQuery->numberFields;
+    newSelectQuery.numberRows = selectQuery->numberRows;
+    newSelectQuery.resultWithFieldsList = 0;
+    newSelectQuery.mysqlResultBool = 0;
+
+    return newSelectQuery;
+}
+
+char ***copyListColumnsRows(App *app, char ***list, unsigned int numberRows, unsigned int numberFields) {
+    int i;
+    int j;
+    char ***newList;
+
+    newList = malloc(sizeof(char**) * numberRows);
+    verifyPointer(app, newList, "Problem malloc newList in copyListColumnsRows");
+    for (i = 0; i < numberRows; i++) {
+        newList[i] = malloc(sizeof(char*) * numberFields);
+        verifyPointer(app, newList[i], "Problem malloc newList[i] in copyListColumns");
+        for (j = 0; j < numberFields; j++) {
+            newList[i][j] = malloc(sizeof(char) * (strlen(list[i][j]) + 1));
+            verifyPointer(app, newList[i][j], "Problem malloc newList[i] in copyListColumns");
+            strcpy(newList[i][j], list[i][j]);
+        }
+    }
+
+    return newList;
+}
+
+Varchar *copyVarcharListFields(App *app, Varchar *listFields, unsigned int numberFields) {
+    int i;
+    Varchar *newListFields;
+
+    newListFields = malloc(sizeof(Varchar) * numberFields);
+    for (i = 0; i < numberFields; i++) {
+        strcpy(newListFields[i], listFields[i]);
+    }
+
+    return newListFields;
+}

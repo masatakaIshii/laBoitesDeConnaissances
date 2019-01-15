@@ -48,6 +48,7 @@ int main(int argc, char **argv) {
 
     returnStat = mainEventLoop(&app);
 
+
     quitApp(&app);
 
     return returnStat;

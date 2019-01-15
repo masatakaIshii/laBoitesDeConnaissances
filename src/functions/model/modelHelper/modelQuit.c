@@ -91,8 +91,8 @@ void quitModel(Model *model) {
 
     if (model->tables != NULL) {
         freeStructTableMysql(model);
-        remove("numberNamesStructTables");
     }
+    remove("numberNamesStructTables");
 
     if (model->ifMysqlIsInit != 0) {
         mysql_close(model->mysql);
@@ -105,15 +105,6 @@ void quitPreparedIUD(App *app) {
     MySqlStmtManager *stmtManager = &app->model.query.stmtManager;
 
     quitStmtManager(stmtManager);
-}
-
-void quitPreparedSelectQuery(App *app) {
-
-    SelectQuery *selectQuery        = &app->model.query.selectQuery;
-    MySqlStmtManager *stmtManager   = &app->model.query.stmtManager;
-
-    quitStmtManager(stmtManager);
-    quitSelectQuery(selectQuery);
 }
 
 void quitSelectQuery(SelectQuery *selectQuery) {
@@ -130,16 +121,18 @@ void quitSelectQuery(SelectQuery *selectQuery) {
 
         selectQuery->listColumnsRows = NULL;
     }
+    if (selectQuery->listFields != NULL) {
+        freeListString(&selectQuery->listFields);
+        selectQuery->listFields = NULL;
+    }
 
     if (selectQuery->resultWithFieldsList != 0){
-        if (selectQuery->listFields != NULL) {
-            freeListString(&selectQuery->listFields);
-        }
-        if (selectQuery->result != NULL) {
-            mysql_free_result(selectQuery->result);
-            selectQuery->result = NULL;
-        }
         selectQuery->resultWithFieldsList = 0;
+    }
+
+    if (selectQuery->mysqlResultBool != 0) {
+        mysql_free_result(selectQuery->result);
+        selectQuery->mysqlResultBool = 0;
     }
 
 }
@@ -177,6 +170,7 @@ void quitStmtParams(MySqlStmtManager *stmtManager) {
 
     if (stmtManager->paramsNames != NULL) {
         free(stmtManager->paramsNames);
+        stmtManager->paramsNames = NULL;
     }
 
     if (stmtManager->params != NULL) {
@@ -184,7 +178,10 @@ void quitStmtParams(MySqlStmtManager *stmtManager) {
         for (i = 0; i < stmtManager->numberParams; i++) {
             type = stmtManager->buffersBind[i].buffer_type;
             if ((type == MYSQL_TYPE_STRING || type == MYSQL_TYPE_VAR_STRING || type == MYSQL_TYPE_BLOB) && stmtManager->BindInOut == BIND_INPUT) {
-                free(stmtManager->params[i].paramsString);
+
+                if (stmtManager->params[i].paramsString != NULL) {
+                    free(stmtManager->params[i].paramsString);
+                }
             }
         }
         free(stmtManager->params);

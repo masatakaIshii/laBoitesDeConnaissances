@@ -11,9 +11,8 @@
 
 #define MAX_CURRENT_VALUE 1000
 
-void showQueryResult(App *app) {
+void showQueryResult(App *app, SelectQuery *selectQuery) {
 
-    SelectQuery *selectQuery    = &app->model.query.selectQuery;
     int numberFields            = selectQuery->numberFields;
     int numberRows              = selectQuery->numberRows;
     int *maxLengthsFields;

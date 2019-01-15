@@ -10,12 +10,19 @@
 
 #include "../../struct.h"
 #include "../../common.h"
+#include "modelInit.h"
 #include "modelQuit.h"
 #include "modelCommon.h"
+#include "modelParamFinder.h"
 
-void setBindParams(App *app, char **paramsValues);
+void setBindParams(App *app, char **paramsValues, char *query);
+
+void bindSelectQueryPrepared(App *app, MySqlStmtManager *stmtManager, SelectQuery *selectQuery);
+int getTypeField(Varchar paramName, Model *model, MySqlStmtManager *stmtManager);
+void getProperFieldAndTable(Varchar field, Varchar table);
 
 void loadBindParams(App *app, MySqlStmtManager *stmtManager, BindType bindIO, char **paramsValues);
+void loadStmtManagerBindTypes(App *app, Model *model);
 
 void preparedBindParamString(App *app, int index, MySqlStmtManager *stmtManager, char *paramValue, BindType bindIO);
 void preparedBindParamInt(App *app, int index, MySqlStmtManager *stmtManager, char *paramValue, BindType bindIO);

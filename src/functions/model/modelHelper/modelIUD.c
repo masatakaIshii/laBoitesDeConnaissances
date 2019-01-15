@@ -51,9 +51,6 @@ int sendPreparedQueryIUD(App *app, const char *currentQuery) {
     }
 
     affectedRow = mysql_stmt_affected_rows(stmtManager->stmt);
-    if (affectedRow <= 0){
-        printf("Warning[MYSQL] : none row affected\n");
-    }
 
     return affectedRow;
 }

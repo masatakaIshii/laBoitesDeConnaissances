@@ -8,12 +8,22 @@
 
 #include "../../../headers/model/modelHelper/modelBindHelper.h"
 
-void setBindParams(App *app, char **paramsValues) {
+void setBindParams(App *app, char **paramsValues, char *query) {
     int                 result = 0;
     BindType            bindIO = BIND_INPUT;
     MySqlStmtManager    *stmtManager = &app->model.query.stmtManager;
 
     stmtManager->BindInOut = bindIO;
+
+        //load app->model.tables
+    readAndGetNumberAndNamesAndStructTables(app, &app->model);
+
+    getParamsNames(app, stmtManager, query, stmtManager->numberParams);
+
+    loadStmtManagerBindTypes(app, &app->model);
+
+
+    freeStructTableMysql(&app->model);
 
     if (stmtManager->params != NULL) {
         quitStmtParams(stmtManager);
@@ -23,18 +33,99 @@ void setBindParams(App *app, char **paramsValues) {
 
     result = mysql_stmt_bind_param(stmtManager->stmt, stmtManager->buffersBind);
     verifyStmtIntResult(app, stmtManager, "Problem in mysql_stmt_bind_param in setBindParams", result);
+
 }
 
 void bindSelectQueryPrepared(App *app, MySqlStmtManager *stmtManager, SelectQuery *selectQuery) {
 
     BindType    bindIO = BIND_OUTPUT;
+    int tempNumberParams = stmtManager->numberParams;
 
     stmtManager->numberParams = selectQuery->numberFields;
 
     stmtManager->BindInOut = bindIO;
 
     loadBindParams(app, stmtManager, bindIO, NULL);
+
+    stmtManager->numberParams = tempNumberParams;
 }
+
+/* thinking if loadStmtManagerBindTypes have to be in modelBindHelper.c or not */
+void loadStmtManagerBindTypes(App *app, Model *model) {
+
+    int i;
+    int typeParam;
+    MySqlStmtManager *stmtManager = &model->query.stmtManager;
+
+    stmtManager->buffersBind = malloc(sizeof(MYSQL_BIND) * stmtManager->numberParams);
+    memset(stmtManager->buffersBind, 0, sizeof(MYSQL_BIND));
+    verifyPointer(app, stmtManager->buffersBind, "Problem malloc stmtManager->params in loadStmtManagerParams");
+
+    for (i = 0; i < stmtManager->numberParams; i++) {
+        typeParam = getTypeField(stmtManager->paramsNames[i], model, stmtManager);
+        stmtManager->buffersBind[i].buffer_type = typeParam;
+
+    }
+
+}
+
+int getTypeField(Varchar paramName, Model *model, MySqlStmtManager *stmtManager) {
+    MySqlTable *tables = model->tables;
+    Varchar table;
+    Varchar checkSplitParamName;
+    int typeField = -1;
+    Varchar *tablesNames = stmtManager->tablesNames;
+    int numberTables = model->numberAllTables;
+    int i;
+    int j;
+
+    if (stmtManager->numberTables > 1) {
+        strcpy(checkSplitParamName, paramName);
+        getProperFieldAndTable(paramName, table);
+        if (strncmp(checkSplitParamName, paramName, strlen(paramName)) == 0) {
+            printf("Warning : in modelStmtManager.c, the paramName go to getProperFieldAndTable but still doesn't change : %s\n", paramName);
+        }
+
+    } else {
+        strcpy(table, tablesNames[0]);
+    }
+
+    for (i = 0; i < numberTables; i++) {
+        if (strncmp(table, tables[i].tableName, strlen(table) + 1) == 0) {
+            for (j = 0; j < tables[i].numberField; j++) {
+
+                if (strncmp(paramName, tables[i].listFieldsNames[j], strlen(paramName) + 1) == 0) {
+                    typeField = tables[i].listFieldsTypes[j];
+                }
+            }
+        }
+    }
+
+    return typeField;
+}
+
+/**
+*@brief if field is juncture, separated "table.field" to "table" and "field"
+*
+*@param field : address of field
+*@param table : address of table
+*/
+void getProperFieldAndTable(Varchar field, Varchar table) {
+    char temp[255];
+
+    //Check if field is juncture
+    if (strchr(field, '.')) {
+        strcpy(temp, field);
+        sprintf(field, "%s", strchr(temp, '.') + 1);
+
+        //verify if table content a value, if table is NULL it'll be affected
+        strcpy(table, temp);
+        table[strchr(temp, '.') - temp] = '\0';
+
+    }
+}
+
+
 
 void loadBindParams(App *app, MySqlStmtManager *stmtManager, BindType bindIO, char **paramsValues){
     int                 i;
@@ -64,6 +155,7 @@ void loadBindParams(App *app, MySqlStmtManager *stmtManager, BindType bindIO, ch
         if (typeParam == MYSQL_TYPE_DOUBLE) {
             preparedBindParamDouble(app, i, stmtManager, currentParamValue, bindIO);
         }
+
     }
 }
 

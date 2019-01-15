@@ -11,7 +11,7 @@
 #include "modelCommon.h"
 #include "modelQuit.h"
 
-void showQueryResult(App *app);
+void showQueryResult(App *app, SelectQuery *selectQuery);
 int *getMaxLengthOfEachFields(App *app, char ***resultQuery, int numberFields, int numberRows);
 void showAppropriateQueryResult(SelectQuery *selectQuery, int *maxLengthsFields, int numberFields, int numberRows);
 void showLign(SelectQuery *selectQuery, int *maxLengthsFields, int numberFields);

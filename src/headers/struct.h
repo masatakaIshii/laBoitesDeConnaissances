@@ -95,6 +95,7 @@ typedef struct SelectQuery {
     unsigned int    numberFields;
     unsigned int    numberRows;
     short           resultWithFieldsList;
+    short           mysqlResultBool;
 } SelectQuery;
 
 /**

@@ -17,7 +17,7 @@ void dbConnect(App *app) {
     check = mysql_options(app->model.mysql, MYSQL_READ_DEFAULT_GROUP, "option");
     verifyMYSQLIntResult(app, check);
 
-    if (!mysql_real_connect(app->model.mysql, "localhost", "root", "", "the_box_of_knowledge", 0, NULL, 0)) {
+    if (!mysql_real_connect(app->model.mysql, "localhost", "root", "root", "the_box_of_knowledge", 0, NULL, 0)) {
         printf("%s", mysql_error(app->model.mysql));
         quitApp(app);
     }

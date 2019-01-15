@@ -41,22 +41,17 @@ char *getFetchValuesComparedToMysqlType(App *app, MySqlStmtManager *stmtManager,
     char *result;
     int typeParam = stmtManager->buffersBind[indexColumn].buffer_type;
 
-    if (stmtManager->params[indexColumn].paramsIsNull == 0) {
-        if (typeParam == MYSQL_TYPE_LONG){
-            copyNumberToString(app, &result, "%d", indexColumn, stmtManager);
-        }
-        if (typeParam == MYSQL_TYPE_DOUBLE) {
-            copyNumberToString(app, &result, "%.2lf", indexColumn, stmtManager);
-        }
-        if (typeParam == MYSQL_TYPE_DATETIME) {
-            copyDateTimeToString(app, &result, indexColumn, stmtManager);
-        }
-        if (typeParam == MYSQL_TYPE_VAR_STRING || typeParam == MYSQL_TYPE_STRING) {
-            copyStringAfterFetchLength(app, &result, indexColumn, stmtManager);
-        }
-    } else {
-        result = malloc(sizeof(char));
-        strcpy(result, "");
+    if (typeParam == MYSQL_TYPE_LONG){
+        copyNumberToString(app, &result, "%d", indexColumn, stmtManager);
+    }
+    if (typeParam == MYSQL_TYPE_DOUBLE) {
+        copyNumberToString(app, &result, "%.2lf", indexColumn, stmtManager);
+    }
+    if (typeParam == MYSQL_TYPE_DATETIME) {
+        copyDateTimeToString(app, &result, indexColumn, stmtManager);
+    }
+    if (typeParam == MYSQL_TYPE_VAR_STRING || typeParam == MYSQL_TYPE_STRING) {
+        copyStringAfterFetchLength(app, &result, indexColumn, stmtManager);
     }
 
     return result;
@@ -100,14 +95,18 @@ void copyDateTimeToString(App *app, char **stringToFill, int index, MySqlStmtMan
 void copyStringAfterFetchLength(App *app, char **stringToFill, int index, MySqlStmtManager *stmtManager) {
     unsigned long length = stmtManager->params[index].paramsLengths;
 
-    *stringToFill = malloc(length + 1);
-    verifyPointer(app, *stringToFill, "Problem malloc *stringToFill in copyStringAfterFetchLength\n");
+    if (length > 0 || stmtManager->params[index].paramsIsNull != 0) {
+        *stringToFill = malloc(length + 1);
+        verifyPointer(app, *stringToFill, "Problem malloc *stringToFill in copyStringAfterFetchLength\n");
 
-    stmtManager->buffersBind[index].buffer = *stringToFill;
-    stmtManager->buffersBind[index].buffer_length = length + 1;
-    mysql_stmt_fetch_column(stmtManager->stmt, &stmtManager->buffersBind[index], index, 0);
-    (*stringToFill)[length] = '\0';
-
+        stmtManager->buffersBind[index].buffer = *stringToFill;
+        stmtManager->buffersBind[index].buffer_length = length + 1;
+        mysql_stmt_fetch_column(stmtManager->stmt, &stmtManager->buffersBind[index], index, 0);
+        (*stringToFill)[length] = '\0';
+    } else {
+        *stringToFill = malloc(sizeof(char));
+        strcpy(*stringToFill, "");
+    }
 }
 //
 //int getLengthStringOfInt (int intNumber) {
