@@ -1,0 +1,79 @@
+    //getPreparedSelectQuery()
+    printf("\n box \n");
+    //pour obtenir la structure selectQuery
+    SelectQuery box = getSelectQuery(&app, "SELECT * FROM box");
+    //montrer le résultat de la requête select
+    showQueryResult(&app, &box);
+
+
+    printf("\n list \n");
+    SelectQuery list = getSelectQuery(&app, "Select * FROM list");
+    //ajouter le champs à la première ligne et déplacer à index+ le reste
+    addFieldsToSelectQuery(&app, &list);
+    showQueryResult(&app, &list);
+
+
+    char *query = "SELECT box.color, list.description FROM box, list WHERE box.id = ? OR box.id = ? AND list.id_box = ?";
+    char *tables[2] = {"box", "list"};
+    char *paramsValues1[3] = {"86", "3", "1"};
+    char *paramsValues2[3] = {"3", "1", "1"};
+
+    printf("\n boxlist1 \n");
+    // vérifier la validité de la requête et alimenter la structure MYSQL_STMT
+    setPreparedQuery(&app, query, tables, 2);
+    // alimenter les paramètres à bind en fonction des valeur des paramètres
+    setBindParams(&app, paramsValues1, query);
+    // obtenir SelectQuery avec une requête select préparée
+    SelectQuery boxlist1 = getPreparedSelectQuery(&app, query);
+
+    showQueryResult(&app, &boxlist1);
+
+
+    printf("\n boxlist2 \n");
+    setBindParams(&app, paramsValues2, query);
+
+    SelectQuery boxlist2 = getPreparedSelectQuery(&app, query);
+
+    addFieldsToSelectQuery(&app, &boxlist2);
+    // enlever la liste de champ dans listColumnsRows et remettre le résultat de base
+    removeFieldsToSelectQuery(&app, &boxlist2);
+    showQueryResult(&app, &boxlist2);
+
+    printf("\n insert \n");
+    char *query2 = "INSERT INTO box (name, description, created_date, modified_date, color) VALUES (?, ?, NOW(), ?, ?)";
+    char *tables2[2] = {"box", "list"};
+    char *paramsValues3[4] = {"tati", "C'est tati", "0000-00-00 00:00:00", "11"};
+
+    setPreparedQuery(&app, query2, tables2, 1);
+
+    //printf("app.model.query.stmtManager.currentQuery : %s\n", app.model.query.stmtManager.currentQuery);
+    // alimenter les paramètres à bind en fonction des valeur des paramètres
+    setBindParams(&app, paramsValues3, query2);
+
+
+
+    int result = sendPreparedQueryIUD(&app, query2);
+
+    printf("affected rows of insert prepared query : %d\n", result);
+
+    printf("\n delete \n");
+    char *query3 = "DELETE FROM box WHERE color = ?";
+    char *tables3[1] = {"box"};
+    char *paramsValues4[1] = {"10"};
+
+    setPreparedQuery(&app, query3, tables3, 1);
+
+    //printf("app.model.query.stmtManager.currentQuery : %s\n", app.model.query.stmtManager.currentQuery);
+    // alimenter les paramètres à bind en fonction des valeur des paramètres
+    setBindParams(&app, paramsValues4, query3);
+
+
+
+    int result2 = sendPreparedQueryIUD(&app, query3);
+
+    printf("affected rows of delete prepared query : %d\n", result2);
+    // ne pas oublier de free l'ensemble
+    quitSelectQuery(&box);
+    quitSelectQuery(&list);
+    quitSelectQuery(&boxlist1);
+    quitSelectQuery(&boxlist2);

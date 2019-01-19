@@ -14,7 +14,8 @@
 #include <mysql.h>
 #include "../headers/common.h"
 #include "../headers/play/box.h"
-#include "../headers/model/modelCommon.h"
+#include "../headers/model/modelHelper/modelInit.h"
+#include "../headers/model/modelHelper/modelQuit.h"
 
 /*
 *
@@ -25,8 +26,6 @@
 *
 */
 
-
-
 int mainEventLoop(App *app) {
     SDL_Rect buttons[2];
     SDL_Event event;
@@ -34,21 +33,9 @@ int mainEventLoop(App *app) {
 
     while (!done) {
         SDL_WaitEvent(&event);
+        commonEvents(app, event, &done);
         switch (event.type){
-            // Quitte le programme
-            case SDL_QUIT:
-                return EXIT_SUCCESS;
-
-            // Redimensionnement de la fenetre
-            case SDL_WINDOWEVENT:
-                if(event.window.event == SDL_WINDOWEVENT_RESIZED)
-                    resizeScreen(app, event.window.data2);
-            break;
-
             case SDL_KEYDOWN:
-                // Quitte le programme
-                if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-                    return EXIT_SUCCESS;
                 // MODE PLAY
                 if (event.key.keysym.scancode == SDL_SCANCODE_1)
                     playMode(app);
@@ -73,6 +60,22 @@ int mainEventLoop(App *app) {
     }
 
     return EXIT_FAILURE;
+}
+
+void commonEvents(App *app, SDL_Event event, int *done){
+    // Quitte le programme
+    if(event.type == SDL_QUIT){
+        quitApp(app);
+        exit(EXIT_SUCCESS);
+    }
+
+    // Retour
+    if(event.type == SDL_KEYDOWN && event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+        *done = 1;
+
+    // Redimensionnement de la fenetre
+    if(event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED)
+        resizeScreen(app, event.window.data2);
 }
 
 void displayMenu(App *app, SDL_Rect *buttons) {
@@ -115,6 +118,7 @@ SDL_Rect createRect(App *app, int width, int height, int x, int y, Uint8* color)
     return rect;
 }
 
+
 int inRect(SDL_Rect rect, int clicX, int clicY){
     int x, y;
 
@@ -129,10 +133,11 @@ int inRect(SDL_Rect rect, int clicX, int clicY){
     return 0;
 }
 
-void verifyPointer(App *app, void *pointer, char *message) {
+void verifyPointer(App *app, void *pointer, const char *message) {
+
     if (!pointer) {
-        printf("%s: %s\n", message, SDL_GetError());
         // On ferme la SDL et on sort du programme
+        printf("%s\n", message);
         quitApp(app);
         exit(EXIT_FAILURE);
     }
@@ -215,9 +220,13 @@ void loadApp(App *app) {
     loadColors(&colors);
     app->colors = colors;
 
-    // Connexion a la base de donnees
-    mysql_init(&app->mysql);
+    // Connexion � la base de donn�es , initialisation et chargement
+
+    InitModel(&app->model);
+
     dbConnect(app);
+
+    loadFileModelTables(app);
 }
 
 void quitApp(App *app){
@@ -226,6 +235,5 @@ void quitApp(App *app){
     //TTF_Quit();
     SDL_Quit();
 
-    //deconnexion de la base de donnees
-    mysql_close(&app->mysql);
+    quitModel(&app->model);
 }

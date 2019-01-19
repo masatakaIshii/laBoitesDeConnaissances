@@ -8,15 +8,27 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include "headers/struct.h"
 #include "headers/common.h"
+#include "headers/model/modelHelper/modelCommon.h"
+#include "headers/model/modelHelper/modelQuit.h"
+#include "headers/model/modelHelper/modelSelect.h"
+#include "headers/model/modelHelper/modelShow.h"
+#include "headers/model/modelHelper/modelIUD.h"
+#include "headers/model/modelHelper/modelBindHelper.h"
+#include "headers/model/modelHelper/modelStmtManager.h"
+#include "headers/model/modelHelper/modelBindHelper.h"
+#include "headers/model/modelHelper/modelParamFinder.h"
+#include "headers/model/modelHelper/modelFetchSelectHelper.h"
 #include "headers/play/box.h"
-#include "headers/model/modelSelect.h"
-#include "headers/model/modelShow.h"
-#include "headers/model/modelIUD.h"
 
 int main(int argc, char **argv) {
+
     App app;
-    int returnStat;
+    MYSQL mysqlFirst;
+    app.model.mysql = &mysqlFirst;
+
+    int returnStat = NULL;
 
     freopen("CON", "w", stdout);
     freopen("CON", "r", stdin);
@@ -35,6 +47,7 @@ int main(int argc, char **argv) {
     loadApp(&app);
 
     returnStat = mainEventLoop(&app);
+
 
     quitApp(&app);
 
