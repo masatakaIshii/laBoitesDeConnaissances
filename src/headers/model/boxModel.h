@@ -6,4 +6,4 @@
 ** Description  : getting data for box table
 */
 
-void getBoxes(App *app);
+SelectQuery getBoxes(App *app);

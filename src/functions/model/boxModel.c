@@ -10,6 +10,6 @@
 #include <stdio.h>
 #include "../../headers/model/modelHelper/modelSelect.h"
 
-void getBoxes(App *app){
-    getSelectQuery(app, "SELECT * from box");
+SelectQuery getBoxes(App *app){
+    return getSelectQuery(app, "SELECT * from box");
 }

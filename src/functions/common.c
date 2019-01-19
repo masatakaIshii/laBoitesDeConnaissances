@@ -13,54 +13,8 @@
 #include <SDL2/SDL_ttf.h>
 #include <mysql.h>
 #include "../headers/common.h"
-#include "../headers/play/box.h"
 #include "../headers/model/modelHelper/modelInit.h"
 #include "../headers/model/modelHelper/modelQuit.h"
-
-/*
-*
-* Pour utiliser inRect():
-*
-* displayMenu() doit agir sur un tableau de structure SDL_Rect avec toutes les zones clicables dedans
-* check la position avec inRect() grace a ce tableau
-*
-*/
-
-int mainEventLoop(App *app) {
-    SDL_Rect buttons[2];
-    SDL_Event event;
-    int done = 0;
-
-    while (!done) {
-        SDL_WaitEvent(&event);
-        commonEvents(app, event, &done);
-        switch (event.type){
-            case SDL_KEYDOWN:
-                // MODE PLAY
-                if (event.key.keysym.scancode == SDL_SCANCODE_1)
-                    playMode(app);
-                // MODE CREATE
-                if (event.key.keysym.scancode == SDL_SCANCODE_2)
-                    // Fonction CREATE
-            break;
-
-            case SDL_MOUSEBUTTONDOWN:
-                if(event.button.button == SDL_BUTTON_LEFT){
-                    // MODE PLAY
-                    if(inRect(buttons[0] , event.button.x, event.button.y))
-                        playMode(app);
-                    // MODE CREATE
-                    else if(inRect(buttons[1] , event.button.x, event.button.y))
-                        // Fonction CREATE
-                        playMode(app);
-                }
-            break;
-        }
-        displayMenu(app, buttons);
-    }
-
-    return EXIT_FAILURE;
-}
 
 void commonEvents(App *app, SDL_Event event, int *done){
     // Quitte le programme
@@ -78,41 +32,26 @@ void commonEvents(App *app, SDL_Event event, int *done){
         resizeScreen(app, event.window.data2);
 }
 
-void displayMenu(App *app, SDL_Rect *buttons) {
-    // On set la couleur du fond d'ecran
-    SDL_SetRenderDrawColor(app->renderer, app->colors.blue[0], app->colors.blue[1], app->colors.blue[2], app->colors.blue[3]);
-    SDL_RenderClear(app->renderer);
-
-    // On creer le boutton Play
-    buttons[0] = createRect(app, app->config.width / 3, app->config.height / 1.5, app->config.width / 12, app->config.height / 4, app->colors.green);
-    // On creer le boutton Create
-    buttons[1] = createRect(app, app->config.width / 3, app->config.height / 1.5, (app->config.width / 12) * 7, app->config.height / 4, app->colors.yellow);
-
-    // Actualisation de l'ecran
-    SDL_RenderPresent(app->renderer);
-}
-
 void resizeScreen(App *app, int height) {
-    // On charge la nouvelle config
+    // Load new config
     app->config.height = height;
     app->config.width = height * SCREEN_FORMAT;
 
-    // On redimensionne la fenetre
+    // Resize window
     SDL_SetWindowSize(app->screen, app->config.width, app->config.height);
 }
 
 SDL_Rect createRect(App *app, int width, int height, int x, int y, Uint8* color) {
-    // Definition du rectangle
     SDL_Rect rect;
     rect.x = x;
     rect.y = y;
     rect.w = width;
     rect.h = height;
 
-    // Definition de la couleur
+    // Color
     SDL_SetRenderDrawColor(app->renderer, color[0], color[1], color[2], color[3]);
 
-    // Creation du rectangle en couleur
+    // Create rect with color
     SDL_RenderFillRect(app->renderer, &rect);
 
     return rect;
@@ -134,9 +73,7 @@ int inRect(SDL_Rect rect, int clicX, int clicY){
 }
 
 void verifyPointer(App *app, void *pointer, const char *message) {
-
     if (!pointer) {
-        // On ferme la SDL et on sort du programme
         printf("%s\n", message);
         quitApp(app);
         exit(EXIT_FAILURE);
@@ -159,6 +96,7 @@ void loadConfigFile(Config *config) {
         printf("Unable to load file");
     }
 
+    // Utiliser sscanf(line, "%s=%s", param, value) != EOF;
     while(fgets(line, 200, file) != NULL) {
         ptr = strchr(line, '=');
         if(ptr != NULL){
