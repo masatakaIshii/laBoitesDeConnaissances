@@ -49,6 +49,15 @@
 		<Unit filename="functions/common.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="functions/menu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="functions/model/boxModel.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="functions/model/listModel.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="functions/model/modelHelper/modelBindHelper.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -86,6 +95,8 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="headers/common.h" />
+		<Unit filename="headers/model/boxModel.h" />
+		<Unit filename="headers/model/listModel.h" />
 		<Unit filename="headers/model/modelHelper/modelBindHelper.h" />
 		<Unit filename="headers/model/modelHelper/modelCommon.h" />
 		<Unit filename="headers/model/modelHelper/modelFetchSelectHelper.h" />
