@@ -15,7 +15,6 @@
 #include "../../headers/model/boxModel.h"
 
 void playMode(App *app){
-    // Variables
     SDL_Event event;
     SDL_Rect pageButtons[2];
     SDL_Rect *boxButtons = NULL;
@@ -26,8 +25,8 @@ void playMode(App *app){
     int i = 0;
 
     // Getting data
-    getBoxes(app);
-    nbTotalOfBox = app->model.query.selectQuery.numberRows;
+    SelectQuery boxes = getBoxes(app);
+    nbTotalOfBox = boxes.numberRows;
     boxButtons = malloc(nbTotalOfBox * sizeof(SDL_Rect));
 
     // Event loop
@@ -46,7 +45,7 @@ void playMode(App *app){
                     // Display a box
                     for(i = 0; i < nbOfBox; i++){
                         if(inRect(boxButtons[i], event.button.x, event.button.y))
-                            listMenu(app, page, i);
+                            listMenu(app, boxes, page, i);
                     }
                 }
             break;
@@ -56,6 +55,10 @@ void playMode(App *app){
 
     free(boxButtons);
 }
+
+
+////////////////////////// DISPLAY \\\\\\\\\\\\\\\\\\\\\\\\\\_
+
 
 void displayHomePlay(App *app, int page, SDL_Rect *pageButtons, SDL_Rect *boxButtons, int *nbOfBoxInPage, int nbTotalOfBox){
     SDL_Rect nullBtn = {0};
@@ -87,12 +90,12 @@ int createBoxPage(App *app, SDL_Rect *buttons, int size, int page){
 
     for(x = 0; x < 5; x++){
         for(y = 0; y < 2; y++){
+            if(i >= size)
+                break;
             xBox = ((app->config.width / 3) * y) + 10*y + app->config.width/5;
             yBox = ((app->config.height / 8) * x) + 10*x + app->config.height/6;
             buttons[i] = createRect(app, app->config.height / 8, app->config.height / 8, xBox, yBox, app->colors.green);
             i++;
-            if(i >= size)
-                break;
         }
         if(i >= size)
             break;

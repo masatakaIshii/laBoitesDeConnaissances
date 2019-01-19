@@ -6,6 +6,6 @@
 ** Description  : play mode main functions
 */
 
-void listMenu(App *app, int page, int i);
-void displayHomeBox(App *app, SDL_Rect *listButtons);
-int createListPage(App *app, SDL_Rect *buttons, char *list, int size);
+void listMenu(App *app, SelectQuery boxes, int page, int i);
+void displayHomeBox(App *app, SDL_Rect *listButtons, SelectQuery lists);
+int createListPage(App *app, SDL_Rect *buttons, int size);
