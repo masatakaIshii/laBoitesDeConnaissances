@@ -50,7 +50,7 @@ void bindSelectQueryPrepared(App *app, MySqlStmtManager *stmtManager, SelectQuer
     stmtManager->numberParams = tempNumberParams;
 }
 
-/* thinking if loadStmtManagerBindTypes have to be in modelBindHelper.c or not */
+
 void loadStmtManagerBindTypes(App *app, Model *model) {
 
     int i;

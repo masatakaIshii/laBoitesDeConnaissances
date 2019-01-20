@@ -30,8 +30,8 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add directory="C:/Program Files (x86)/CodeBlocks/SDL2-2.0.0/i686-w64-mingw32/include" />
-			<Add directory="C:/Program Files (x86)/CodeBlocks/MySQL/include" />
+			<Add directory="D:/Program Files (x86)/CodeBlocks/SDL2/include" />
+			<Add directory="D:/Program Files (x86)/CodeBlocks/MySQL/include" />
 		</Compiler>
 		<Linker>
 			<Add library="mingw32" />
@@ -39,12 +39,12 @@
 			<Add library="gdi32" />
 			<Add library="winmm" />
 			<Add library="dxguid" />
-			<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/libmingw32.a" />
-			<Add library="C:/Program Files (x86)/CodeBlocks/SDL2-2.0.0/i686-w64-mingw32/lib/libSDL2main.a" />
-			<Add library="C:/Program Files (x86)/CodeBlocks/SDL2-2.0.0/i686-w64-mingw32/lib/libSDL2.dll.a" />
-			<Add library="C:/Program Files (x86)/CodeBlocks/MySQL/lib/mysqlclient.lib" />
-			<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/SDL2_ttf.lib" />
-			<Add directory="C:/Program Files (x86)/CodeBlocks/SDL2-2.0.0/i686-w64-mingw32/lib" />
+			<Add library="D:/Program Files (x86)/CodeBlocks/MinGW/lib/libmingw32.a" />
+			<Add library="D:/Program Files (x86)/CodeBlocks/SDL2/lib/libSDL2main.a" />
+			<Add library="D:/Program Files (x86)/CodeBlocks/SDL2/lib/libSDL2.dll.a" />
+			<Add library="D:/Program Files (x86)/CodeBlocks/MySQL/lib/mysqlclient.lib" />
+			<Add library="D:/Program Files (x86)/CodeBlocks/SDL2/lib/SDL2_ttf.lib" />
+			<Add directory="D:/Program Files (x86)/CodeBlocks/SDL2-2.0.0/i686-w64-mingw32/lib" />
 		</Linker>
 		<Unit filename="functions/common.c">
 			<Option compilerVar="CC" />

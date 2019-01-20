@@ -20,16 +20,29 @@ typedef enum BindType{
     BIND_OUTPUT
 }BindType;
 
+typedef enum typeRenderText{
+    TEXT_SOLID,
+    TEXT_BLENDED
+}typeRenderText;
+
 typedef struct Colors {
     Uint8 blue[4];
     Uint8 lightblue[4];
     Uint8 green[4];
     Uint8 yellow[4];
+    Uint8 black[3];
 } Colors;
 
 typedef struct Config {
     int width;
     int height;
+    char host[MAX_VARCHAR];
+    char user[MAX_VARCHAR];
+    char password[MAX_TEXT];
+    char database[MAX_VARCHAR];
+    char fontCambriab[MAX_VARCHAR];
+    char fontSixty[MAX_VARCHAR];
+    char fontTimes[MAX_VARCHAR];
 } Config;
 
 /* Model */

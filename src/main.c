@@ -39,10 +39,11 @@ int main(int argc, char **argv) {
         printf("Unable to init SDL: %s\n", SDL_GetError());
         return EXIT_FAILURE;
     }
-    /*if(TTF_Init() < 0) {
+    // Start SDL_Ttf
+    if(TTF_Init() < 0) {
         fprintf(stderr, "Unable to init SDL_ttf: %s\n", TTF_GetError());
         return EXIT_FAILURE;
-    }*/
+    }
 
     loadApp(&app);
 

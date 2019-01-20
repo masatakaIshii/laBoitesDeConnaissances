@@ -10,6 +10,7 @@
 
 void dbConnect(App *app) {
 
+    Config *connect = &app->config;
     int check = 0;
     mysql_init(app->model.mysql);
     verifyPointer(app, app->model.mysql, "Problem with mysql_init");
@@ -17,7 +18,7 @@ void dbConnect(App *app) {
     check = mysql_options(app->model.mysql, MYSQL_READ_DEFAULT_GROUP, "option");
     verifyMYSQLIntResult(app, check);
 
-    if (!mysql_real_connect(app->model.mysql, "localhost", "root", "", "the_box_of_knowledge", 0, NULL, 0)) {
+    if (!mysql_real_connect(app->model.mysql, connect->host, connect->user, connect->password, connect->database, 0, NULL, 0)) {
         printf("%s", mysql_error(app->model.mysql));
         quitApp(app);
     }
