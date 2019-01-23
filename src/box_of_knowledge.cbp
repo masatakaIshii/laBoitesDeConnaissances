@@ -49,6 +49,9 @@
 		<Unit filename="functions/common.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="functions/controll/create/create.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="functions/menu.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -94,7 +97,15 @@
 		<Unit filename="functions/play/list.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="functions/view/commonView.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="functions/view/create/createViewBoxes.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="headers/common.h" />
+		<Unit filename="headers/controll/create.h" />
+		<Unit filename="headers/controll/createList.h" />
 		<Unit filename="headers/model/boxModel.h" />
 		<Unit filename="headers/model/listModel.h" />
 		<Unit filename="headers/model/modelHelper/modelBindHelper.h" />
@@ -110,6 +121,8 @@
 		<Unit filename="headers/play/box.h" />
 		<Unit filename="headers/play/list.h" />
 		<Unit filename="headers/struct.h" />
+		<Unit filename="headers/view/commonView.h" />
+		<Unit filename="headers/view/create/createViewBoxes.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>

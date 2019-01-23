@@ -21,6 +21,10 @@
 #include "headers/model/modelHelper/modelParamFinder.h"
 #include "headers/model/modelHelper/modelFetchSelectHelper.h"
 #include "headers/play/box.h"
+#include "headers/controll/create.h"
+#include "headers/controll/createList.h"
+#include "headers/view/commonView.h"
+#include "headers/view/create/createViewBoxes.h"
 
 int main(int argc, char **argv) {
 
@@ -48,7 +52,6 @@ int main(int argc, char **argv) {
     loadApp(&app);
 
     returnStat = mainEventLoop(&app);
-
 
     quitApp(&app);
 

@@ -50,6 +50,7 @@ void playMode(App *app){
                 }
             break;
         }
+
         displayHomePlay(app, page, pageButtons, boxButtons, &nbOfBox, nbTotalOfBox);
     }
 

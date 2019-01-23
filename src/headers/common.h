@@ -12,7 +12,12 @@
 int mainEventLoop(App *app);
 void commonEvents(App *app, SDL_Event event, int *done);
 void displayMenu(App *app, SDL_Rect *buttons);
+void RenderMainTexts (App *app) ;
+
 void resizeScreen(App *app, int height);
+int hRatio9(App *app, double ratioHeight);
+int wRatio16(App *app, double ratioWidth);
+
 SDL_Rect createRect(App *app, int width, int height, int x, int y, Uint8* color);
 SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSize, typeRenderText typeRender, SDL_Color colorFg);
 int inRect(SDL_Rect rect, int clicX, int clicY);

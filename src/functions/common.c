@@ -8,6 +8,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include <string.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -41,6 +42,18 @@ void resizeScreen(App *app, int height) {
     SDL_SetWindowSize(app->screen, app->config.width, app->config.height);
 }
 
+int hRatio9(App *app, double ratioHeight) {
+
+    int height = round(ratioHeight * (double)app->config.height / 9);
+
+    return height;
+}
+
+int wRatio16(App *app, double ratioWidth) {
+    int width = round(ratioWidth * (double)app->config.width / 16);
+
+    return width;
+}
 SDL_Rect createRect(App *app, int width, int height, int x, int y, Uint8* color) {
     SDL_Rect rect;
     rect.x = x;

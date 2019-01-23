@@ -14,6 +14,7 @@
 #include <mysql.h>
 #include "../headers/common.h"
 #include "../headers/play/box.h"
+#include "../headers/controll/create.h"
 
 int mainEventLoop(App *app) {
     SDL_Rect buttons[2];
@@ -30,6 +31,7 @@ int mainEventLoop(App *app) {
                     playMode(app);
                 // MODE CREATE
                 if (event.key.keysym.scancode == SDL_SCANCODE_2)
+                    createMode(app);
                     // Fonction CREATE
             break;
 
@@ -41,14 +43,14 @@ int mainEventLoop(App *app) {
                     // MODE CREATE
                     else if(inRect(buttons[1] , event.button.x, event.button.y))
                         // Fonction CREATE
-                        playMode(app);
+                        createMode(app);
                 }
             break;
         }
         displayMenu(app, buttons);
     }
 
-    return EXIT_FAILURE;
+    return (done) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 
@@ -83,8 +85,8 @@ void RenderMainTexts (App *app) {
     SDL_Texture *titleText = textToTexture(app, app->config.fontCambriab, "THE BOX OF KNOWLEDGE", 55, typeText, white);
 
     //Define the placement of texts
-    SDL_Rect playTextRect = {app->config.width / 9.5, app->config.height / 2.20, app->config.width / 3.5, app->config.height / 5};
-    SDL_Rect createTextRect = {(app->config.width / 11.625) * 7, app->config.height / 2.20, app->config.width / 3.5, app->config.height / 5};
+    SDL_Rect playTextRect = {wRatio16(app, 1.65), hRatio9(app, 4), wRatio16(app, 4.5), hRatio9(app, 2.25)};
+    SDL_Rect createTextRect = {wRatio16(app, 9.65), hRatio9(app, 4), wRatio16(app, 4.5), hRatio9(app, 2.25)};
     SDL_Rect titleTextRect = {app->config.width / 3.75, 0, app->config.width / 2.25, app->config.height / 5};
 
     //Render texts

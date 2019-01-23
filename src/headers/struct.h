@@ -143,7 +143,24 @@ typedef struct Model {
     Query       query;
 } Model;
 
+/* --View-- */
 
+typedef struct Position{
+    int startX;
+    int startY;
+    int stepX;
+    int stepY;
+} Position;
+
+typedef struct DisplayManager {
+    int currentPage;
+    int nbElements;
+    int nbRows;
+    int nbColumns;
+    int elementH;
+    int elementW;
+    Position pos;
+} DisplayManager;
 
 /* --App-- */
 typedef struct App {
