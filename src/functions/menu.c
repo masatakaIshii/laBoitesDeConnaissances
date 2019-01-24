@@ -75,27 +75,16 @@ void displayMenu(App *app, SDL_Rect *buttons) {
 }
 
 void RenderMainTexts (App *app) {
-    typeRenderText typeText = TEXT_BLENDED;
     SDL_Color black = { 0, 0, 0};
     SDL_Color white = { 255, 255, 255 };
-
-    //Create textures of all texts
-    SDL_Texture *playText = textToTexture(app, app->config.fontCambriab, "PLAY MODE", 50, typeText, black);
-    SDL_Texture *createText = textToTexture(app, app->config.fontCambriab, "CREATE MODE", 50, typeText, black);
-    SDL_Texture *titleText = textToTexture(app, app->config.fontCambriab, "THE BOX OF KNOWLEDGE", 55, typeText, white);
 
     //Define the placement of texts
     SDL_Rect playTextRect = {wRatio16(app, 1.65), hRatio9(app, 4), wRatio16(app, 4.5), hRatio9(app, 2.25)};
     SDL_Rect createTextRect = {wRatio16(app, 9.65), hRatio9(app, 4), wRatio16(app, 4.5), hRatio9(app, 2.25)};
     SDL_Rect titleTextRect = {app->config.width / 3.75, 0, app->config.width / 2.25, app->config.height / 5};
 
-    //Render texts
-    SDL_RenderCopy(app->renderer, playText, NULL, &playTextRect);
-    SDL_RenderCopy(app->renderer, createText, NULL, &createTextRect);
-    SDL_RenderCopy(app->renderer, titleText, NULL, &titleTextRect);
-
-    //Destroy after copy
-    SDL_DestroyTexture(playText);
-    SDL_DestroyTexture(createText);
-    SDL_DestroyTexture(titleText);
+    // Render the texts
+    renderText(app, playTextRect, app->config.fontCambriab, "PLAY MODE", 50, TEXT_BLENDED, black);
+    renderText(app, createTextRect, app->config.fontCambriab, "CREATE MODE", 50, TEXT_BLENDED, black);
+    renderText(app, titleTextRect, app->config.fontCambriab, "THE BOX OF KNOWLEDGE", 55, TEXT_BLENDED, white);
 }
