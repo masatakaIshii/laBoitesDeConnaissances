@@ -52,10 +52,16 @@
 		<Unit filename="functions/controll/create/create.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="functions/controll/create/form.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="functions/menu.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="functions/model/boxModel.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="functions/model/formModel.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="functions/model/listModel.c">
@@ -106,7 +112,9 @@
 		<Unit filename="headers/common.h" />
 		<Unit filename="headers/controll/create.h" />
 		<Unit filename="headers/controll/createList.h" />
+		<Unit filename="headers/controll/form.h" />
 		<Unit filename="headers/model/boxModel.h" />
+		<Unit filename="headers/model/formModel.h" />
 		<Unit filename="headers/model/listModel.h" />
 		<Unit filename="headers/model/modelHelper/modelBindHelper.h" />
 		<Unit filename="headers/model/modelHelper/modelCommon.h" />
