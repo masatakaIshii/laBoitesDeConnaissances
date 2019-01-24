@@ -20,16 +20,31 @@ typedef enum BindType{
     BIND_OUTPUT
 }BindType;
 
+typedef enum typeRenderText{
+    TEXT_SOLID,
+    TEXT_BLENDED
+}typeRenderText;
+
 typedef struct Colors {
     Uint8 blue[4];
     Uint8 lightblue[4];
     Uint8 green[4];
     Uint8 yellow[4];
+    Uint8 red[4];
+    SDL_Color black;
+    SDL_Color white;
 } Colors;
 
 typedef struct Config {
     int width;
     int height;
+    char host[MAX_VARCHAR];
+    char user[MAX_VARCHAR];
+    char password[MAX_TEXT];
+    char database[MAX_VARCHAR];
+    char fontCambriab[MAX_VARCHAR];
+    char fontSixty[MAX_VARCHAR];
+    char fontTimes[MAX_VARCHAR];
 } Config;
 
 /* Model */
@@ -130,7 +145,29 @@ typedef struct Model {
     Query       query;
 } Model;
 
+/* --View-- */
 
+typedef struct Position{
+    int startX;
+    int startY;
+    int stepX;
+    int stepY;
+} Position;
+
+typedef struct DisplayManager {
+    int currentPage;
+    int nbElements;
+    int nbRows;
+    int nbColumns;
+    int elementH;
+    int elementW;
+    Position pos;
+} DisplayManager;
+
+typedef struct TextInput {
+    SDL_Rect diplay[3];
+    char label[MAX_VARCHAR];
+} TextInput;
 
 /* --App-- */
 typedef struct App {

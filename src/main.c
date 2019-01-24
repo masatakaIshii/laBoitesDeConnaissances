@@ -21,6 +21,11 @@
 #include "headers/model/modelHelper/modelParamFinder.h"
 #include "headers/model/modelHelper/modelFetchSelectHelper.h"
 #include "headers/play/box.h"
+#include "headers/controll/create.h"
+#include "headers/controll/createList.h"
+#include "headers/view/commonView.h"
+#include "headers/view/create/createViewBoxes.h"
+#include "headers/controll/form.h"
 
 int main(int argc, char **argv) {
 
@@ -39,15 +44,15 @@ int main(int argc, char **argv) {
         printf("Unable to init SDL: %s\n", SDL_GetError());
         return EXIT_FAILURE;
     }
-    /*if(TTF_Init() < 0) {
+    // Start SDL_Ttf
+    if(TTF_Init() < 0) {
         fprintf(stderr, "Unable to init SDL_ttf: %s\n", TTF_GetError());
         return EXIT_FAILURE;
-    }*/
+    }
 
     loadApp(&app);
 
     returnStat = mainEventLoop(&app);
-
 
     quitApp(&app);
 

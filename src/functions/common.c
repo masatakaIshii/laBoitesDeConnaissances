@@ -1,13 +1,14 @@
 /*
 ** Filename : common.c
 **
-** Made by  : Baptiste LEGO
+** Made by  : Baptiste LEGO, Masataka ISHII
 **
 ** Description  : common functions used in App
 */
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include <string.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -41,6 +42,14 @@ void resizeScreen(App *app, int height) {
     SDL_SetWindowSize(app->screen, app->config.width, app->config.height);
 }
 
+int hRatio9(App *app, double ratioHeight) {
+    return round(ratioHeight * (double)app->config.height / 9);
+}
+
+int wRatio16(App *app, double ratioWidth) {
+    return round(ratioWidth * (double)app->config.width / 16);
+}
+
 SDL_Rect createRect(App *app, int width, int height, int x, int y, Uint8* color) {
     SDL_Rect rect;
     rect.x = x;
@@ -57,7 +66,6 @@ SDL_Rect createRect(App *app, int width, int height, int x, int y, Uint8* color)
     return rect;
 }
 
-
 int inRect(SDL_Rect rect, int clicX, int clicY){
     int x, y;
 
@@ -70,6 +78,42 @@ int inRect(SDL_Rect rect, int clicX, int clicY){
     }
 
     return 0;
+}
+
+SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSize, typeRenderText typeRender, SDL_Color colorFg) {
+    SDL_Texture *textTexture = NULL;
+    SDL_Surface *textSurface = NULL;
+    TTF_Font *font = NULL;
+
+
+    font = TTF_OpenFont(pathFontFile, fontSize);
+    verifyPointer(app, font, "Problem font\n");
+
+    if (typeRender == TEXT_SOLID){
+        textSurface = TTF_RenderText_Solid(font, text, colorFg);
+        verifyPointer(app, textSurface, "Problem textSurface to render text_solid\n");
+    }
+    if (typeRender == TEXT_BLENDED) {
+        textSurface = TTF_RenderText_Blended(font, text, colorFg);
+        verifyPointer(app, textSurface, "Problem textSurface to render text_blended\n");
+    }
+
+
+    textTexture = SDL_CreateTextureFromSurface(app->renderer, textSurface);
+    verifyPointer(app, textTexture, "Problem textTexture\n");
+
+    SDL_FreeSurface(textSurface);
+    TTF_CloseFont(font);
+
+    return textTexture;
+}
+
+void renderText(App *app, SDL_Rect rect, char *pathFontFile, char *text, int fontSize, typeRenderText typeRender, SDL_Color textColor){
+    SDL_Texture *textTexture = textToTexture(app, pathFontFile, text, fontSize, typeRender, textColor);
+
+    SDL_RenderCopy(app->renderer, textTexture, NULL, &rect);
+
+    SDL_DestroyTexture(textTexture);
 }
 
 void verifyPointer(App *app, void *pointer, const char *message) {
@@ -101,19 +145,35 @@ void loadConfigFile(Config *config) {
         ptr = strchr(line, '=');
         if(ptr != NULL){
             strcpy(value, ptr + 1);
+            value[strlen(value) - 1] = '\0';
             strncpy(param, line, ptr - line);
             param[ptr-line] = '\0';
 
-            if(strcmp(param, "windowHeight") == 0){
-                config->height = (int)strtol(value, NULL, 0);
-                config->width = config->height * SCREEN_FORMAT; // Largeur intialise au format defini suivant la hauteur
-            }
-            //else if(strcmp(param, "color1") == 0)
-                // Set la couleur ici
+            loadConfigParam(config, param, value);
         }
     }
 
     fclose(file);
+}
+
+void loadConfigParam(Config *config, char *param, char *value) {
+
+    if(strcmp(param, "windowHeight") == 0){
+        config->height = (int)strtol(value, NULL, 0);
+        config->width = config->height * SCREEN_FORMAT; // Largeur intialise au format defini suivant la hauteur
+    }
+    (strcmp(param, "host") == 0) ? strcpy(config->host, value) : "";
+    (strcmp(param, "user") == 0) ? strcpy(config->user, value) : "";
+    (strcmp(param, "password") == 0) ? strcpy(config->password, value) : "";
+    (strcmp(param, "database") == 0) ? strcpy(config->database, value) : "";
+    (strcmp(param, "database") == 0) ? strcpy(config->database, value) : "";
+    (strcmp(param, "fontCambriab") == 0) ? strcpy(config->fontCambriab, value) : "";
+    (strcmp(param, "fontSixty") == 0) ? strcpy(config->fontSixty, value) : "";
+    (strcmp(param, "fontTimes") == 0) ? strcpy(config->fontTimes, value) : "";
+
+
+    //else if(strcmp(param, "color1") == 0)
+        // Set la couleur ici
 }
 
 void loadColors(Colors *colors) {
@@ -131,6 +191,24 @@ void loadColors(Colors *colors) {
     colors->yellow[1] = 187;
     colors->yellow[2] = 80;
     colors->yellow[3] = 0;
+
+    colors->lightblue[0] = 110;
+    colors->lightblue[1] = 255;
+    colors->lightblue[2] = 255;
+    colors->lightblue[3] = 0;
+
+    colors->red[0] = 255;
+    colors->red[1] = 0;
+    colors->red[2] = 0;
+    colors->red[3] = 0;
+
+    colors->black.r = 0;
+    colors->black.g = 0;
+    colors->black.b = 0;
+
+    colors->white.r = 255;
+    colors->white.g = 255;
+    colors->white.b = 255;
 }
 
 void loadApp(App *app) {
@@ -170,7 +248,7 @@ void loadApp(App *app) {
 void quitApp(App *app){
     SDL_DestroyRenderer(app->renderer);
     SDL_DestroyWindow(app->screen);
-    //TTF_Quit();
+    TTF_Quit();
     SDL_Quit();
 
     quitModel(&app->model);
