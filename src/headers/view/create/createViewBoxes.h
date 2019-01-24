@@ -10,7 +10,7 @@
 #include "../../struct.h"
 #include "../../common.h"
 #include "../commonView.h"
-void displayBoxes(App *app, int page, SDL_Rect *pageButtons, SDL_Rect *boxButtons, int *nbOfBox, int nbTotalOfBox);
+void displayBoxes(App *app, int page, SDL_Rect *pageButtons, SDL_Rect *boxButtons, SDL_Rect *manageButtons, int *nbOfBox, int nbTotalOfBox);
 
 #endif // CREATE_VIEW_BOXES
 

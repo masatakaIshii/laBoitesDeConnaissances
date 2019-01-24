@@ -8,12 +8,17 @@
 
 #include "../../../headers/view/create/createViewBoxes.h"
 
-void displayBoxes(App *app, int page, SDL_Rect *pageButtons, SDL_Rect *boxButtons, int *nbOfBox, int nbTotalOfBox) {
-    SDL_Rect nullBtn = {0};
-    int elementHeight = hRatio9(app, 1.25),            elementWidth = wRatio16(app, 1.25);
-    int nbColomns = 2,                              nbRows = 3;
-    int startX = wRatio16(app, 5.5),                startY = hRatio9(app, 2);
-    int stepX = wRatio16(app, 3.5),                   stepY = hRatio9(app, 0.25);
+void displayBoxes(App *app, int page, SDL_Rect *pageButtons, SDL_Rect *boxButtons, SDL_Rect *manageButtons, int *nbOfBox, int nbTotalOfBox) {
+
+    int elementHeight = hRatio9(app, 1.25),     elementWidth = wRatio16(app, 1.25);
+    int nbColomns = 2,                          nbRows = 4;
+    int startX = wRatio16(app, 5.5),            startY = hRatio9(app, 2);
+    int stepX = wRatio16(app, 3.5),             stepY = hRatio9(app, 0.25);
+
+    char boxManageText[2][11];
+
+    strcpy(boxManageText[0], "CREATE BOX");
+    strcpy(boxManageText[1], "DELETE BOX");
 
     DisplayManager display = displayManagerConstructor(elementHeight, elementWidth, nbColomns, nbRows, startX, startY, stepX, stepY);
 
@@ -23,17 +28,9 @@ void displayBoxes(App *app, int page, SDL_Rect *pageButtons, SDL_Rect *boxButton
     // Creating boxes
     *nbOfBox = createCustumElementsPage(app, boxButtons, nbTotalOfBox, page, display);
 
-    if (page != 0) {
-        pageButtons[0] = createRect(app, wRatio16(app, 1.5), hRatio9(app, 1), wRatio16(app, 8.5), hRatio9(app, 7.25), app->colors.yellow);
-    } else {
-        pageButtons[0] = nullBtn;
-    }
+    displayPageButtons(app, page, pageButtons, display.nbElements, nbTotalOfBox);
 
-    if (display.nbElements * (page + 1) < nbTotalOfBox) {
-        pageButtons[1] = createRect(app, wRatio16(app, 1.5), hRatio9(app, 1), wRatio16(app, 10.5), hRatio9(app, 7.25), app->colors.yellow);
-    } else {
-        pageButtons[1] = nullBtn;
-    }
+    displayManageButtons(app, manageButtons, boxManageText);
 
     SDL_RenderPresent(app->renderer);
 }

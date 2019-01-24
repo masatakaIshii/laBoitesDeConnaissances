@@ -11,16 +11,13 @@ void createMode(App *app) {
     SDL_Event event;
     SDL_Rect pageButtons[2];
     SDL_Rect *boxButtons = NULL;
+    SDL_Rect manageButtons[2];
     int nbOfBox = 0;
-    int nbTotalOfBox = 0;
     int page = 0;
     int done = 0;
 
     SelectQuery boxes = getBoxes(app);
-    nbTotalOfBox = boxes.numberRows;
     boxButtons= malloc(boxes.numberRows * sizeof(SDL_Rect));
-
-    showQueryResult(app, &boxes);
 
     while(!done) {
         SDL_WaitEvent(&event);
@@ -28,17 +25,16 @@ void createMode(App *app) {
         switch (event.type) {
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT) {
-                    createEventBoxes(app, &boxes, event, pageButtons, boxButtons, &page);
+                    createEventBoxes(app, &boxes, event, pageButtons, boxButtons, manageButtons, &page);
                 }
         }
-        displayBoxes(app, page, pageButtons, boxButtons, &nbOfBox, nbTotalOfBox);
+        displayBoxes(app, page, pageButtons, boxButtons, manageButtons, &nbOfBox, boxes.numberRows);
     }
-
 
     free(boxButtons);
 }
 
-void createEventBoxes(App *app, SelectQuery *boxes, SDL_Event event, SDL_Rect *pageButtons, SDL_Rect *boxButtons, int *page) {
+void createEventBoxes(App *app, SelectQuery *boxes, SDL_Event event, SDL_Rect *pageButtons, SDL_Rect *boxButtons, SDL_Rect *manageButtons, int *page) {
     int i;
     int currentId = (*page) * boxes->numberFields;
     // Change the page
@@ -47,7 +43,14 @@ void createEventBoxes(App *app, SelectQuery *boxes, SDL_Event event, SDL_Rect *p
     } else if(inRect(pageButtons[1], event.button.x, event.button.y)) {
         (*page)++;
     }
-    printf("boxes.numberFields : %d\n", boxes->numberFields);
+
+    if (inRect(manageButtons[0], event.button.x, event.button.y)) {
+        createForm(app, boxes, boxButtons, "box");
+    }
+    if (inRect(manageButtons[1], event.button.x, event.button.y)) {
+        //deleteBoxForm
+        printf("deleBoxForm\n");
+    }
 
     for (i = currentId ; i < (currentId + boxes->numberFields); i++) {
         if (inRect(boxButtons[i], event.button.x, event.button.y)){
@@ -55,5 +58,4 @@ void createEventBoxes(App *app, SelectQuery *boxes, SDL_Event event, SDL_Rect *p
             printf("boxes : %d => %s : %s\n", i, boxes->listColumnsRows[i][0], boxes->listColumnsRows[i][1]);
         }
     }
-
 }

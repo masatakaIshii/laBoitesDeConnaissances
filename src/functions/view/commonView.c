@@ -56,3 +56,41 @@ int createCustumElementsPage(App *app, SDL_Rect *buttons, int sizeElements, int 
 
     return currentIndex - display.nbElements * display.currentPage;
 }
+
+void displayPageButtons(App *app, int page, SDL_Rect *pageButtons, int nbElements, int nbTotalOfBox) {
+    SDL_Rect nullBtn = {0};
+
+    if (page != 0) {
+        pageButtons[0] = createRect(app, wRatio16(app, 0.7), hRatio9(app, 0.4), wRatio16(app, 8.5), hRatio9(app, 7.25), app->colors.green);
+    } else {
+        pageButtons[0] = nullBtn;
+    }
+
+    if (nbElements * (page + 1) < nbTotalOfBox) {
+        pageButtons[1] = createRect(app, wRatio16(app, 0.7), hRatio9(app, 0.4), wRatio16(app, 10.5), hRatio9(app, 7.25), app->colors.green);
+    } else {
+        pageButtons[1] = nullBtn;
+    }
+}
+
+void displayManageButtons(App *app, SDL_Rect *manageButtons, char boxManageText[2][11]) {
+
+    manageButtons[0] = createRect(app, wRatio16(app, 3), hRatio9(app, 1.5), wRatio16(app, 1),  hRatio9(app, 2.5), app->colors.lightblue);
+
+    manageButtons[1] = createRect(app, wRatio16(app, 3), hRatio9(app, 1.5), wRatio16(app, 1), hRatio9(app, 5.5), app->colors.red);
+
+    renderTextManageButton(app, manageButtons, boxManageText);
+}
+
+void renderTextManageButton(App *app, SDL_Rect *manageButtons, char boxManageText[2][11]) {
+    TypeRenderText typeText = TEXT_BLENDED;
+
+    SDL_Texture *createText = textToTexture(app, app->config.fontCambriab, boxManageText[0], 100, typeText, app->colors.black);
+    SDL_Texture *deleteText = textToTexture(app, app->config.fontCambriab, boxManageText[1], 100, typeText, app->colors.black);
+
+    SDL_RenderCopy(app->renderer, createText, NULL, &manageButtons[0]);
+    SDL_RenderCopy(app->renderer, deleteText, NULL, &manageButtons[1]);
+
+    SDL_DestroyTexture(createText);
+    SDL_DestroyTexture(deleteText);
+}

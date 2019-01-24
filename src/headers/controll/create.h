@@ -11,9 +11,10 @@
 #include "../common.h"
 #include "../model/boxModel.h"
 #include "../view/create/createViewBoxes.h"
+#include "form.h"
 
 void createMode(App *app);
-void createEventBoxes(App *app, SelectQuery *boxes, SDL_Event event, SDL_Rect *pageButtons, SDL_Rect *boxButtons, int *page);
+void createEventBoxes(App *app, SelectQuery *boxes, SDL_Event event, SDL_Rect *pageButtons, SDL_Rect *boxButtons, SDL_Rect *manageButtons, int *page);
 
 #endif // CONTROLL_CREATE_MODE
 

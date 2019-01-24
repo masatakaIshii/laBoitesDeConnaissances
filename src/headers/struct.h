@@ -20,17 +20,19 @@ typedef enum BindType{
     BIND_OUTPUT
 }BindType;
 
-typedef enum typeRenderText{
+typedef enum TypeRenderText{
     TEXT_SOLID,
     TEXT_BLENDED
-}typeRenderText;
+}TypeRenderText;
 
 typedef struct Colors {
     Uint8 blue[4];
     Uint8 lightblue[4];
     Uint8 green[4];
     Uint8 yellow[4];
-    Uint8 black[3];
+    Uint8 red[4];
+    SDL_Color black;
+    SDL_Color white;
 } Colors;
 
 typedef struct Config {
@@ -161,6 +163,11 @@ typedef struct DisplayManager {
     int elementW;
     Position pos;
 } DisplayManager;
+
+typedef struct TextInput {
+    SDL_Rect diplay[3];
+    char label[MAX_VARCHAR];
+}
 
 /* --App-- */
 typedef struct App {

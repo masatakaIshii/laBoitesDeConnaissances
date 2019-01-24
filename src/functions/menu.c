@@ -75,14 +75,15 @@ void displayMenu(App *app, SDL_Rect *buttons) {
 }
 
 void RenderMainTexts (App *app) {
-    typeRenderText typeText = TEXT_BLENDED;
-    SDL_Color black = { 0, 0, 0};
-    SDL_Color white = { 255, 255, 255 };
+    TypeRenderText typeText = TEXT_BLENDED;
+
+    SDL_Color black = { app->colors.black.r, app->colors.black.g, app->colors.black.b};
+    SDL_Color white = { app->colors.white.r, app->colors.white.g, app->colors.white.b};
 
     //Create textures of all texts
-    SDL_Texture *playText = textToTexture(app, app->config.fontCambriab, "PLAY MODE", 50, typeText, black);
-    SDL_Texture *createText = textToTexture(app, app->config.fontCambriab, "CREATE MODE", 50, typeText, black);
-    SDL_Texture *titleText = textToTexture(app, app->config.fontCambriab, "THE BOX OF KNOWLEDGE", 55, typeText, white);
+    SDL_Texture *playText = textToTexture(app, app->config.fontCambriab, "PLAY MODE", 100, typeText, black);
+    SDL_Texture *createText = textToTexture(app, app->config.fontCambriab, "CREATE MODE", 100, typeText, black);
+    SDL_Texture *titleText = textToTexture(app, app->config.fontCambriab, "THE BOX OF KNOWLEDGE", 100, typeText, white);
 
     //Define the placement of texts
     SDL_Rect playTextRect = {wRatio16(app, 1.65), hRatio9(app, 4), wRatio16(app, 4.5), hRatio9(app, 2.25)};

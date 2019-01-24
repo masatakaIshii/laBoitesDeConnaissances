@@ -25,6 +25,7 @@
 #include "headers/controll/createList.h"
 #include "headers/view/commonView.h"
 #include "headers/view/create/createViewBoxes.h"
+#include "headers/controll/form.h"
 
 int main(int argc, char **argv) {
 

@@ -19,7 +19,7 @@ int hRatio9(App *app, double ratioHeight);
 int wRatio16(App *app, double ratioWidth);
 
 SDL_Rect createRect(App *app, int width, int height, int x, int y, Uint8* color);
-SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSize, typeRenderText typeRender, SDL_Color colorFg);
+SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSize, TypeRenderText typeRender, SDL_Color colorFg);
 int inRect(SDL_Rect rect, int clicX, int clicY);
 void verifyPointer(App *app, void *pointer,const char* message);
 void loadDefaultConfig(Config *config);

@@ -70,7 +70,7 @@ SDL_Rect createRect(App *app, int width, int height, int x, int y, Uint8* color)
     return rect;
 }
 
-SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSize, typeRenderText typeRender, SDL_Color colorFg) {
+SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSize, TypeRenderText typeRender, SDL_Color colorFg) {
     SDL_Texture *textTexture = NULL;
     SDL_Surface *textSurface = NULL;
     TTF_Font *font = NULL;
@@ -79,19 +79,18 @@ SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSiz
     font = TTF_OpenFont(pathFontFile, fontSize);
     verifyPointer(app, font, "Problem font\n");
 
-
     if (typeRender == TEXT_SOLID){
         textSurface = TTF_RenderText_Solid(font, text, colorFg);
-        verifyPointer(app, textSurface, "Problem textSurface");
+        verifyPointer(app, textSurface, "Problem textSurface to render text_solid\n");
     }
     if (typeRender == TEXT_BLENDED) {
         textSurface = TTF_RenderText_Blended(font, text, colorFg);
-        verifyPointer(app, textSurface, "Problem textSurface");
+        verifyPointer(app, textSurface, "Problem textSurface to render text_blended\n");
     }
 
 
     textTexture = SDL_CreateTextureFromSurface(app->renderer, textSurface);
-    verifyPointer(app, textTexture, "Problem textTexture");
+    verifyPointer(app, textTexture, "Problem textTexture\n");
 
     SDL_FreeSurface(textSurface);
     TTF_CloseFont(font);
@@ -189,9 +188,23 @@ void loadColors(Colors *colors) {
     colors->yellow[2] = 80;
     colors->yellow[3] = 0;
 
-    colors->black[0] = 0;
-    colors->black[1] = 0;
-    colors->black[2] = 0;
+    colors->lightblue[0] = 110;
+    colors->lightblue[1] = 255;
+    colors->lightblue[2] = 255;
+    colors->lightblue[3] = 0;
+
+    colors->red[0] = 255;
+    colors->red[1] = 0;
+    colors->red[2] = 0;
+    colors->red[3] = 0;
+
+    colors->black.r = 0;
+    colors->black.g = 0;
+    colors->black.b = 0;
+
+    colors->white.r = 255;
+    colors->white.g = 255;
+    colors->white.b = 255;
 }
 
 void loadApp(App *app) {
