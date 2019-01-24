@@ -43,17 +43,13 @@ void resizeScreen(App *app, int height) {
 }
 
 int hRatio9(App *app, double ratioHeight) {
-
-    int height = round(ratioHeight * (double)app->config.height / 9);
-
-    return height;
+    return round(ratioHeight * (double)app->config.height / 9);
 }
 
 int wRatio16(App *app, double ratioWidth) {
-    int width = round(ratioWidth * (double)app->config.width / 16);
-
-    return width;
+    return round(ratioWidth * (double)app->config.width / 16);
 }
+
 SDL_Rect createRect(App *app, int width, int height, int x, int y, Uint8* color) {
     SDL_Rect rect;
     rect.x = x;
@@ -70,7 +66,21 @@ SDL_Rect createRect(App *app, int width, int height, int x, int y, Uint8* color)
     return rect;
 }
 
-SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSize, TypeRenderText typeRender, SDL_Color colorFg) {
+int inRect(SDL_Rect rect, int clicX, int clicY){
+    int x, y;
+
+    for(x = 0; x < rect.w; x++){
+        for(y = 0; y < rect.h; y++){
+            if(x + rect.x == clicX && y + rect.y == clicY){
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSize, typeRenderText typeRender, SDL_Color colorFg) {
     SDL_Texture *textTexture = NULL;
     SDL_Surface *textSurface = NULL;
     TTF_Font *font = NULL;
@@ -98,18 +108,12 @@ SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSiz
     return textTexture;
 }
 
-int inRect(SDL_Rect rect, int clicX, int clicY){
-    int x, y;
+void renderText(App *app, SDL_Rect rect, char *pathFontFile, char *text, int fontSize, typeRenderText typeRender, SDL_Color textColor){
+    SDL_Texture *textTexture = textToTexture(app, pathFontFile, text, fontSize, typeRender, textColor);
 
-    for(x = 0; x < rect.w; x++){
-        for(y = 0; y < rect.h; y++){
-            if(x + rect.x == clicX && y + rect.y == clicY){
-                return 1;
-            }
-        }
-    }
+    SDL_RenderCopy(app->renderer, textTexture, NULL, &rect);
 
-    return 0;
+    SDL_DestroyTexture(textTexture);
 }
 
 void verifyPointer(App *app, void *pointer, const char *message) {

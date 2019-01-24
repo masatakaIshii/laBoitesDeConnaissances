@@ -83,7 +83,7 @@ void displayManageButtons(App *app, SDL_Rect *manageButtons, char boxManageText[
 }
 
 void renderTextManageButton(App *app, SDL_Rect *manageButtons, char boxManageText[2][11]) {
-    TypeRenderText typeText = TEXT_BLENDED;
+    typeRenderText typeText = TEXT_BLENDED;
 
     SDL_Texture *createText = textToTexture(app, app->config.fontCambriab, boxManageText[0], 100, typeText, app->colors.black);
     SDL_Texture *deleteText = textToTexture(app, app->config.fontCambriab, boxManageText[1], 100, typeText, app->colors.black);

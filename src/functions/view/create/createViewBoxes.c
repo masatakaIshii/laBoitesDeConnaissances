@@ -11,7 +11,7 @@
 void displayBoxes(App *app, int page, SDL_Rect *pageButtons, SDL_Rect *boxButtons, SDL_Rect *manageButtons, int *nbOfBox, int nbTotalOfBox) {
 
     int elementHeight = hRatio9(app, 1.25),     elementWidth = wRatio16(app, 1.25);
-    int nbColomns = 2,                          nbRows = 4;
+    int nbColomns = 2,                          nbRows = 3;
     int startX = wRatio16(app, 5.5),            startY = hRatio9(app, 2);
     int stepX = wRatio16(app, 3.5),             stepY = hRatio9(app, 0.25);
 
