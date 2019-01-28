@@ -13,6 +13,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <mysql.h>
 #include "../headers/common.h"
+#include "../headers/menu.h"
 #include "../headers/play/box.h"
 #include "../headers/controll/create.h"
 

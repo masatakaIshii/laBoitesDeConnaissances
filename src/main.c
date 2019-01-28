@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include "headers/struct.h"
 #include "headers/common.h"
+#include "headers/menu.h"
 #include "headers/model/modelHelper/modelCommon.h"
 #include "headers/model/modelHelper/modelQuit.h"
 #include "headers/model/modelHelper/modelSelect.h"

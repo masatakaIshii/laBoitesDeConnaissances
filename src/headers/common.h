@@ -9,10 +9,7 @@
 #ifndef COMMON_FUNCTIONS
 #include "struct.h"
 
-int mainEventLoop(App *app);
 void commonEvents(App *app, SDL_Event event, int *done);
-void displayMenu(App *app, SDL_Rect *buttons);
-void RenderMainTexts (App *app);
 
 void resizeScreen(App *app, int height);
 int hRatio9(App *app, double ratioHeight);
