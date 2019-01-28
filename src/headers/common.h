@@ -21,6 +21,9 @@ int inRect(SDL_Rect rect, int clicX, int clicY);
 SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSize, typeRenderText typeRender, SDL_Color colorFg);
 void renderText(App *app, SDL_Rect rect, char *pathFontFile, char *text, int fontSize, typeRenderText typeRender, SDL_Color textColor);
 
+Uint8 *hexToRgb(const char *hex);
+int hexToDecimal(char *input, int size);
+
 void verifyPointer(App *app, void *pointer,const char* message);
 
 void loadDefaultConfig(Config *config);

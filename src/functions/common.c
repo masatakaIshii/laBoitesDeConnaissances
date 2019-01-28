@@ -116,6 +116,51 @@ void renderText(App *app, SDL_Rect rect, char *pathFontFile, char *text, int fon
     SDL_DestroyTexture(textTexture);
 }
 
+Uint8 *hexToRgb(const char *hex){
+    char hexNumber[2];
+    Uint8 *rgb = NULL;
+    int i;
+
+    rgb = malloc(sizeof(Uint8) * 4);
+    if(rgb == NULL){
+        printf("Unable to convert hex\n");
+        return NULL;
+    }
+
+    for(i = 0; i < 3; i++){
+        strncpy(hexNumber, hex, 2);
+        rgb[i] = hexToDecimal(hexNumber, 2);
+        hex += 2;
+    }
+
+    rgb[3] = 0;
+
+    return rgb;
+}
+
+int hexToDecimal(char *input, int size){
+    int result = 0;
+    int factor = 1;
+    int i;
+
+    for(i = size - 1; i >= 0; i--){
+        if(input[i] >= '0' && input[i] <= '9'){
+            result += (input[i] - '0') * factor;
+            factor *= 16;
+        }
+        else if(input[i] >= 'A' && input[i] <= 'F'){
+            result += (input[i] - 'A' + 10) * factor;
+            factor *= 16;
+        }
+        else if(input[i] >= 'a' && input[i] <= 'f'){
+            result += (input[i] - 'a' + 10) * factor;
+            factor *= 16;
+        }
+    }
+
+    return result;
+}
+
 void verifyPointer(App *app, void *pointer, const char *message) {
     if (!pointer) {
         printf("%s\n", message);

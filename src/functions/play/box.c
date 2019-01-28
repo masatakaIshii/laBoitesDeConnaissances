@@ -63,10 +63,18 @@ void playMode(App *app){
 
 void displayHomePlay(App *app, SelectQuery boxes, int page, SDL_Rect *pageButtons, SDL_Rect *boxButtons, int *nbOfBoxInPage, int nbTotalOfBox){
     SDL_Rect nullBtn = {0};
+    SDL_Rect textPos;
 
     // Set background color
     SDL_SetRenderDrawColor(app->renderer, app->colors.blue[0], app->colors.blue[1], app->colors.blue[2], app->colors.blue[3]);
     SDL_RenderClear(app->renderer);
+
+    // Write title
+    textPos.h = hRatio9(app, 1.5);
+    textPos.w = wRatio16(app, 6);
+    textPos.x = wRatio16(app, 5);
+    textPos.y = 0;
+    renderText(app, textPos, app->config.fontCambriab, "TOUTES LES BOITES", 55, TEXT_BLENDED, app->colors.white);
 
     // Creating boxes
     *nbOfBoxInPage = createBoxPage(app, boxes, boxButtons, nbTotalOfBox, page);
@@ -101,7 +109,7 @@ int createBoxPage(App *app, SelectQuery boxes, SDL_Rect *buttons, int size, int 
             // Create square
             xBox = ((app->config.width / 3) * y) + 10*y + app->config.width/5;
             yBox = ((app->config.height / 8) * x) + 10*x + app->config.height/6;
-            buttons[i] = createRect(app, app->config.height / 8, app->config.height / 8, xBox, yBox, app->colors.green);
+            buttons[i] = createRect(app, app->config.height / 8, app->config.height / 8, xBox, yBox, hexToRgb(boxes.listColumnsRows[i][5]));
 
             // Create texts
             renderButtonLabel(app, boxes.listColumnsRows[i], buttons[i]);
@@ -128,7 +136,7 @@ void renderButtonLabel(App *app, char **data, SDL_Rect buttonPos){
     else
         textPos.w *= 4;
 
-    renderText(app, textPos, app->config.fontCambriab, data[1], 50, TEXT_BLENDED, app->colors.white);
+    renderText(app, textPos, app->config.fontCambriab, data[1], 70, TEXT_BLENDED, app->colors.white);
 
     // Last modification date
     textPos.y += textPos.h;
