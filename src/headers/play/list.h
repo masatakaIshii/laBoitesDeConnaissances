@@ -7,5 +7,5 @@
 */
 
 void listMenu(App *app, SelectQuery boxes, int page, int i);
-void displayHomeBox(App *app, SDL_Rect *listButtons, SelectQuery lists);
-int createListPage(App *app, SDL_Rect *buttons, int size);
+void displayHomeBox(App *app, SelectQuery lists, SDL_Rect *listButtons);
+int createListPage(App *app, SelectQuery lists, SDL_Rect *buttons, int size);

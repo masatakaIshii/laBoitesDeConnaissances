@@ -51,17 +51,17 @@ void playMode(App *app){
             break;
         }
 
-        displayHomePlay(app, page, pageButtons, boxButtons, &nbOfBox, nbTotalOfBox);
+        displayHomePlay(app, boxes, page, pageButtons, boxButtons, &nbOfBox, nbTotalOfBox);
     }
 
     free(boxButtons);
 }
 
 
-////////////////////////// DISPLAY \\\\\\\\\\\\\\\\\\\\\\\\\\_
+/*///////////////////////// DISPLAY \\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
 
-void displayHomePlay(App *app, int page, SDL_Rect *pageButtons, SDL_Rect *boxButtons, int *nbOfBoxInPage, int nbTotalOfBox){
+void displayHomePlay(App *app, SelectQuery boxes, int page, SDL_Rect *pageButtons, SDL_Rect *boxButtons, int *nbOfBoxInPage, int nbTotalOfBox){
     SDL_Rect nullBtn = {0};
 
     // Set background color
@@ -69,7 +69,7 @@ void displayHomePlay(App *app, int page, SDL_Rect *pageButtons, SDL_Rect *boxBut
     SDL_RenderClear(app->renderer);
 
     // Creating boxes
-    *nbOfBoxInPage = createBoxPage(app, boxButtons, nbTotalOfBox, page);
+    *nbOfBoxInPage = createBoxPage(app, boxes, boxButtons, nbTotalOfBox, page);
 
     // Conditions for page buttons
     if(page != 0)
@@ -85,17 +85,25 @@ void displayHomePlay(App *app, int page, SDL_Rect *pageButtons, SDL_Rect *boxBut
     SDL_RenderPresent(app->renderer);
 }
 
-int createBoxPage(App *app, SDL_Rect *buttons, int size, int page){
+int createBoxPage(App *app, SelectQuery boxes, SDL_Rect *buttons, int size, int page){
     int x, y, i = 10 * page;
     int xBox = 0, yBox = 0;
+    SDL_Rect textPos;
 
     for(x = 0; x < 5; x++){
         for(y = 0; y < 2; y++){
             if(i >= size)
                 break;
+            // Create square
             xBox = ((app->config.width / 3) * y) + 10*y + app->config.width/5;
             yBox = ((app->config.height / 8) * x) + 10*x + app->config.height/6;
             buttons[i] = createRect(app, app->config.height / 8, app->config.height / 8, xBox, yBox, app->colors.green);
+
+            // Create text
+            textPos = buttons[i];
+            textPos.x += app->config.height / 8 + 5;
+            textPos.w *= 4;
+            renderText(app, textPos, app->config.fontCambriab, boxes.listColumnsRows[i][1], 30, TEXT_BLENDED, app->colors.white);
             i++;
         }
         if(i >= size)

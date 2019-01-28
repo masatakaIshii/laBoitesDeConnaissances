@@ -7,7 +7,7 @@
 */
 
 void playMode(App *app);
-void displayHomePlay(App *app, int page, SDL_Rect *pageButtons, SDL_Rect *boxButtons, int *nbOfBoxInPage, int nbTotalOfBox);
-int createBoxPage(App *app, SDL_Rect *buttons, int size, int page);
+void displayHomePlay(App *app, SelectQuery boxes, int page, SDL_Rect *pageButtons, SDL_Rect *boxButtons, int *nbOfBoxInPage, int nbTotalOfBox);
+int createBoxPage(App *app, SelectQuery boxes, SDL_Rect *buttons, int size, int page);
 
 

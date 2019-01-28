@@ -33,30 +33,31 @@ void listMenu(App *app, SelectQuery boxes, int page, int i){
                 }
             break;
         }
-        displayHomeBox(app, listButtons, lists);
+        displayHomeBox(app, lists, listButtons);
     }
 
     free(listButtons);
 }
 
 
-////////////////////////// DISPLAY \\\\\\\\\\\\\\\\\\\\\\\\\\_
+/*///////////////////////// DISPLAY \\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
 
-void displayHomeBox(App *app, SDL_Rect *listButtons, SelectQuery lists){
+void displayHomeBox(App *app, SelectQuery lists, SDL_Rect *listButtons){
     // On set la couleur du fond d'ecran
     SDL_SetRenderDrawColor(app->renderer, app->colors.blue[0], app->colors.blue[1], app->colors.blue[2], app->colors.blue[3]);
     SDL_RenderClear(app->renderer);
 
     // Creation des boites
-    createListPage(app, listButtons, lists.numberRows);
+    createListPage(app, lists, listButtons, lists.numberRows);
 
     SDL_RenderPresent(app->renderer);
 }
 
-int createListPage(App *app, SDL_Rect *buttons, int size){
+int createListPage(App *app, SelectQuery lists, SDL_Rect *buttons, int size){
     int x, y, i = 0;
     int xBox = 0, yBox = 0;
+    SDL_Rect textPos;
 
     for(x = 0; x < 5; x++){
         for(y = 0; y < 2; y++){
@@ -65,6 +66,12 @@ int createListPage(App *app, SDL_Rect *buttons, int size){
             xBox = ((app->config.width / 3) * y) + 10*y + app->config.width/5;
             yBox = ((app->config.height / 8) * x) + 10*x + app->config.height/6;
             buttons[i] = createRect(app, app->config.height / 8, app->config.height / 8, xBox, yBox, app->colors.yellow);
+
+            // Create text
+            textPos = buttons[i];
+            textPos.x += app->config.height / 8 + 5;
+            textPos.w *= 4;
+            renderText(app, textPos, app->config.fontCambriab, lists.listColumnsRows[i][1], 30, TEXT_BLENDED, app->colors.white);
             i++;
         }
         if(i >= size)
