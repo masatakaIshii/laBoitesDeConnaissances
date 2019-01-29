@@ -266,8 +266,8 @@ void loadColors(Colors *colors) {
     colors->lightblue[3] = 0;
 
     colors->red[0] = 255;
-    colors->red[1] = 0;
-    colors->red[2] = 0;
+    colors->red[1] = 70;
+    colors->red[2] = 70;
     colors->red[3] = 0;
 
     colors->black.r = 0;

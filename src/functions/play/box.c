@@ -63,7 +63,6 @@ void playMode(App *app){
 
 void displayHomePlay(App *app, SelectQuery boxes, int page, SDL_Rect *pageButtons, SDL_Rect *boxButtons, int *nbOfBoxInPage, int nbTotalOfBox){
     SDL_Rect nullBtn = {0};
-    SDL_Rect textPos;
 
     // Set background color
     SDL_SetRenderDrawColor(app->renderer, app->colors.blue[0], app->colors.blue[1], app->colors.blue[2], app->colors.blue[3]);
