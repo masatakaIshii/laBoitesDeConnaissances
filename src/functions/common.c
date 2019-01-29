@@ -116,6 +116,29 @@ void renderText(App *app, SDL_Rect rect, char *pathFontFile, char *text, int fon
     SDL_DestroyTexture(textTexture);
 }
 
+void writeTitle(App *app, char *title){
+    SDL_Rect textPos;
+
+    // Write title
+    textPos.h = hRatio9(app, 1.5);
+    textPos.y = 0;
+
+    if(strlen(title) < 6){
+        textPos.w = wRatio16(app, 2);
+        textPos.x = wRatio16(app, 7);
+    }
+    else if(strlen(title) < 12){
+        textPos.w = wRatio16(app, 4);
+        textPos.x = wRatio16(app, 6);
+    }
+    else{
+        textPos.w = wRatio16(app, 6);
+        textPos.x = wRatio16(app, 5);
+    }
+
+    renderText(app, textPos, app->config.fontCambriab, title, 80, TEXT_BLENDED, app->colors.white);
+}
+
 Uint8 *hexToRgb(const char *hex){
     char hexNumber[2];
     Uint8 *rgb = NULL;

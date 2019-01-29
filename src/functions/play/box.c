@@ -70,11 +70,7 @@ void displayHomePlay(App *app, SelectQuery boxes, int page, SDL_Rect *pageButton
     SDL_RenderClear(app->renderer);
 
     // Write title
-    textPos.h = hRatio9(app, 1.5);
-    textPos.w = wRatio16(app, 6);
-    textPos.x = wRatio16(app, 5);
-    textPos.y = 0;
-    renderText(app, textPos, app->config.fontCambriab, "TOUTES LES BOITES", 55, TEXT_BLENDED, app->colors.white);
+    writeTitle(app, "TOUTES LES BOITES");
 
     // Creating boxes
     *nbOfBoxInPage = createBoxPage(app, boxes, boxButtons, nbTotalOfBox, page);
