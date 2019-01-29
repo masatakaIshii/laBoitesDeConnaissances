@@ -7,12 +7,13 @@
 */
 #include "../../../headers/controll/form.h"
 
-void createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableName){
+void createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableName, int idParent){
     SDL_Event event;
+
     MySqlTable tableInfo;
     int done = 0;
 
-    tableInfo =  getTable(app, tableName);
+    tableInfo = getTable(app, tableName);
 
     while (!done) {
         SDL_WaitEvent(&event);
@@ -23,5 +24,6 @@ void createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableN
 
                 }
         }
+        //displayForm(app, )
     }
 }

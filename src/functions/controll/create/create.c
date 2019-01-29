@@ -45,7 +45,7 @@ void createEventBoxes(App *app, SelectQuery *boxes, SDL_Event event, SDL_Rect *p
     }
 
     if (inRect(manageButtons[0], event.button.x, event.button.y)) {
-        createForm(app, boxes, boxButtons, "box");
+        createForm(app, boxes, boxButtons, "box", 0);
     }
     if (inRect(manageButtons[1], event.button.x, event.button.y)) {
         //deleteBoxForm
