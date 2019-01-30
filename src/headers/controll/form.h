@@ -10,7 +10,9 @@
 #include "../struct.h"
 #include "../model/formModel.h"
 
+
 void createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableName, int idParent);
+
 
 #endif // CREATE_FORM
 

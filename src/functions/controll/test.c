@@ -36,9 +36,9 @@
 int testEventLoop(App *app) {
     SDL_Event event;
     int done = 0;
-    short startInput = 0;
-    TextsInput input = {"", 0};
-    SDL_Rect buttonInput;
+    TextsInput input;
+
+    loadTextsInput(&input);
 
     printf("bienvenue dans le test\n");
     SDL_StopTextInput();
@@ -47,9 +47,7 @@ int testEventLoop(App *app) {
         commonEvents(app, event, &done);
         switch (event.type){
             case SDL_KEYDOWN:
-                // MODE PLAY
-                textInputKeyEvents(event, &input, &startInput);
-                // Fonction CREATE
+                textInputKeyEvents(event, &input);
             break;
 
             case SDL_MOUSEBUTTONDOWN:
@@ -64,20 +62,30 @@ int testEventLoop(App *app) {
 
             break;
         }
-        displayInput(app, buttonInput, &input);
+        displayInput(app, &input);
     }
+
+    deleteAllListInputText(input.listChar);
 
     return (done) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
-void textInputKeyEvents(SDL_Event event, TextsInput *input, short *startInput){
+void loadTextsInput(TextsInput *input){
+    input->cursor = 0;
+    input->nbChar = 0;
+    input->size = 0;
+    input->start = 0;
+    input->end = 0;
+    input->listChar = NULL;
+}
 
-    input->length = strlen(input->texts);
+void textInputKeyEvents(SDL_Event event, TextsInput *input){
+
+//    input->length = strlen(input->texts);
 
     if (event.key.keysym.sym == SDLK_F1){
         SDL_StartTextInput();
         printf("SDL_TextInput activate\n");
-        *startInput = 1;
     }
 
     if (event.key.keysym.sym == SDLK_F2){
@@ -89,13 +97,27 @@ void textInputKeyEvents(SDL_Event event, TextsInput *input, short *startInput){
     if (event.key.keysym.sym == SDLK_RETURN || event.key.keysym.sym == SDLK_KP_ENTER){
 
     } else if (event.key.keysym.sym == SDLK_RIGHT){
-        (input->cursor <= strlen(input->texts)) ? input->cursor++ : 0;
+        (input->cursor <= input->nbChar) ? input->cursor++ : 0;
+
     } else if (event.key.keysym.sym == SDLK_LEFT){
         (input->cursor > 0) ? input->cursor-- : 0;
+
     } else if (event.key.keysym.sym == SDLK_DELETE){
-        input->action = (input->cursor < strlen(input->texts)) ?  R_DELETE : STAND_BY;
+        input->action = (input->cursor < input->nbChar) ?  R_DELETE : STAND_BY;
+
     } else if (event.key.keysym.sym == SDLK_BACKSPACE){
-        (SDL_IsTextInputActive()) ? removeCharBeforeCursor(input) : printf("ca ne passe pas!\n");
+        if (SDL_IsTextInputActive()) {
+            int sizeOfChar = 0;
+            input->listChar = deleteEndTextInput(input->listChar, &sizeOfChar);
+            if (sizeOfChar != 0){
+                input->size -= sizeOfChar;
+                input->nbChar--;
+                input->cursor--;
+            }
+            printf("sizeOfChar : %d\n", sizeOfChar);
+
+        }
+
     } else {
         input->action = ADD_CHAR;
     }
@@ -103,50 +125,64 @@ void textInputKeyEvents(SDL_Event event, TextsInput *input, short *startInput){
 
 void textInputEvents(App *app, SDL_Event event, TextsInput *input){
 
-    input->length = strlen(input->texts);
     printf("in textInputsEvents, action : %d\n", input->action);
     if (input->action == ADD_CHAR){
-        addCharInInputString(input, event.text.text);
+        input->listChar = addListInputTextInEnd(app, NULL, event.text.text, input->listChar);
+        input->nbChar++;
+        input->cursor++;
+        input->size+=strlen(event.text.text);
     }
 
-    printf("fullText : %s\n", input->texts);
     printf("input->cursor : %d\n", input->cursor);
 }
 
 void addCharInInputString(TextsInput *input, char *oneChar){
 
-    if (input->cursor == input->length || input->length == 0){
-        strcat(input->texts, oneChar);
-        input->cursor++;
-    } else {
-
-    }
+//    if (input->cursor == input->nbChar || input->nbChar == 0){
+//        strcat(input->texts, oneChar);
+//        input->cursor++;
+//    } else {
+//
+//    }
 }
 
 void removeCharBeforeCursor(TextsInput *input){
-    printf("ca passe\n");
-    if (input->length > 0 || input->cursor > 0){
-        input->texts[input->length - 1] = '\0';
-        input->cursor--;
-        printf("in removeCharBeforeCursor, text : %s\n", input->texts);
-    }
+//    printf("ca passe\n");
+//    if (input->size > 0 || input->cursor > 0){
+//        input->texts[input->size - 1] = '\0';
+//        input->cursor--;
+//        printf("in removeCharBeforeCursor, text : %s\n", input->texts);
+//    }
 }
 
-void displayInput(App *app, SDL_Rect buttonInput, TextsInput *input){
+void displayInput(App *app, TextsInput *input){
 
-    input->length = strlen(input->texts);
+    ListInputText *list = input->listChar;
+    double step = 0.5;
+    int i = 0;
+
     SDL_SetRenderDrawColor(app->renderer, app->colors.blue[0], app->colors.blue[1], app->colors.blue[2], app->colors.blue[3]);
     SDL_RenderClear(app->renderer);
 
-    buttonInput = createRect(app, wRatio16(app, 8), hRatio9(app, 4.5), wRatio16(app, 4), hRatio9(app, 2.25), app->colors.green);
+    SDL_Rect buttonInput = createRect(app, wRatio16(app, 8), hRatio9(app, 4.5), wRatio16(app, 4), hRatio9(app, 2.25), app->colors.green);
 
-    SDL_Rect inputTextRect = {wRatio16(app, 4.5), hRatio9(app, 4), adaptWForTexts(wRatio16(app, 1), input->length), hRatio9(app, 2.25)};
+    printf("nbChar : %d\n", input->nbChar);
+    printf("size : %d\n", input->size);
+    printf("cursor : %d\n", input->cursor);
+    if (input->nbChar != 0){
 
-    printf("length : %d\n", input->length);
-    if (input->length > 0){
-        renderText(app, inputTextRect, app->config.fontTimes, input->texts, 50, TEXT_BLENDED, app->colors.black);
+        while(list != NULL){
+
+            list->inputChar.charRect.x = wRatio16(app, 4 + (step * i));
+            list->inputChar.charRect.y = hRatio9(app, 3);
+            list->inputChar.charRect.w = wRatio16(app, step);
+            list->inputChar.charRect.h = hRatio9(app, 1.5);
+            renderText(app, list->inputChar.charRect, app->config.fontTimes, list->inputChar.oneChar, 50, TEXT_BLENDED, app->colors.black);
+            i++;
+            list = list->next;
+        }
     }
-
+    showListInputText(input->listChar);
     SDL_RenderPresent(app->renderer);
 }
 
