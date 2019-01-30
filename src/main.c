@@ -8,6 +8,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 #include "headers/struct.h"
 #include "headers/common.h"
 #include "headers/menu.h"
@@ -35,6 +36,7 @@ int main(int argc, char **argv) {
     app.model.mysql = &mysqlFirst;
 
     int returnStat = NULL;
+    srand(time(NULL));
 
     freopen("CON", "w", stdout);
     freopen("CON", "r", stdin);

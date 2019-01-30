@@ -13,7 +13,6 @@
 #define SCREEN_FORMAT   1.95
 #define MAX_VARCHAR 255
 #define MAX_TEXT 1000
-#define free(ptr) free(ptr), ptr=NULL
 
 typedef enum BindType{
     BIND_INPUT,

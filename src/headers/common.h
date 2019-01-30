@@ -25,6 +25,8 @@ void writeTitle(App *app, char *title);
 Uint8 *hexToRgb(const char *hex);
 int hexToDecimal(char *input, int size);
 
+int intConvertor(const char* str);
+
 void verifyPointer(App *app, void *pointer,const char* message);
 
 void loadDefaultConfig(Config *config);

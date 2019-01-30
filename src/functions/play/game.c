@@ -6,11 +6,9 @@
 ** Description  : game functions
 */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <SDL2/SDL.h>
 #include "../../headers/common.h"
 #include "../../headers/play/game.h"
+#include "../../headers/play/card.h"
 #include "../../headers/model/cardModel.h"
 
 enum {RESET, PLAY};
@@ -31,6 +29,8 @@ void game(App *app, char **list, int idList){
             case SDL_MOUSEBUTTONDOWN:
                 if(event.button.button == SDL_BUTTON_LEFT){
                     // Action
+                    if(inRect(pageButtons[PLAY], event.button.x, event.button.y) && numberOfValidCards(app, cards) > 0)
+                        newCard(app, cards);
                 }
             break;
         }
@@ -43,6 +43,7 @@ void game(App *app, char **list, int idList){
 
 
 void displayGame(App *app, char **list, SelectQuery cards, SDL_Rect *pageButtons){
+    char str[5];
     SDL_Rect textPos;
 
     // Setting background
@@ -53,18 +54,23 @@ void displayGame(App *app, char **list, SelectQuery cards, SDL_Rect *pageButtons
     writeTitle(app, list[1]);
 
     // Create buttons
-    pageButtons[RESET] = createRect(app, wRatio16(app, 2), hRatio9(app, 1), wRatio16(app, 1), hRatio9(app, 1) - 20, app->colors.lightblue);
-    renderText(app, pageButtons[RESET], app->config.fontCambriab, "RESET", 50, TEXT_BLENDED, app->colors.black);
+    pageButtons[RESET] = createRect(app, wRatio16(app, 2), hRatio9(app, 1), wRatio16(app, 1), hRatio9(app, 1) - 20, app->colors.yellow);
+    renderText(app, pageButtons[RESET], app->config.fontCambriab, "RESET", 50, TEXT_BLENDED, app->colors.white);
 
-    pageButtons[PLAY] = createRect(app, wRatio16(app, 4), hRatio9(app, 1), wRatio16(app, 6), hRatio9(app, 7) + 40, app->colors.green);
-    renderText(app, pageButtons[PLAY], app->config.fontCambriab, "JOUER", 80, TEXT_BLENDED, app->colors.white);
+    pageButtons[PLAY] = createRect(app, wRatio16(app, 5), hRatio9(app, 1), wRatio16(app, 5.5), hRatio9(app, 7) + 40, app->colors.green);
+    if(numberOfValidCards(app, cards) > 0)
+        renderText(app, pageButtons[PLAY], app->config.fontCambriab, "TIRER UNE CARTE", 80, TEXT_BLENDED, app->colors.white);
+    else
+        renderText(app, pageButtons[PLAY], app->config.fontCambriab, "AUCUNE CARTE DISPO", 80, TEXT_BLENDED, app->colors.white);
 
     // Create cards
+    sprintf(str, "%d", numberOfValidCards(app, cards));
     textPos = createRect(app, wRatio16(app, 4), hRatio9(app, 5), wRatio16(app, 3), hRatio9(app, 2), hexToRgb(list[5]));
-    renderText(app, textPos, app->config.fontTimes, "13", 150, TEXT_BLENDED, app->colors.white);
+    renderText(app, textPos, app->config.fontTimes, str, 150, TEXT_BLENDED, app->colors.white);
 
+    sprintf(str, "%d", cards.numberRows - numberOfValidCards(app, cards));
     textPos = createRect(app, wRatio16(app, 4), hRatio9(app, 5), wRatio16(app, 9), hRatio9(app, 2), app->colors.red);
-    renderText(app, textPos, app->config.fontTimes, "8", 150, TEXT_BLENDED, app->colors.white);
+    renderText(app, textPos, app->config.fontTimes, str, 150, TEXT_BLENDED, app->colors.white);
 
     // Refresh screen
     SDL_RenderPresent(app->renderer);

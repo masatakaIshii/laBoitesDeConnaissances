@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
+#include <time.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <mysql.h>
@@ -184,6 +185,10 @@ int hexToDecimal(char *input, int size){
     return result;
 }
 
+int intConvertor(const char* str){
+    return (int)strtol(str, NULL, 0);
+}
+
 void verifyPointer(App *app, void *pointer, const char *message) {
     if (!pointer) {
         printf("%s\n", message);
@@ -227,7 +232,7 @@ void loadConfigFile(Config *config) {
 void loadConfigParam(Config *config, char *param, char *value) {
 
     if(strcmp(param, "windowHeight") == 0){
-        config->height = (int)strtol(value, NULL, 0);
+        config->height = intConvertor(value);
         config->width = config->height * SCREEN_FORMAT; // Largeur intialise au format defini suivant la hauteur
     }
     (strcmp(param, "host") == 0) ? strcpy(config->host, value) : "";

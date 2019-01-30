@@ -11,11 +11,11 @@
 #include "../../headers/model/modelHelper/modelSelect.h"
 
 SelectQuery getCardsFromList(App *app, int listId){
-    char query[50];
+    char query[150];
     char id[4];
 
     sprintf(id, "%d", listId);
-    strcpy(query, "SELECT * from card WHERE id_list=");
+    strcpy(query, "SELECT id, name, created_date, question, answer, id_list, count, UNIX_TIMESTAMP(validated_date), modified_date FROM card WHERE id_list=");
     strcat(query, id);
 
     return getSelectQuery(app, query);
