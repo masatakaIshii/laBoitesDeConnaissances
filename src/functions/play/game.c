@@ -29,8 +29,14 @@ void game(App *app, char **list, int idList){
             case SDL_MOUSEBUTTONDOWN:
                 if(event.button.button == SDL_BUTTON_LEFT){
                     // Action
-                    if(inRect(pageButtons[PLAY], event.button.x, event.button.y) && numberOfValidCards(app, cards) > 0)
+                    if(inRect(pageButtons[PLAY], event.button.x, event.button.y) && numberOfValidCards(app, cards) > 0){
                         newCard(app, cards);
+                        cards = getCardsFromList(app, idList); // Getting new data
+                    }
+                    else if(inRect(pageButtons[RESET], event.button.x, event.button.y)){
+                        resetCards(app, idList);
+                        cards = getCardsFromList(app, idList); // Getting new data
+                    }
                 }
             break;
         }

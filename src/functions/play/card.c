@@ -9,6 +9,7 @@
 #include <time.h>
 #include "../../headers/common.h"
 #include "../../headers/play/card.h"
+#include "../../headers/model/cardModel.h"
 
 enum {WIN, FAIL};
 
@@ -50,7 +51,7 @@ void cardResponse(App *app, char **card){
             case SDL_MOUSEBUTTONDOWN:
                 if(event.button.button == SDL_BUTTON_LEFT){
                     if(inRect(pageButtons[WIN], event.button.x, event.button.y)){
-                        printf("Bravo\n");
+                        setNewCardValidation(app, card[0]);
                         done = 1;
                     }
                     if(inRect(pageButtons[FAIL], event.button.x, event.button.y)){
