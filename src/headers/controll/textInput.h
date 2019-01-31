@@ -9,10 +9,11 @@
 #include "../struct.h"
 #include "../common.h"
 
-void loadTextsInput(TextsInput *input);
+void initTextsInput(TextsInput *input);
 
 void textInputKeyEvents(SDL_Event event, TextsInput *input);
-
+void textInputEvents(App *app, SDL_Event *event, TextsInput *input);
+int adaptWForTexts(int wOneChar, int nbChar);
 
 #endif // TEXTS_INPUT
 

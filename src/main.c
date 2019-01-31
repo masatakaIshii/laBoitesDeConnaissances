@@ -26,7 +26,6 @@
 #include "headers/view/commonView.h"
 #include "headers/view/create/createViewBoxes.h"
 #include "headers/controll/form.h"
-#include "headers/controll/test.h"
 
 int main(int argc, char **argv) {
 
@@ -54,7 +53,6 @@ int main(int argc, char **argv) {
     loadApp(&app);
 
     returnStat = mainEventLoop(&app);
-    //returnStat = testEventLoop(&app);
 
     quitApp(&app);
 

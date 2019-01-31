@@ -12,7 +12,8 @@
 #include "listRectAndChar.h"
 #include "textInput.h"
 
-void createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableName, int idParent);
+void createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableName, int idParent);;
+int eventForm(SDL_Event *event, int *done)
 void displayInput(App *app, TextsInput *input);
 int adaptWForTexts(int wOneChar, int nbChar);
 

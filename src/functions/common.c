@@ -110,7 +110,6 @@ SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSiz
 
 void renderText(App *app, SDL_Rect rect, char *pathFontFile, char *text, int fontSize, typeRenderText typeRender, SDL_Color textColor){
 
-    printf("in renderText, text : %s\n", text);
     SDL_Texture *textTexture = textToTexture(app, pathFontFile, text, fontSize, typeRender, textColor);
 
     SDL_RenderCopy(app->renderer, textTexture, NULL, &rect);

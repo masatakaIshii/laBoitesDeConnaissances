@@ -196,6 +196,14 @@ typedef struct TextsInput{
     KeyAction action;
 } TextsInput;
 
+typedef struct InputManager{
+    SDL_Rect rectInputs[3];
+    TextsInput *textInput;
+    char label[MAX_VARCHAR];
+    char error[MAX_VARCHAR];
+    int active;
+}
+
 /* --App-- */
 typedef struct App {
     SDL_Window      *screen;
