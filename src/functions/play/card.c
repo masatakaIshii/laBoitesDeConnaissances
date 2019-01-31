@@ -17,10 +17,14 @@ void newCard(App *app, SelectQuery cards){
     SDL_Rect pageButton;
     SDL_Event event;
     int done = 0;
-    int cardId;
+    int cardRow;
 
     // TAKE RANDOM CARD
-    cardId = randomCard(app, cards);
+    cardRow = randomCard(app, cards);
+    if(cardRow < 0){
+        printf("Error\n");
+        exit(EXIT_FAILURE);
+    }
 
     while (!done) {
         SDL_WaitEvent(&event);
@@ -29,13 +33,13 @@ void newCard(App *app, SelectQuery cards){
             case SDL_MOUSEBUTTONDOWN:
                 if(event.button.button == SDL_BUTTON_LEFT){
                     if(inRect(pageButton, event.button.x, event.button.y)){
-                        cardResponse(app, cards.listColumnsRows[cardId]);
+                        cardResponse(app, cards.listColumnsRows[cardRow]);
                         done = 1;
                     }
                 }
             break;
         }
-        displayCard(app, cards.listColumnsRows[cardId], &pageButton);
+        displayCard(app, cards.listColumnsRows[cardRow], &pageButton);
     }
 }
 
@@ -71,7 +75,7 @@ int randomCard(App *app, SelectQuery cards){
     random = rand() % numberOfValidCards(app, cards);
 
     for(i = 0; i < cards.numberRows; i++){
-        if(counter == random)
+        if(counter == random && isValidCard(cards.listColumnsRows[i]))
             return i;
         if(isValidCard(cards.listColumnsRows[i]))
             counter++;

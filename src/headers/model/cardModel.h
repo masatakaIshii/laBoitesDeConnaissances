@@ -8,4 +8,4 @@
 
 SelectQuery getCardsFromList(App *app, int listId);
 int resetCards(App *app, int listId);
-int setNewCardValidation(App *app, int cardId);
+int setNewCardValidation(App *app, char *cardId);
