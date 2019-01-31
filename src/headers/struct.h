@@ -165,15 +165,36 @@ typedef struct DisplayManager {
 
 
 /* -- Input text -- */
-typedef struct InputTextManager {
-    SDL_Rect diplay[3];
-    char label[MAX_VARCHAR];
-    char error[MAX_VARCHAR];
-    int length;
+
+typedef struct InputChar {
+    SDL_Rect charRect;
+    char oneChar[3];
+} InputChar;
+
+typedef struct ListInputText {
+    InputChar inputChar;
+    struct ListInputText *next;
+} ListInputText;
+
+typedef enum KeyAction{
+    STAND_BY,
+    C_RIGHT,
+    C_LEFT,
+    ADD_CHAR,
+    B_DELETE,
+    R_DELETE,
+    SB_DELETE
+} KeyAction;
+
+typedef struct TextsInput{
+    ListInputText *listChar;
+    int size;
+    int nbChar;
+    int cursor;
     int start;
     int end;
-    int cursor;
-} InputTextManager;
+    KeyAction action;
+} TextsInput;
 
 /* --App-- */
 typedef struct App {

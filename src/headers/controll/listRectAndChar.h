@@ -15,16 +15,6 @@
 #include "../struct.h"
 #include "../common.h"
 
-typedef struct InputChar {
-    SDL_Rect charRect;
-    char oneChar[3];
-} InputChar;
-
-typedef struct ListInputText {
-    InputChar inputChar;
-    struct ListInputText *next;
-} ListInputText;
-
 ListInputText *addListInputTextInEnd(App *app, SDL_Rect *rect, char *newChar, ListInputText *list);
 ListInputText *deleteEndTextInput(ListInputText *list, int *sizeOfChar);
 ListInputText *deleteFrontListInputText(ListInputText *start);

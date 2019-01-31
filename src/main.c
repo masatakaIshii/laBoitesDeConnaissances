@@ -53,8 +53,8 @@ int main(int argc, char **argv) {
 
     loadApp(&app);
 
-    //returnStat = mainEventLoop(&app);
-    returnStat = testEventLoop(&app);
+    returnStat = mainEventLoop(&app);
+    //returnStat = testEventLoop(&app);
 
     quitApp(&app);
 

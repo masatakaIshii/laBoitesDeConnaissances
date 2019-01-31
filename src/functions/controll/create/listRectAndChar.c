@@ -3,11 +3,17 @@
 **
 ** Made by  : Masataka ISHII
 **
-** Description  : function concern to chained list
+** Description  : function concern to chained list for structure ListInputText
 */
 
 #include "../../../headers/controll/listRectAndChar.h"
 
+/**
+*Add new character in list the end of the list
+*
+*
+*
+*/
 ListInputText *addListInputTextInEnd(App *app, SDL_Rect *rect, char *newChar, ListInputText *list){
     ListInputText *temp;
     ListInputText *newEnd = malloc(sizeof(ListInputText));
@@ -42,6 +48,7 @@ ListInputText *deleteEndTextInput(ListInputText *list, int *sizeOfChar) {
     }
 
     if (list->next == NULL) {
+        *sizeOfChar = strlen(list->inputChar.oneChar);
         free(list);
         return NULL;
     }
@@ -53,6 +60,7 @@ ListInputText *deleteEndTextInput(ListInputText *list, int *sizeOfChar) {
         temp = temp->next;
     }
     *sizeOfChar = strlen(temp->inputChar.oneChar);
+
     free(temp);
 
     pTemp->next = NULL;
