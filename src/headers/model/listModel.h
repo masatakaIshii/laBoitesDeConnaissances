@@ -6,4 +6,5 @@
 ** Description  : data model for list table
 */
 
-SelectQuery getLists(App *app, char *boxId);
+SelectQuery getAllLists(App *app);
+SelectQuery getListsFromBox(App *app, char *boxId);

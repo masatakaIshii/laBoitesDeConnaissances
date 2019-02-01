@@ -22,7 +22,7 @@ void listMenu(App *app, SelectQuery boxes, int page, int i){
     SelectQuery lists;
 
     // Getting data
-    lists = getLists(app, boxes.listColumnsRows[(i+page) + page*9][0]);
+    lists = getListsFromBox(app, boxes.listColumnsRows[(i+page) + page*9][0]);
     boxTitle = boxes.listColumnsRows[(i+page) + page*9][1];
 
     listButtons = malloc(lists.numberRows * sizeof(SDL_Rect));

@@ -100,8 +100,8 @@ int isValidCard(char **card){
     int diffSeconds, diffHour, diffMin;
 
     diffSeconds = (int)nowSeconds - intConvertor(card[7]);
-    diffHour = diffSeconds / 3600;
     diffMin = diffSeconds / 60;
+    diffHour = diffSeconds / 3600;
 
     switch (intConvertor(card[6])){
         case 1:

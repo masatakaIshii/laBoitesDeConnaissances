@@ -11,6 +11,10 @@
 #include "../../headers/model/modelHelper/modelSelect.h"
 #include "../../headers/model/modelHelper/modelIUD.h"
 
+SelectQuery getAllCards(App *app){
+    return getSelectQuery(app, "SELECT * FROM card");
+}
+
 SelectQuery getCardsFromList(App *app, int listId){
     char query[150];
     char id[4];

@@ -14,11 +14,14 @@
 #include <mysql.h>
 #include "../headers/common.h"
 #include "../headers/menu.h"
+#include "../headers/stats.h"
 #include "../headers/play/box.h"
 #include "../headers/controll/create.h"
 
+enum {PLAY, CREATE, STATS};
+
 int mainEventLoop(App *app) {
-    SDL_Rect buttons[2];
+    SDL_Rect buttons[3];
     SDL_Event event;
     int done = 0;
 
@@ -33,18 +36,16 @@ int mainEventLoop(App *app) {
                 // MODE CREATE
                 if (event.key.keysym.scancode == SDL_SCANCODE_2)
                     createMode(app);
-                    // Fonction CREATE
             break;
 
             case SDL_MOUSEBUTTONDOWN:
                 if(event.button.button == SDL_BUTTON_LEFT){
-                    // MODE PLAY
-                    if(inRect(buttons[0] , event.button.x, event.button.y))
+                    if(inRect(buttons[PLAY] , event.button.x, event.button.y))
                         playMode(app);
-                    // MODE CREATE
-                    else if(inRect(buttons[1] , event.button.x, event.button.y))
-                        // Fonction CREATE
+                    else if(inRect(buttons[CREATE] , event.button.x, event.button.y))
                         createMode(app);
+                    else if(inRect(buttons[STATS], event.button.x, event.button.y))
+                        stats(app);
                 }
             break;
         }
@@ -59,20 +60,20 @@ int mainEventLoop(App *app) {
 
 
 void displayMenu(App *app, SDL_Rect *buttons) {
-
-    // On set la couleur du fond d'ecran
+    // Background color
     SDL_SetRenderDrawColor(app->renderer, app->colors.blue[0], app->colors.blue[1], app->colors.blue[2], app->colors.blue[3]);
     SDL_RenderClear(app->renderer);
 
-    // On creer le boutton Play
-    buttons[0] = createRect(app, app->config.width / 3, app->config.height / 1.5, app->config.width / 12, app->config.height / 4, app->colors.green);
-    // On creer le boutton Create
-    buttons[1] = createRect(app, app->config.width / 3, app->config.height / 1.5, (app->config.width / 12) * 7, app->config.height / 4, app->colors.yellow);
+    // Create the buttons
+    buttons[PLAY] = createRect(app, app->config.width / 3, app->config.height / 1.5, app->config.width / 12, app->config.height / 4, app->colors.green);
+    buttons[CREATE] = createRect(app, app->config.width / 3, app->config.height / 1.5, (app->config.width / 12) * 7, app->config.height / 4, app->colors.yellow);
+    buttons[STATS] = createRect(app, wRatio16(app, 2), hRatio9(app, 1), wRatio16(app, 1), app->config.height / 18, app->colors.yellow);
+    renderText(app, buttons[STATS], app->config.fontCambriab, "STATS", 50, TEXT_BLENDED, app->colors.black);
 
     RenderMainTexts(app);
-    // Actualisation de l'ecran
-    SDL_RenderPresent(app->renderer);
 
+    // Refresh screen
+    SDL_RenderPresent(app->renderer);
 }
 
 void RenderMainTexts (App *app) {
