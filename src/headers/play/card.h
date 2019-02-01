@@ -3,7 +3,7 @@
 **
 ** Made by  : Baptiste LEGO
 **
-** Description  : card functions
+** Description  : card headers
 */
 
 void newCard(App *app, SelectQuery cards);

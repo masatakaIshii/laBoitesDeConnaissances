@@ -3,7 +3,7 @@
 **
 ** Made by  : Baptiste LEGO
 **
-** Description  : play mode main functions
+** Description  : list menu main functions
 */
 
 #include "../../headers/common.h"

@@ -3,7 +3,7 @@
 **
 ** Made by  : Baptiste LEGO
 **
-** Description  : getting data for list table
+** Description  : data model for list table
 */
 
 #include <stdlib.h>

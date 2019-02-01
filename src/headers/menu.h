@@ -3,7 +3,7 @@
 **
 ** Made by  : Baptiste LEGO
 **
-** Description  : menu functions for events and display
+** Description  : menu headers for events and display
 */
 
 int mainEventLoop(App *app);

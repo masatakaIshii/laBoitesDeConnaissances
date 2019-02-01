@@ -3,7 +3,7 @@
 **
 ** Made by  : Baptiste LEGO
 **
-** Description  : play mode main functions
+** Description  : list menu headers
 */
 
 void listMenu(App *app, SelectQuery boxes, int page, int i);

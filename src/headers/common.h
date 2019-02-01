@@ -3,7 +3,7 @@
 **
 ** Made by  : Baptiste LEGO
 **
-** Description  : common functions used in App
+** Description  : common headers used in App
 */
 
 #ifndef COMMON_FUNCTIONS

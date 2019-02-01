@@ -3,7 +3,7 @@
 **
 ** Made by  : Baptiste LEGO
 **
-** Description  : getting data for card table
+** Description  : data model for card table
 */
 
 SelectQuery getCardsFromList(App *app, int listId);

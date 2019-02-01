@@ -3,7 +3,7 @@
 **
 ** Made by  : Baptiste LEGO
 **
-** Description  : play mode main functions
+** Description  : box menu headers
 */
 
 void playMode(App *app);
