@@ -80,25 +80,21 @@ void textInputEvents(App *app, SDL_Event *event, TextsInput *input){
     }
 }
 
-void displayInput(App *app, TextsInput *input){
+void displayInput(App *app, TextsInput *input, Uint8 *rectColor, SDL_Rect rectInput, SDL_Rect textPos){
 
     ListInputText *list = input->listChar;
-    double step = 0.5;
     int i = 0;
 
-    SDL_SetRenderDrawColor(app->renderer, app->colors.blue[0], app->colors.blue[1], app->colors.blue[2], app->colors.blue[3]);
-    SDL_RenderClear(app->renderer);
-
-    SDL_Rect buttonInput = createRect(app, wRatio16(app, 8), hRatio9(app, 4.5), wRatio16(app, 4), hRatio9(app, 2.25), app->colors.green);
+    SDL_Rect buttonInput = createRect(app, rectInput.w, rectInput.h, rectInput.x, rectInput.y, rectColor);
 
     if (input->nbChar != 0){
 
         while(list != NULL){
 
-            list->inputChar.charRect.x = wRatio16(app, 4 + (step * i));
-            list->inputChar.charRect.y = hRatio9(app, 3);
-            list->inputChar.charRect.w = wRatio16(app, step);
-            list->inputChar.charRect.h = hRatio9(app, 1.5);
+            list->inputChar.charRect.x = textPos.x + textPos.w * i;
+            list->inputChar.charRect.y = textPos.y;
+            list->inputChar.charRect.w = textPos.w;
+            list->inputChar.charRect.h = textPos.h;
             renderText(app, list->inputChar.charRect, app->config.fontTimes, list->inputChar.oneChar, 50, TEXT_BLENDED, app->colors.black);
             i++;
             list = list->next;

@@ -59,7 +59,7 @@
 		<Unit filename="functions/controll/create/listRectAndChar.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="functions/controll/test.c">
+		<Unit filename="functions/controll/create/textInput.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="functions/menu.c">
@@ -116,12 +116,15 @@
 		<Unit filename="functions/view/create/createViewBoxes.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="functions/view/create/createViewForm.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="headers/common.h" />
 		<Unit filename="headers/controll/create.h" />
 		<Unit filename="headers/controll/createList.h" />
 		<Unit filename="headers/controll/form.h" />
 		<Unit filename="headers/controll/listRectAndChar.h" />
-		<Unit filename="headers/controll/test.h" />
+		<Unit filename="headers/controll/textInput.h" />
 		<Unit filename="headers/model/boxModel.h" />
 		<Unit filename="headers/model/formModel.h" />
 		<Unit filename="headers/model/listModel.h" />
@@ -140,6 +143,7 @@
 		<Unit filename="headers/struct.h" />
 		<Unit filename="headers/view/commonView.h" />
 		<Unit filename="headers/view/create/createViewBoxes.h" />
+		<Unit filename="headers/view/create/createViewForm.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>

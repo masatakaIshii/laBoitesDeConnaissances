@@ -165,6 +165,10 @@ typedef struct DisplayManager {
 
 
 /* -- Input text -- */
+typedef struct ListFields {
+    Varchar *list;
+    int numberFields;
+} ListFields;
 
 typedef struct InputChar {
     SDL_Rect charRect;
@@ -202,7 +206,7 @@ typedef struct InputManager{
     char label[MAX_VARCHAR];
     char error[MAX_VARCHAR];
     int active;
-}
+} InputManager;
 
 /* --App-- */
 typedef struct App {
