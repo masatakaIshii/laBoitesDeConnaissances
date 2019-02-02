@@ -23,7 +23,7 @@
 *@param (char *) tableName : the name of table to insert the information
 *@param (int) idParent : the id of parent if the table contain foreign key
 */
-void createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableName, int idParent){
+int createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableName, int idParent){
     SDL_Event event;
     SDL_Rect submitButton;
     MySqlTable tableInfo = getTable(app, tableName);
@@ -43,9 +43,12 @@ void createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableN
         displayAllForm(app, inputs, fields, tableName, &submitButton);
     }
 
-    quitInputs();
+    quitInputs(inputs, fields.numberFields);
+    free(fields.list);
+    free(tableInfo.listFieldsNames);
+    free(tableInfo.listFieldsTypes);
 
-    //return checkForm;
+    return checkForm;
 }
 
 /**
@@ -206,4 +209,12 @@ InputManager *loadInputs(App *app, ListFields fields, int maxTextLength){
     }
 
     return inputs;
+}
+
+void quitInputs(InputManager *inputs, int numberFields){
+    int i;
+
+    for (i = 0;i < numberFields; i++){
+        deleteAllListInputText(inputs[i].textInput.listChar);
+    }
 }
