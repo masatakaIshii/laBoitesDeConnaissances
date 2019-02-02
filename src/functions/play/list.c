@@ -14,7 +14,6 @@
 
 void listMenu(App *app, SelectQuery boxes, int page, int i){
     SDL_Rect *listButtons = NULL;
-    char *boxTitle = NULL;
     int *id = NULL;
     int done = 0;
     int numberOfLists = 0;
@@ -22,15 +21,13 @@ void listMenu(App *app, SelectQuery boxes, int page, int i){
     SelectQuery lists;
 
     // Getting data
-    lists = getListsFromBox(app, boxes.listColumnsRows[(i+page) + page*9][0]);
-    boxTitle = boxes.listColumnsRows[(i+page) + page*9][1];
+    lists = getListsFromBox(app, boxes.listColumnsRows[(i+page) + page*9][ID]);
 
     listButtons = malloc(lists.numberRows * sizeof(SDL_Rect));
+    verifyPointer(app, listButtons, "Can't allocate memory for listButtons\n");
+
     id = malloc(sizeof(int) * lists.numberRows);
-    if(id == NULL || listButtons == NULL){
-        printf("Full memory\n");
-        exit(EXIT_FAILURE);
-    }
+    verifyPointer(app, id, "Can't allocate memory for id\n");
 
     while (!done) {
         SDL_WaitEvent(&event);
@@ -46,7 +43,7 @@ void listMenu(App *app, SelectQuery boxes, int page, int i){
                 }
             break;
         }
-        numberOfLists = displayHomeBox(app, lists, listButtons, boxTitle, id);
+        numberOfLists = displayHomeBox(app, lists, listButtons, boxes.listColumnsRows[(i+page) + page*9][NAME], id);
     }
 
     free(listButtons);
@@ -96,8 +93,8 @@ int createListPage(App *app, SelectQuery lists, SDL_Rect *buttons, int *id, int 
             // Create square
             xBox = ((app->config.width / 3) * y) + 10*y + app->config.width/5;
             yBox = ((app->config.height / 8) * x) + 10*x + app->config.height/6;
-            buttons[i] = createRect(app, app->config.height / 8, app->config.height / 8, xBox, yBox, hexToRgb(lists.listColumnsRows[i][5]));
-            id[i] = (int)strtol(lists.listColumnsRows[i][0], NULL, 0);
+            buttons[i] = createRect(app, app->config.height / 8, app->config.height / 8, xBox, yBox, hexToRgb(lists.listColumnsRows[i][L_COLOR]));
+            id[i] = (int)strtol(lists.listColumnsRows[i][ID], NULL, 0);
 
             // Create texts
             renderButtonLabel(app, lists.listColumnsRows[i], buttons[i]);

@@ -10,6 +10,7 @@
 #include "../../headers/play/game.h"
 #include "../../headers/play/card.h"
 #include "../../headers/model/cardModel.h"
+#include "../../headers/model/listModel.h"
 
 enum {RESET, PLAY};
 
@@ -57,7 +58,7 @@ void displayGame(App *app, char **list, SelectQuery cards, SDL_Rect *pageButtons
     SDL_RenderClear(app->renderer);
 
     // Write title
-    writeTitle(app, list[1]);
+    writeTitle(app, list[NAME]);
 
     // Create buttons
     pageButtons[RESET] = createRect(app, wRatio16(app, 2), hRatio9(app, 1), wRatio16(app, 1), hRatio9(app, 1) - 20, app->colors.yellow);
@@ -71,7 +72,7 @@ void displayGame(App *app, char **list, SelectQuery cards, SDL_Rect *pageButtons
 
     // Create cards
     sprintf(str, "%d", numberOfValidCards(app, cards));
-    textPos = createRect(app, wRatio16(app, 4), hRatio9(app, 5), wRatio16(app, 3), hRatio9(app, 2), hexToRgb(list[5]));
+    textPos = createRect(app, wRatio16(app, 4), hRatio9(app, 5), wRatio16(app, 3), hRatio9(app, 2), hexToRgb(list[L_COLOR]));
     renderText(app, textPos, app->config.fontTimes, str, 150, TEXT_BLENDED, app->colors.white);
 
     sprintf(str, "%d", cards.numberRows - numberOfValidCards(app, cards));

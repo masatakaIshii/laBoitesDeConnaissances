@@ -23,6 +23,7 @@ void newCard(App *app, SelectQuery cards){
     cardRow = randomCard(app, cards);
     if(cardRow < 0){
         printf("Error\n");
+        quitApp(app);
         exit(EXIT_FAILURE);
     }
 
@@ -55,7 +56,7 @@ void cardResponse(App *app, char **card){
             case SDL_MOUSEBUTTONDOWN:
                 if(event.button.button == SDL_BUTTON_LEFT){
                     if(inRect(pageButtons[WIN], event.button.x, event.button.y)){
-                        setNewCardValidation(app, card[0]);
+                        setNewCardValidation(app, card[ID]);
                         done = 1;
                     }
                     if(inRect(pageButtons[FAIL], event.button.x, event.button.y)){
@@ -99,11 +100,11 @@ int isValidCard(char **card){
     time_t nowSeconds = time(NULL);
     int diffSeconds, diffHour, diffMin;
 
-    diffSeconds = (int)nowSeconds - intConvertor(card[7]);
+    diffSeconds = (int)nowSeconds - intConvertor(card[VALIDATED_DATE]);
     diffMin = diffSeconds / 60;
     diffHour = diffSeconds / 3600;
 
-    switch (intConvertor(card[6])){
+    switch (intConvertor(card[COUNT])){
         case 1:
             if(diffMin < 10)
                 return 0;
@@ -141,9 +142,9 @@ void displayCard(App *app, char **card, SDL_Rect *pageButton){
     SDL_RenderClear(app->renderer);
 
     // Texts
-    writeTitle(app, card[1]);
+    writeTitle(app, card[NAME]);
     textPos = createRect(app, wRatio16(app, 10), hRatio9(app, 2), wRatio16(app, 3), hRatio9(app, 3), app->colors.blue);
-    renderText(app, textPos, app->config.fontCambriab, card[3], 50, TEXT_BLENDED, app->colors.white);
+    renderText(app, textPos, app->config.fontCambriab, card[QUESTION], 50, TEXT_BLENDED, app->colors.white);
 
     // Button
     *pageButton = createRect(app, wRatio16(app, 5), hRatio9(app, 1), wRatio16(app, 5.5), hRatio9(app, 7) + 40, app->colors.yellow);
@@ -161,9 +162,9 @@ void displayResponse(App *app, char **card, SDL_Rect *pageButtons){
     SDL_RenderClear(app->renderer);
 
     // Texts
-    writeTitle(app, card[1]);
+    writeTitle(app, card[NAME]);
     textPos = createRect(app, wRatio16(app, 10), hRatio9(app, 2), wRatio16(app, 3), hRatio9(app, 3), app->colors.blue);
-    renderText(app, textPos, app->config.fontCambriab, card[4], 50, TEXT_BLENDED, app->colors.white);
+    renderText(app, textPos, app->config.fontCambriab, card[ANSWER], 50, TEXT_BLENDED, app->colors.white);
 
     // Button
     pageButtons[WIN] = createRect(app, wRatio16(app, 3), hRatio9(app, 1), wRatio16(app, 4), hRatio9(app, 7) + 40, app->colors.green);
