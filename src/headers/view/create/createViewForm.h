@@ -8,7 +8,14 @@
 
 #ifndef CREATE_VIEW_FORM
 #include "../../struct.h"
+#include "../../common.h"
+#include "../../controll/textInput.h"
 
-void displayAllInputs(App *app, InputManager *input, int numberFields);
+void displayAllForm(App *app, InputManager *input, ListFields fields, char *tableName, SDL_Rect *submitButton);
+void createInputs(App *app, InputManager *input, ListFields fields);
+SDL_Rect getPositionOfText(SDL_Rect inputRect, int maxLength);
 
+int getAppropriateWidth(SDL_Rect commonRect, int length, int maxLength);
+
+void renderAllForm(App *app, SDL_Rect titleRect, char *title, SDL_Rect *submitButton, InputManager *input, ListFields fields);
 #endif // CREATE_VIEW_FORM

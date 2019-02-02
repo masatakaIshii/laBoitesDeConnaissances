@@ -69,6 +69,47 @@ void textInputKeyEvents(SDL_Event event, TextsInput *input){
     }
 }
 
+void textInputButtonLeftEvents(App *app, SDL_Event *event, InputManager *inputs, int numberFields){
+    int i = 0;
+    int change = -1;
+
+//    printf("in textInputButtonLeftEvents : %d\n", numberFields);
+//
+//        for (j = 0; j < 3; j++){
+//            printf("inputs[%d].rectInputs[%d].h : %d\n", i, j, inputs[i].rectInputs[j].h);
+//            printf("inputs[%d].rectInputs[%d].w : %d\n", i, j, inputs[i].rectInputs[j].w);
+//            printf("inputs[%d].rectInputs[%d].x : %d\n", i, j, inputs[i].rectInputs[j].x);
+//            printf("inputs[%d].rectInputs[%d].y : %d\n", i, j, inputs[i].rectInputs[j].y);
+//            printf("event->button.x = %d\n", event->button.x);
+//            printf("event->button.y = %d\n", event->button.y);
+//        }
+
+    for (i = 0; i < numberFields; i++){
+
+        if (inRect(inputs[i].rectInputs[0], event->button.x, event->button.y) || inRect(inputs[i].rectInputs[1], event->button.x, event->button.y)){
+            if (SDL_IsTextInputActive() == SDL_FALSE){
+                SDL_StartTextInput();
+            }
+
+            inputs[i].active = 1;
+            change = i;
+        } else {
+            inputs[i].active = 0;
+        }
+        printf("ca marche poto\n");
+    }
+
+
+    if (change == -1){
+        for (i = 0; i < numberFields; i++){
+            inputs[i].active = 0;
+        }
+        if (SDL_IsTextInputActive()){
+            SDL_StopTextInput();
+            printf("SDL_StopTextInput\n");
+        }
+    }
+}
 
 void textInputEvents(App *app, SDL_Event *event, TextsInput *input){
 
@@ -84,8 +125,6 @@ void displayInput(App *app, TextsInput *input, Uint8 *rectColor, SDL_Rect rectIn
 
     ListInputText *list = input->listChar;
     int i = 0;
-
-    SDL_Rect buttonInput = createRect(app, rectInput.w, rectInput.h, rectInput.x, rectInput.y, rectColor);
 
     if (input->nbChar != 0){
 

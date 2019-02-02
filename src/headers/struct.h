@@ -192,17 +192,19 @@ typedef enum KeyAction{
 
 typedef struct TextsInput{
     ListInputText *listChar;
+    SDL_Rect firstRect;
     int size;
     int nbChar;
     int cursor;
     int start;
     int end;
+    int maxLength;
     KeyAction action;
 } TextsInput;
 
 typedef struct InputManager{
     SDL_Rect rectInputs[3];
-    TextsInput *textInput;
+    TextsInput textInput;
     char label[MAX_VARCHAR];
     char error[MAX_VARCHAR];
     int active;

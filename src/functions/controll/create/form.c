@@ -9,7 +9,6 @@
 
 /**
 *@todo : récupérer un tableau de chaîne de caractères correspondant aux valeurs à inscrire dans le formulaire (sans les id et id_ et date)
-*@todo : mettre en place un bouton qui prendra en compte un label et l'input texte
 *@todo : la liste chaînée de caractère doit être rendu dans l'input texte
 *@todo : la liste chaînée ne doit pas dépasser la taille de l'input texte
 */
@@ -25,15 +24,12 @@
 */
 void createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableName, int idParent){
     SDL_Event event;
-
+    SDL_Rect submitButton;
     MySqlTable tableInfo = getTable(app, tableName);
     int done = 0;
     ListFields fields = getListFieldsForForm(app, tableInfo);
-    InputManager *inputs = malloc(sizeof(InputManager) * fields.numberFields);
-    verifyPointer(app, inputs, "Problem malloc inputs in createForm");
-
-    //loadInputs(app, inputs, fields);
-    //initTextsInput(&input);
+    InputManager *inputs = loadInputs(app, fields, 50);
+    int checkForm = 0;
 
     SDL_StopTextInput();
     while (!done) {
@@ -41,9 +37,9 @@ void createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableN
 
         commonEvents(app, event, &done);
 
-        eventForm(app, &event, &done);
+        checkForm = eventForm(app, &event, inputs, &done, fields.numberFields);
 
-        displayAllInputs(app, inputs, fields.numberFields);
+        displayAllForm(app, inputs, fields, tableName, &submitButton);
         //displayInput(app, &input);
     }
 
@@ -51,7 +47,7 @@ void createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableN
     //deleteAllListInputText(input.listChar);
 }
 
-int eventForm(App *app, SDL_Event *event, int *done){
+int eventForm(App *app, SDL_Event *event, InputManager *inputs, int *done, int numberFields){
     int checkForm = 0;
 
     switch (event->type){
@@ -59,10 +55,11 @@ int eventForm(App *app, SDL_Event *event, int *done){
             //textInputKeyEvents(event, &input);
         break;
 
-        case SDL_MOUSEBUTTONDOWN:
+        case SDL_MOUSEBUTTONDOWN:;
             if(event->button.button == SDL_BUTTON_LEFT){
-
+                textInputButtonLeftEvents(app, event, inputs, numberFields);
             }
+
         break;
 
         case SDL_TEXTINPUT:
@@ -109,11 +106,17 @@ ListFields getListFieldsForForm(App *app, MySqlTable tableInfo){
 int *adaptedIndexesToForm(App *app, MySqlTable tableInfo, int *numberField){
     int *indexes = NULL;
     int i;
+    int canAddIndex = 0;
 
     for (i = 0; i < tableInfo.numberField; i++){
-        if (strncmp(tableInfo.listFieldsNames[i], "id", 2) != 0 && tableInfo.listFieldsTypes[i] != MYSQL_TYPE_DATETIME){
+        if (strncmp(tableInfo.listFieldsNames[i], "id", 3) != 0 && strncmp(tableInfo.listFieldsNames[i], "id_", 3) != 0 && tableInfo.listFieldsTypes[i] != MYSQL_TYPE_DATETIME){
+            canAddIndex = 1;
+        }
+
+        if (canAddIndex == 1){
             (*numberField)++;
             indexes = addIndexInArray(app, indexes, i, *numberField);
+            canAddIndex = 0;
         }
     }
 
@@ -136,18 +139,24 @@ int *addIndexInArray(App *app, int *indexes, int index, int numberField){
         free(indexes);
     } else {
         printf("Problem values of numberFields in addIndexInArray\n");
+        quitApp(app);
         return EXIT_FAILURE;
     }
 
     return inter;
 }
 
-void loadInputs(App *app, InputManager *inputs, ListFields fields){
+InputManager *loadInputs(App *app, ListFields fields, int maxTextLength){
     int i;
+    InputManager *inputs = malloc(sizeof(InputManager) * fields.numberFields);
+    verifyPointer(app, inputs, "Problem malloc inputs in createForm");
 
     for (i = 0; i < fields.numberFields; i++){
         inputs[i].active = 0;
         strcpy(inputs[i].error, "");
         strcpy(inputs[i].label, fields.list[i]);
+        inputs[i].textInput.maxLength = maxTextLength;
     }
+
+    return inputs;
 }
