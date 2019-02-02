@@ -27,31 +27,20 @@ void initTextsInput(TextsInput *input){
 *
 *
 */
-void textInputKeyEvents(SDL_Event event, TextsInput *input){
+void textInputKeyEvents(SDL_Event *event, TextsInput *input){
 
-    if (event.key.keysym.sym == SDLK_F1){
-        SDL_StartTextInput();
-        printf("SDL_TextInput activate\n");
-    }
+    if (event->key.keysym.sym == SDLK_RETURN || event->key.keysym.sym == SDLK_KP_ENTER){
 
-    if (event.key.keysym.sym == SDLK_F2){
-        if (SDL_IsTextInputActive()){
-            SDL_StopTextInput();
-            printf("SDL_TextInput desactivate\n");
-        }
-    }
-    if (event.key.keysym.sym == SDLK_RETURN || event.key.keysym.sym == SDLK_KP_ENTER){
-
-    } else if (event.key.keysym.sym == SDLK_RIGHT){
+    } else if (event->key.keysym.sym == SDLK_RIGHT){
         (input->cursor <= input->nbChar) ? input->cursor++ : 0;
 
-    } else if (event.key.keysym.sym == SDLK_LEFT){
+    } else if (event->key.keysym.sym == SDLK_LEFT){
         (input->cursor > 0) ? input->cursor-- : 0;
 
-    } else if (event.key.keysym.sym == SDLK_DELETE){
+    } else if (event->key.keysym.sym == SDLK_DELETE){
         input->action = (input->cursor < input->nbChar) ?  R_DELETE : STAND_BY;
 
-    } else if (event.key.keysym.sym == SDLK_BACKSPACE){
+    } else if (event->key.keysym.sym == SDLK_BACKSPACE){
         if (SDL_IsTextInputActive()) {
             int sizeOfChar = 0;
             input->listChar = deleteEndTextInput(input->listChar, &sizeOfChar);
@@ -121,12 +110,12 @@ void textInputEvents(App *app, SDL_Event *event, TextsInput *input){
     }
 }
 
-void displayInput(App *app, TextsInput *input, Uint8 *rectColor, SDL_Rect rectInput, SDL_Rect textPos){
+void displayInput(App *app, TextsInput input, Uint8 *rectColor, SDL_Rect textPos){
 
-    ListInputText *list = input->listChar;
+    ListInputText *list = input.listChar;
     int i = 0;
 
-    if (input->nbChar != 0){
+    if (input.nbChar != 0){
 
         while(list != NULL){
 
@@ -139,8 +128,8 @@ void displayInput(App *app, TextsInput *input, Uint8 *rectColor, SDL_Rect rectIn
             list = list->next;
         }
     }
-    showListInputText(input->listChar);
-    SDL_RenderPresent(app->renderer);
+
+    showListInputText(input.listChar);
 }
 
 int adaptWForTexts(int wOneChar, int nbChar){

@@ -40,7 +40,6 @@ void createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableN
         checkForm = eventForm(app, &event, inputs, &done, fields.numberFields);
 
         displayAllForm(app, inputs, fields, tableName, &submitButton);
-        //displayInput(app, &input);
     }
 
     free(inputs);
@@ -49,21 +48,30 @@ void createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableN
 
 int eventForm(App *app, SDL_Event *event, InputManager *inputs, int *done, int numberFields){
     int checkForm = 0;
+    int i;
 
     switch (event->type){
         case SDL_KEYDOWN:
-            //textInputKeyEvents(event, &input);
+            if (SDL_IsTextInputActive()){
+                for (i = 0; i < numberFields; i++){
+                    if (inputs[i].active == 1){
+                        textInputKeyEvents(event, &inputs[i].textInput);
+                    }
+                }
+            }
         break;
-
-        case SDL_MOUSEBUTTONDOWN:;
+        case SDL_MOUSEBUTTONDOWN:
             if(event->button.button == SDL_BUTTON_LEFT){
                 textInputButtonLeftEvents(app, event, inputs, numberFields);
             }
-
         break;
-
         case SDL_TEXTINPUT:
-            //textInputEvents(app, event, &input);
+            for (i = 0; i < numberFields; i++){
+                if (inputs[i].active == 1){
+                    textInputEvents(app, event, &inputs[i].textInput);
+                    showListInputText(inputs[i].textInput.listChar);
+                }
+            }
         break;
     }
 
@@ -155,6 +163,7 @@ InputManager *loadInputs(App *app, ListFields fields, int maxTextLength){
         inputs[i].active = 0;
         strcpy(inputs[i].error, "");
         strcpy(inputs[i].label, fields.list[i]);
+        inputs[i].textInput.listChar = NULL;
         inputs[i].textInput.maxLength = maxTextLength;
     }
 

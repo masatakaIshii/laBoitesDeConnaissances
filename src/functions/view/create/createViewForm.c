@@ -21,6 +21,8 @@ void displayAllForm(App *app, InputManager *input, ListFields fields, char *tabl
 
     renderAllForm(app, titleRect, title, submitButton, input, fields);
 
+    displayAllTextInputs(app, input, fields.numberFields);
+
     //afficher label, input et laisser une place au cas où pour l'error. le sDL_Rect de input doit avoir une bordure
 
     SDL_RenderPresent(app->renderer);
@@ -45,7 +47,7 @@ void createInputs(App *app, InputManager *input, ListFields fields){
                 wForStr = commonPos.w;
             }
             if (j == 1){
-                input->textInput.firstRect = getPositionOfText(input[i].rectInputs[j], input[i].textInput.maxLength);
+                input[i].textInput.firstRect = getPositionOfText(input[i].rectInputs[j], input[i].textInput.maxLength);
                 input[i].rectInputs[j] = createRect(app, commonPos.w, commonPos.h, commonPos.x, currentY, white);
             }
             currentY += commonPos.h;
@@ -63,13 +65,13 @@ void createInputs(App *app, InputManager *input, ListFields fields){
 */
 SDL_Rect getPositionOfText(SDL_Rect inputRect, int maxLength){
     SDL_Rect textRect;
-    int marginX = inputRect.x / (maxLength + 2);
-    int marginY = inputRect.y / 18;
 
-    textRect.x = inputRect.x + marginX;
-    textRect.y = inputRect.y + marginY;
-    textRect.w = marginX;
-    textRect.h = inputRect.h - (marginY * 2);
+    int wChar = inputRect.w /(maxLength + 2);
+
+    textRect.x = inputRect.x;
+    textRect.y = inputRect.y;
+    textRect.w = wChar;
+    textRect.h = inputRect.h;
 
     return textRect;
 }
@@ -99,13 +101,22 @@ void renderAllForm(App *app, SDL_Rect titleRect, char *title, SDL_Rect *submitBu
     }
     textSubmit.h = hRatio9(app, 1);
     textSubmit.w = wRatio16(app, 2);
-    textSubmit.y = hRatio9(app, 7.5);
+    textSubmit.y = hRatio9(app, 7.75);
     textSubmit.x = wRatio16(app, 7);
 
-    *submitButton = createRect(app, wRatio16(app, 2.3), hRatio9(app, 1), wRatio16(app, 6.85), hRatio9(app, 7.5), app->colors.lightblue);
+    *submitButton = createRect(app, wRatio16(app, 2.3), hRatio9(app, 1), wRatio16(app, 6.85), hRatio9(app, 7.75), app->colors.lightblue);
 
     SDL_RenderFillRect(app->renderer, submitButton);
 
     renderText(app, textSubmit, app->config.fontCambriab, "submit", 75, TEXT_BLENDED, app->colors.black);
     renderText(app, titleRect, app->config.fontCambriab, title, 100, TEXT_BLENDED, app->colors.white);
+}
+
+void displayAllTextInputs(App *app, InputManager *inputs, int numberFields){
+    int i;
+    Uint8 black[4] = {0, 0, 0, 0};
+
+    for (i = 0; i < numberFields; i++){
+        displayInput(app, inputs[i].textInput, black, inputs[i].textInput.firstRect);
+    }
 }
