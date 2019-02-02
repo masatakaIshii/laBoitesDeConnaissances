@@ -5,9 +5,8 @@
 **
 ** Description  : form functions for events
 */
-#include "../../../headers/controll/form.h"
+#include "../../../headers/controll/create/form.h"
 /**
-*@todo : block the addText to the maxLengthText
 *@todo : verify the value of each input (make verification with pointer of function)
 *@todo : show error if the value is not correct
 *@todo : if after the second submit, the error is correct, then the char error is dissapear
@@ -38,7 +37,7 @@ int createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableNa
 
         commonEvents(app, event, &done);
 
-        checkForm = eventForm(app, &event, inputs, &done, fields.numberFields);
+        checkForm = eventForm(app, &event, inputs, &done, fields, tableName, submitButton);
 
         displayAllForm(app, inputs, fields, tableName, &submitButton);
     }
@@ -62,14 +61,14 @@ int createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableNa
 *
 *@return (int) checkForm : when form is submit and valid, exit the loop
 */
-int eventForm(App *app, SDL_Event *event, InputManager *inputs, int *done, int numberFields){
+int eventForm(App *app, SDL_Event *event, InputManager *inputs, int *done, ListFields fields, char* tableName, SDL_Rect submitButton){
     int checkForm = 0;
     int i;
 
     switch (event->type){
         case SDL_KEYDOWN:
             if (SDL_IsTextInputActive()){
-                for (i = 0; i < numberFields; i++){
+                for (i = 0; i < fields.numberFields; i++){
                     if (inputs[i].active == 1){
                         textInputKeyEvents(event, &inputs[i].textInput);
                     }
@@ -78,11 +77,12 @@ int eventForm(App *app, SDL_Event *event, InputManager *inputs, int *done, int n
         break;
         case SDL_MOUSEBUTTONDOWN:
             if(event->button.button == SDL_BUTTON_LEFT){
-                textInputButtonLeftEvents(app, event, inputs, numberFields);
+                textInputButtonLeftEvents(app, event, inputs, fields.numberFields);
+                checkForm = submitButtonEvent(app, event, inputs, fields, tableName, submitButton);
             }
         break;
         case SDL_TEXTINPUT:
-            for (i = 0; i < numberFields; i++){
+            for (i = 0; i < fields.numberFields; i++){
                 if (inputs[i].active == 1){
                     textInputEvents(app, event, &inputs[i].textInput);
                 }
@@ -209,6 +209,17 @@ InputManager *loadInputs(App *app, ListFields fields, int maxTextLength){
     }
 
     return inputs;
+}
+
+int submitButtonEvent(App *app, SDL_Event *event, InputManager *inputs, ListFields fields, char *tableName, SDL_Rect submitButton){
+
+    int check = 0;
+
+    if (inRect(submitButton, event->button.x, event->button.y)){
+        verifyInputsValues(app, inputs, fields, tableName);
+    }
+
+    return check;
 }
 
 void quitInputs(InputManager *inputs, int numberFields){

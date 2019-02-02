@@ -69,7 +69,7 @@ SDL_Rect getPositionOfText(SDL_Rect inputRect, int maxLength){
 
     int wChar = inputRect.w /(maxLength + 2);
 
-    textRect.x = inputRect.x;
+    textRect.x = inputRect.x + wChar;
     textRect.y = inputRect.y;
     textRect.w = wChar;
     textRect.h = inputRect.h;
