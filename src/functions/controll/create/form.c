@@ -6,11 +6,12 @@
 ** Description  : form functions for events
 */
 #include "../../../headers/controll/form.h"
-
 /**
-*@todo : récupérer un tableau de chaîne de caractères correspondant aux valeurs à inscrire dans le formulaire (sans les id et id_ et date)
-*@todo : la liste chaînée de caractère doit être rendu dans l'input texte
-*@todo : la liste chaînée ne doit pas dépasser la taille de l'input texte
+*@todo : block the addText to the maxLengthText
+*@todo : verify the value of each input (make verification with pointer of function)
+*@todo : show error if the value is not correct
+*@todo : if after the second submit, the error is correct, then the char error is dissapear
+*@todo :
 */
 
 /**
@@ -42,10 +43,22 @@ void createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableN
         displayAllForm(app, inputs, fields, tableName, &submitButton);
     }
 
-    free(inputs);
-    //deleteAllListInputText(input.listChar);
+    quitInputs();
+
+    //return checkForm;
 }
 
+/**
+*@brief All events for form to make specific actions
+*
+*@param (App*) app : structure of application
+*@param (SDL_Event*) event: structure of all event for SDL
+*@param (InputManager*) inputs : structure for manage inputs texts
+*@param (int*) done : bool for exit the loop of event
+*@param (int) numberFields : number of inputs
+*
+*@return (int) checkForm : when form is submit and valid, exit the loop
+*/
 int eventForm(App *app, SDL_Event *event, InputManager *inputs, int *done, int numberFields){
     int checkForm = 0;
     int i;
@@ -80,8 +93,10 @@ int eventForm(App *app, SDL_Event *event, InputManager *inputs, int *done, int n
 
 /**
 *@brief Get list fields for the form
+*
 *@param (App *) app : structure of application
 *@param (MySqlTable) tableInfo : informations of table via the database
+*
 *@return (ListFields) adaptedTable : structure contain list and number of fields for form
 */
 ListFields getListFieldsForForm(App *app, MySqlTable tableInfo){
@@ -106,8 +121,10 @@ ListFields getListFieldsForForm(App *app, MySqlTable tableInfo){
 
 /**
 *@brief To get array and number of display fields name and type
+*
 *@param (App *) app : structure of application
 *@param (int *) numberField : address of numberField of displayFields in form
+*
 *@return (int *) indexes : array of indexes correspond to fields to display in form
 */
 int *adaptedIndexesToForm(App *app, MySqlTable tableInfo, int *numberField){
@@ -130,6 +147,16 @@ int *adaptedIndexesToForm(App *app, MySqlTable tableInfo, int *numberField){
     return indexes;
 }
 
+/**
+*@brief add first index in indexes of add in last case
+*
+*@param (App*) app : structure of application
+*@param (int*) indexes : array dyn of index
+*@param (int) index : index to add in indexes
+*@param (int) numberField : number of fields with new index
+*
+*@return (int*) inter : new indexes with adding index
+*/
 int *addIndexInArray(App *app, int *indexes, int index, int numberField){
     int* inter;
     int i;
@@ -153,6 +180,15 @@ int *addIndexInArray(App *app, int *indexes, int index, int numberField){
     return inter;
 }
 
+/**
+*function to load the structure InputManager and define the max of length of input\n
+*
+*@param (App*) app : structure of application
+*@param (ListFields) fields : structure of fields
+*@param (int) maxTextLength : max length of each input
+*
+*@return (InputManager*) : array of structure InputManager
+*/
 InputManager *loadInputs(App *app, ListFields fields, int maxTextLength){
     int i;
     InputManager *inputs = malloc(sizeof(InputManager) * fields.numberFields);

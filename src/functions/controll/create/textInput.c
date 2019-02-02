@@ -8,8 +8,7 @@
 #include "../../../headers/controll/textInput.h"
 
 /**
-*to initialize the text input
-*
+*@brief To initialize the structure TextInput
 *@param (TextInput *) input
 */
 void initTextsInput(TextsInput *input){
@@ -22,23 +21,14 @@ void initTextsInput(TextsInput *input){
 }
 
 /**
-*
-*
+*function for key event for text input\n
+*@param (SDL_Event *) event :
 *
 *
 */
 void textInputKeyEvents(SDL_Event *event, TextsInput *input){
 
     if (event->key.keysym.sym == SDLK_RETURN || event->key.keysym.sym == SDLK_KP_ENTER){
-
-    } else if (event->key.keysym.sym == SDLK_RIGHT){
-        (input->cursor <= input->nbChar) ? input->cursor++ : 0;
-
-    } else if (event->key.keysym.sym == SDLK_LEFT){
-        (input->cursor > 0) ? input->cursor-- : 0;
-
-    } else if (event->key.keysym.sym == SDLK_DELETE){
-        input->action = (input->cursor < input->nbChar) ?  R_DELETE : STAND_BY;
 
     } else if (event->key.keysym.sym == SDLK_BACKSPACE){
         if (SDL_IsTextInputActive()) {
@@ -49,8 +39,6 @@ void textInputKeyEvents(SDL_Event *event, TextsInput *input){
                 input->nbChar--;
                 input->cursor--;
             }
-            printf("sizeOfChar : %d\n", sizeOfChar);
-            printf("input->size : %d\n", input->size);
         }
 
     } else {
@@ -58,20 +46,17 @@ void textInputKeyEvents(SDL_Event *event, TextsInput *input){
     }
 }
 
+/**
+*function to activate text input event if there are one click is in one of all inputs, else desactivate\n
+*it indicate also which input is activate
+*@param (App *) app : structure of application
+*@param (SDL_Event *) event : the event of SDL2 to get position of click
+*@param (InputManager *) inputs : structure contain all infos of inputs
+*@param (int) numberFields : number of fields to insert
+*/
 void textInputButtonLeftEvents(App *app, SDL_Event *event, InputManager *inputs, int numberFields){
     int i = 0;
     int change = -1;
-
-//    printf("in textInputButtonLeftEvents : %d\n", numberFields);
-//
-//        for (j = 0; j < 3; j++){
-//            printf("inputs[%d].rectInputs[%d].h : %d\n", i, j, inputs[i].rectInputs[j].h);
-//            printf("inputs[%d].rectInputs[%d].w : %d\n", i, j, inputs[i].rectInputs[j].w);
-//            printf("inputs[%d].rectInputs[%d].x : %d\n", i, j, inputs[i].rectInputs[j].x);
-//            printf("inputs[%d].rectInputs[%d].y : %d\n", i, j, inputs[i].rectInputs[j].y);
-//            printf("event->button.x = %d\n", event->button.x);
-//            printf("event->button.y = %d\n", event->button.y);
-//        }
 
     for (i = 0; i < numberFields; i++){
 
@@ -85,9 +70,7 @@ void textInputButtonLeftEvents(App *app, SDL_Event *event, InputManager *inputs,
         } else {
             inputs[i].active = 0;
         }
-        printf("ca marche poto\n");
     }
-
 
     if (change == -1){
         for (i = 0; i < numberFields; i++){
@@ -95,11 +78,16 @@ void textInputButtonLeftEvents(App *app, SDL_Event *event, InputManager *inputs,
         }
         if (SDL_IsTextInputActive()){
             SDL_StopTextInput();
-            printf("SDL_StopTextInput\n");
         }
     }
 }
 
+/**
+*function related just for text input event\n
+*@param (App *) app : structure of application
+*@param (SDL_Event *) event : the event of SDL2 to get position of click
+*@param (TextsInput *) input : structure for manage text input and output
+*/
 void textInputEvents(App *app, SDL_Event *event, TextsInput *input){
 
     if (input->action == ADD_CHAR){
@@ -107,8 +95,6 @@ void textInputEvents(App *app, SDL_Event *event, TextsInput *input){
         input->nbChar++;
         input->cursor++;
         input->size+=strlen(event->text.text);
-        printf("sizeOfChar : %d\n", strlen(event->text.text));
-        printf("input->size : %d\n", input->size);
     }
 }
 
