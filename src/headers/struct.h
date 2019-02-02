@@ -127,7 +127,6 @@ typedef struct InsertParamFinder{
     int     numberFields;
     int     *indexsOfQParenthesis;
     Varchar *listFieldsParenthesis;
-
 }InsertParamFinder;
 
 typedef struct Query {
@@ -164,10 +163,52 @@ typedef struct DisplayManager {
     Position pos;
 } DisplayManager;
 
-typedef struct TextInput {
-    SDL_Rect diplay[3];
+
+/* -- Input text -- */
+typedef struct ListFields {
+    Varchar *list;
+    int numberFields;
+} ListFields;
+
+typedef struct InputChar {
+    SDL_Rect charRect;
+    char oneChar[3];
+} InputChar;
+
+typedef struct ListInputText {
+    InputChar inputChar;
+    struct ListInputText *next;
+} ListInputText;
+
+typedef enum KeyAction{
+    STAND_BY,
+    C_RIGHT,
+    C_LEFT,
+    ADD_CHAR,
+    B_DELETE,
+    R_DELETE,
+    SB_DELETE
+} KeyAction;
+
+typedef struct TextsInput{
+    ListInputText *listChar;
+    SDL_Rect firstRect;
+    int size;
+    int nbChar;
+    int cursor;
+    int start;
+    int end;
+    int maxLength;
+    KeyAction action;
+} TextsInput;
+
+typedef struct InputManager{
+    SDL_Rect rectInputs[3];
+    TextsInput textInput;
     char label[MAX_VARCHAR];
-} TextInput;
+    char error[MAX_VARCHAR];
+    int active;
+} InputManager;
 
 /* --App-- */
 typedef struct App {

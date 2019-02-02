@@ -37,6 +37,7 @@ void createMode(App *app) {
 void createEventBoxes(App *app, SelectQuery *boxes, SDL_Event event, SDL_Rect *pageButtons, SDL_Rect *boxButtons, SDL_Rect *manageButtons, int *page) {
     int i;
     int currentId = (*page) * boxes->numberFields;
+    int check = 0;
     // Change the page
     if (inRect(pageButtons[0], event.button.x, event.button.y)) {
         (*page)--;
@@ -45,11 +46,10 @@ void createEventBoxes(App *app, SelectQuery *boxes, SDL_Event event, SDL_Rect *p
     }
 
     if (inRect(manageButtons[0], event.button.x, event.button.y)) {
-        createForm(app, boxes, boxButtons, "box");
+        check = createForm(app, boxes, boxButtons, "box", 0);
     }
     if (inRect(manageButtons[1], event.button.x, event.button.y)) {
         //deleteBoxForm
-        printf("deleBoxForm\n");
     }
 
     for (i = currentId ; i < (currentId + boxes->numberFields); i++) {

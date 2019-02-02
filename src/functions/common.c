@@ -94,7 +94,7 @@ SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSiz
         verifyPointer(app, textSurface, "Problem textSurface to render text_solid\n");
     }
     if (typeRender == TEXT_BLENDED) {
-        textSurface = TTF_RenderText_Blended(font, text, colorFg);
+        textSurface = TTF_RenderUTF8_Blended(font, text, colorFg);
         verifyPointer(app, textSurface, "Problem textSurface to render text_blended\n");
     }
 
@@ -109,6 +109,7 @@ SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSiz
 }
 
 void renderText(App *app, SDL_Rect rect, char *pathFontFile, char *text, int fontSize, typeRenderText typeRender, SDL_Color textColor){
+
     SDL_Texture *textTexture = textToTexture(app, pathFontFile, text, fontSize, typeRender, textColor);
 
     SDL_RenderCopy(app->renderer, textTexture, NULL, &rect);
@@ -170,7 +171,6 @@ void loadConfigParam(Config *config, char *param, char *value) {
     (strcmp(param, "fontCambriab") == 0) ? strcpy(config->fontCambriab, value) : "";
     (strcmp(param, "fontSixty") == 0) ? strcpy(config->fontSixty, value) : "";
     (strcmp(param, "fontTimes") == 0) ? strcpy(config->fontTimes, value) : "";
-
 
     //else if(strcmp(param, "color1") == 0)
         // Set la couleur ici

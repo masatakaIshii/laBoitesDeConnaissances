@@ -84,7 +84,7 @@ void RenderMainTexts (App *app) {
     SDL_Rect titleTextRect = {app->config.width / 3.75, 0, app->config.width / 2.25, app->config.height / 5};
 
     // Render the texts
-    renderText(app, playTextRect, app->config.fontCambriab, "PLAY MODE", 50, TEXT_BLENDED, black);
-    renderText(app, createTextRect, app->config.fontCambriab, "CREATE MODE", 50, TEXT_BLENDED, black);
-    renderText(app, titleTextRect, app->config.fontCambriab, "THE BOX OF KNOWLEDGE", 55, TEXT_BLENDED, white);
+    renderText(app, playTextRect, app->config.fontCambriab, "PLAY MODE", 55, TEXT_BLENDED, black);
+    renderText(app, createTextRect, app->config.fontCambriab, "CREATE MODE", 55, TEXT_BLENDED, black);
+    renderText(app, titleTextRect, app->config.fontCambriab, "THE BOX OF KNOWLEDGE", 75, TEXT_BLENDED, white);
 }

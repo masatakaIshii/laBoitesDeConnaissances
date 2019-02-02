@@ -1,7 +1,7 @@
 /*
 ** Filename : formModel.c
 **
-** Made by  : Masataka ISHII
+** Made by  : MasaListRectChartaka ISHII
 **
 ** Description  : function concern to form and query
 */
