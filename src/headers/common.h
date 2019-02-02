@@ -21,6 +21,7 @@ int inRect(SDL_Rect rect, int clicX, int clicY);
 SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSize, typeRenderText typeRender, SDL_Color colorFg);
 void renderText(App *app, SDL_Rect rect, char *pathFontFile, char *text, int fontSize, typeRenderText typeRender, SDL_Color textColor);
 void writeTitle(App *app, char *title);
+void writeReturnKey(App *app);
 
 Uint8 *hexToRgb(const char *hex);
 int hexToDecimal(char *input, int size);

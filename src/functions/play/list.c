@@ -64,6 +64,7 @@ int displayHomeBox(App *app, SelectQuery lists, SDL_Rect *listButtons, char* box
 
     // Write title
     writeTitle(app, boxTitle);
+    writeReturnKey(app);
 
     // Creating lists
     if(lists.numberRows > 0)

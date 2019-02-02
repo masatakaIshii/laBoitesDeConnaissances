@@ -69,6 +69,7 @@ void displayHomePlay(App *app, SelectQuery boxes, int page, SDL_Rect *pageButton
 
     // Write title
     writeTitle(app, "TOUTES LES BOITES");
+    writeReturnKey(app);
 
     // Creating boxes
     *nbOfBoxInPage = createBoxPage(app, boxes, boxButtons, boxes.numberRows, page);

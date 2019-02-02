@@ -59,6 +59,7 @@ void displayGame(App *app, char **list, SelectQuery cards, SDL_Rect *pageButtons
 
     // Write title
     writeTitle(app, list[NAME]);
+    writeReturnKey(app);
 
     // Create buttons
     pageButtons[RESET] = createRect(app, wRatio16(app, 2), hRatio9(app, 1), wRatio16(app, 1), hRatio9(app, 1) - 20, app->colors.yellow);

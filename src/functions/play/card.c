@@ -52,6 +52,7 @@ void cardResponse(App *app, char **card){
     while (!done) {
         SDL_WaitEvent(&event);
         commonEvents(app, event, &done);
+        done = 0; // Block the return button --> you have to say if it's true or false to leave
         switch (event.type) {
             case SDL_MOUSEBUTTONDOWN:
                 if(event.button.button == SDL_BUTTON_LEFT){
@@ -143,6 +144,9 @@ void displayCard(App *app, char **card, SDL_Rect *pageButton){
 
     // Texts
     writeTitle(app, card[NAME]);
+    writeReturnKey(app);
+
+    // Write Question
     textPos = createRect(app, wRatio16(app, 10), hRatio9(app, 2), wRatio16(app, 3), hRatio9(app, 3), app->colors.blue);
     renderText(app, textPos, app->config.fontCambriab, card[QUESTION], 50, TEXT_BLENDED, app->colors.white);
 
@@ -163,6 +167,8 @@ void displayResponse(App *app, char **card, SDL_Rect *pageButtons){
 
     // Texts
     writeTitle(app, card[NAME]);
+
+    // Write Answer
     textPos = createRect(app, wRatio16(app, 10), hRatio9(app, 2), wRatio16(app, 3), hRatio9(app, 3), app->colors.blue);
     renderText(app, textPos, app->config.fontCambriab, card[ANSWER], 50, TEXT_BLENDED, app->colors.white);
 

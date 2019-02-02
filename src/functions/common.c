@@ -140,6 +140,17 @@ void writeTitle(App *app, char *title){
     renderText(app, textPos, app->config.fontCambriab, title, 80, TEXT_BLENDED, app->colors.white);
 }
 
+void writeReturnKey(App *app){
+    SDL_Rect textPos;
+
+    textPos.x = wRatio16(app, 11);
+    textPos.y = 0;
+    textPos.w = wRatio16(app, 5);
+    textPos.h = hRatio9(app, 0.3);
+
+    renderText(app, textPos, app->config.fontCambriab, "Appuyez sur ESC pour retourner en arriere", 40, TEXT_BLENDED, app->colors.white);
+}
+
 Uint8 *hexToRgb(const char *hex){
     char hexNumber[2];
     Uint8 *rgb = NULL;
