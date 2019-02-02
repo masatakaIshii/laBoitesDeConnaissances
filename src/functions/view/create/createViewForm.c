@@ -6,7 +6,7 @@
 ** Description  : view form functions
 */
 #include "../../../headers/view/create/createViewForm.h"
-void displayAllForm(App *app, InputManager *input, ListFields fields, char *tableName, SDL_Rect *submitButton){
+void displayAllForm(App *app, InputManager *inputs, ListFields fields, char *tableName, SDL_Rect *submitButton){
 
     //DisplayManager display = displayManagerConstructor(elementHeight, elementWidth, nbColomns, nbRows, startX, startY, stepX, stepY);
     char title[MAX_VARCHAR];
@@ -17,11 +17,11 @@ void displayAllForm(App *app, InputManager *input, ListFields fields, char *tabl
     SDL_SetRenderDrawColor(app->renderer, app->colors.blue[0], app->colors.blue[1], app->colors.blue[2], app->colors.blue[3]);
     SDL_RenderClear(app->renderer);
 
-    createInputs(app, input, fields);
+    createInputs(app, inputs, fields);
 
-    renderAllForm(app, titleRect, title, submitButton, input, fields);
+    renderAllForm(app, titleRect, title, submitButton, inputs, fields);
 
-    displayAllTextInputs(app, input, fields.numberFields);
+    displayAllTextInputs(app, inputs, fields.numberFields);
 
     //afficher label, input et laisser une place au cas où pour l'error. le sDL_Rect de input doit avoir une bordure
 
@@ -29,7 +29,7 @@ void displayAllForm(App *app, InputManager *input, ListFields fields, char *tabl
 }
 
 
-void createInputs(App *app, InputManager *input, ListFields fields){
+void createInputs(App *app, InputManager *inputs, ListFields fields){
     int i, j;
     int currentY = hRatio9(app, 2);
     int stepY = hRatio9(app, 0.05);
@@ -38,17 +38,18 @@ void createInputs(App *app, InputManager *input, ListFields fields){
     int length = 0;
     int wForStr = commonPos.w;
 
+
     for (i = 0; i < fields.numberFields; i++){
         for (j = 0; j < 3; j++){
             if (j == 0 || j == 2){
                 length = strlen(fields.list[i]);
-                wForStr = getAppropriateWidth(commonPos, length, input->textInput.maxLength);
-                input[i].rectInputs[j] = createRect(app, wForStr, commonPos.h, commonPos.x, currentY, app->colors.blue);
+                wForStr = getAppropriateWidth(commonPos, length, inputs[i].textInput.maxLength);
+                inputs[i].rectInputs[j] = createRect(app, wForStr, commonPos.h, commonPos.x, currentY, app->colors.blue);
                 wForStr = commonPos.w;
             }
             if (j == 1){
-                input[i].textInput.firstRect = getPositionOfText(input[i].rectInputs[j], input[i].textInput.maxLength);
-                input[i].rectInputs[j] = createRect(app, commonPos.w, commonPos.h, commonPos.x, currentY, white);
+                inputs[i].textInput.firstRect = getPositionOfText(inputs[i].rectInputs[j], inputs[i].textInput.maxLength);
+                inputs[i].rectInputs[j] = createRect(app, commonPos.w, commonPos.h, commonPos.x, currentY, white);
             }
             currentY += commonPos.h;
         }

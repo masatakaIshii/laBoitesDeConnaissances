@@ -107,6 +107,8 @@ void textInputEvents(App *app, SDL_Event *event, TextsInput *input){
         input->nbChar++;
         input->cursor++;
         input->size+=strlen(event->text.text);
+        printf("sizeOfChar : %d\n", strlen(event->text.text));
+        printf("input->size : %d\n", input->size);
     }
 }
 
@@ -128,8 +130,6 @@ void displayInput(App *app, TextsInput input, Uint8 *rectColor, SDL_Rect textPos
             list = list->next;
         }
     }
-
-    showListInputText(input.listChar);
 }
 
 int adaptWForTexts(int wOneChar, int nbChar){

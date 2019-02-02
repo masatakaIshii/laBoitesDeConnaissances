@@ -69,7 +69,6 @@ int eventForm(App *app, SDL_Event *event, InputManager *inputs, int *done, int n
             for (i = 0; i < numberFields; i++){
                 if (inputs[i].active == 1){
                     textInputEvents(app, event, &inputs[i].textInput);
-                    showListInputText(inputs[i].textInput.listChar);
                 }
             }
         break;
@@ -165,6 +164,9 @@ InputManager *loadInputs(App *app, ListFields fields, int maxTextLength){
         strcpy(inputs[i].label, fields.list[i]);
         inputs[i].textInput.listChar = NULL;
         inputs[i].textInput.maxLength = maxTextLength;
+        inputs[i].textInput.size = 0;
+        inputs[i].textInput.nbChar = 0;
+        inputs[i].textInput.start = 0;
     }
 
     return inputs;
