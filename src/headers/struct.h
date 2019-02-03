@@ -210,6 +210,16 @@ typedef struct InputManager{
     int active;
 } InputManager;
 
+/* -- Form -- */
+typedef struct QueryForm{
+    int idParent;
+    int numberFields;
+    Varchar tableName;
+    Varchar query;
+    Varchar *fields;
+    Varchar *values;
+} QueryForm;
+
 /* --App-- */
 typedef struct App {
     SDL_Window      *screen;

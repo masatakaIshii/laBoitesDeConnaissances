@@ -7,24 +7,37 @@
 */
 #include "../../../headers/controll/create/verifyForm.h"
 
-int verifyInputsValues(App *app, InputManager *inputs, ListFields fields, char* tableName){
+int verifyInputsValues(App *app, InputManager *inputs, ListFields fields, QueryForm *qForm){
 
 /**
-*@todo : mettre valeur des inputs dans un tableaux de string
 *@todo : vérification de chaque valeurs en fonction de leurs types
 *@todo : s'il y a une erreur sur un input, alors indiquer l'erreur sur la chaine de la structure InputManager
 *@todo : sinon envoie de la requête
 */
-    Varchar *inputsValues = getInputsValues(inputs, fields.numberFields);
+    qForm->values = getInputsValues(inputs, fields.numberFields);
+    int check = 0; // if error => -1, else => 0
 
+    //check = verifyIfValuesAreCorrects(inputsValues, fields);
 
-
-
-    return 0;
+    return check;
 }
 
-Varchar *getInputsValues(inputs, int numberFields){
+Varchar *getInputsValues(InputManager *inputs, int numberFields){
 
-    Varchar *inputsValues = NULL;
+    Varchar *inputsValues = malloc(sizeof(Varchar) * numberFields);
+    ListInputText *temp = NULL;
+    int i;
 
+    for (i = 0; i < numberFields; i++){
+        temp = inputs[i].textInput.listChar;
+        strcpy(inputsValues[i], "");
+        while(temp != NULL){
+            strcat(inputsValues[i], temp->inputChar.oneChar);
+            temp = temp->next;
+        }
+    }
+
+    return inputsValues;
 }
+
+
