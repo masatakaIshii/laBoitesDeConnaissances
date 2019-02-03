@@ -197,7 +197,6 @@ InputManager *loadInputs(App *app, ListFields fields, int maxTextLength){
 
     for (i = 0; i < fields.numberFields; i++){
         inputs[i].active = 0;
-        strcpy(inputs[i].error, "");
         strcpy(inputs[i].label, fields.list[i]);
         inputs[i].textInput.listChar = NULL;
         inputs[i].textInput.maxLength = maxTextLength;

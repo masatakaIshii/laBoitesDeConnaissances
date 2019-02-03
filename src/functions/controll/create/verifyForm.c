@@ -15,7 +15,7 @@ int verifyInputsValues(App *app, InputManager *inputs, ListFields fields, QueryF
 *@todo : sinon envoie de la requête
 */
     qForm->values = getInputsValues(inputs, fields.numberFields);
-    int check = 0; // if error => -1, else => 0
+    int check = 0; // if error => 0, else => 1
 
     //check = verifyIfValuesAreCorrects(inputsValues, fields);
 

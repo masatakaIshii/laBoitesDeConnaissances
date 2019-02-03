@@ -42,7 +42,7 @@ void createInputs(App *app, InputManager *inputs, ListFields fields){
     for (i = 0; i < fields.numberFields; i++){
         for (j = 0; j < 3; j++){
             if (j == 0 || j == 2){
-                length = strlen(fields.list[i]);
+                length = (j == 0) ? strlen(inputs[i].label) : strlen(inputs[i].error);
                 wForStr = getAppropriateWidth(commonPos, length, inputs[i].textInput.maxLength);
                 inputs[i].rectInputs[j] = createRect(app, wForStr, commonPos.h, commonPos.x, currentY, app->colors.blue);
                 wForStr = commonPos.w;
@@ -96,10 +96,15 @@ int getAppropriateWidth(SDL_Rect commonRect, int length, int maxLength){
 void renderAllForm(App *app, SDL_Rect titleRect, char *title, SDL_Rect *submitButton, InputManager *input, ListFields fields){
     int i;
     SDL_Rect textSubmit;
+    SDL_Color red = {255, 0, 0, 0};
 
     for (i = 0; i < fields.numberFields; i++){
-        renderText(app, input[i].rectInputs[0], app->config.fontCambriab, fields.list[i], 50, TEXT_BLENDED, app->colors.black);
+        renderText(app, input[i].rectInputs[0], app->config.fontCambriab, input[i].label, 50, TEXT_BLENDED, app->colors.black);
+        if (strlen(input[i].error) > 0){
+            renderText(app, input[i].rectInputs[2], app->config.fontCambriab, input[i].error, 50, TEXT_BLENDED, red);
+        }
     }
+
     textSubmit.h = hRatio9(app, 1);
     textSubmit.w = wRatio16(app, 2);
     textSubmit.y = hRatio9(app, 7.75);
