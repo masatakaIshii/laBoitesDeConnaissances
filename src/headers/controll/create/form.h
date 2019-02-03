@@ -23,7 +23,7 @@ int *addIndexInArray(App *app, int *indexes, int index, int numberField);
 InputManager *loadInputs(App *app, ListFields fields, int maxTextLength);
 
 QueryForm loadQueryForm(App *app, char *tableName, ListFields fieldsForm, MySqlTable tableInfo, int idParent);
-void prepareInsertQuery(App *app, QueryForm *qForm, Varchar *query, ListFields fieldsForm, MySqlTable tableInfo);
+void prepareInsertQuery(App *app, QueryForm *qForm, ListFields fieldsForm, MySqlTable tableInfo);
 void putNowIfItIsDatetime(MySqlTable tableInfo, int index, Varchar *fields, Varchar *values);
 void putIdParentInfo(MySqlTable tableInfo, int index, Varchar *fields, Varchar *values);
 void putComma(MySqlTable tableInfo, int index, Varchar *fields, Varchar *values);

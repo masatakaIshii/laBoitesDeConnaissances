@@ -32,8 +32,6 @@ int createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableNa
     QueryForm qForm = loadQueryForm(app, tableName, fields, tableInfo, idParent);
     int checkForm = 0;
 
-
-
     SDL_StopTextInput();
     while (!done) {
         SDL_WaitEvent(&event);
@@ -220,12 +218,12 @@ QueryForm loadQueryForm(App *app, char *tableName, ListFields fieldsForm, MySqlT
 
     strcpy(newForm.tableName, tableName);
 
-    prepareInsertQuery(app, &newForm, &newForm.query, fieldsForm, tableInfo);
+    prepareInsertQuery(app, &newForm, fieldsForm, tableInfo);
 
     return newForm;
 }
 
-void prepareInsertQuery(App *app, QueryForm *qForm, Varchar *query, ListFields fieldsForm, MySqlTable tableInfo){
+void prepareInsertQuery(App *app, QueryForm *qForm, ListFields fieldsForm, MySqlTable tableInfo){
     Varchar temp = "";
     Varchar fields = "";
     Varchar values = "";
@@ -245,9 +243,9 @@ void prepareInsertQuery(App *app, QueryForm *qForm, Varchar *query, ListFields f
             conditions[j](tableInfo, i, &fields, &values);
         }
     }
-    qForm->fields = getArrayByListString(app, fields, &qForm->numberFields);
     sprintf(temp, "INSERT INTO %s (%s) VALUES (%s)", qForm->tableName, fields, values);
-    strcpy(*query, temp);
+    strcpy(qForm->query, temp);
+    qForm->fields = getArrayByListString(app, fields, &qForm->numberFields);
 }
 
 void putNowIfItIsDatetime(MySqlTable tableInfo, int index, Varchar *fields, Varchar *values){
@@ -273,9 +271,18 @@ void putComma(MySqlTable tableInfo, int index, Varchar *fields, Varchar *values)
 
 Varchar *getArrayByListString(App *app, Varchar listString, int *numberFields){
     Varchar *arrayFields = NULL;
-    varchar temp;
+    char *delimiter = ", ";
+    char *token = strtok(listString, delimiter);
+    int i = 0;
 
     *numberFields = getNumberOfFieldsInInsert(listString);
+    arrayFields = malloc(sizeof(Varchar) * (*numberFields));
+
+    while(token != NULL){
+        strcpy(arrayFields[i], token);
+        token = strtok(NULL, delimiter);
+        i++;
+    }
 
     return arrayFields;
 }
@@ -287,8 +294,14 @@ int getNumberOfFieldsInInsert(Varchar listString){
     strcpy(temp, listString);
 
     while (strchr(temp, ',') != NULL){
+        temp[strchr(temp, ',') - temp] = '_';
         numberFields++;
     }
+    if (numberFields != 0){
+        numberFields++;
+    }
+
+    return numberFields;
 }
 
 int submitButtonEvent(App *app, SDL_Event *event, InputManager *inputs, ListFields fields, QueryForm *qForm, SDL_Rect submitButton){
