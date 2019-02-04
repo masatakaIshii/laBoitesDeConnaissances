@@ -58,7 +58,9 @@ void displayStats(App *app, SelectQuery boxes, SelectQuery lists, SelectQuery ca
 
     // Write title
     writeTitle(app, "STATISTIQUES");
+    writeReturnKey(app);
 
+    // Content
     writeStats(app, boxes, lists, cards);
 
     // Refresh screen
@@ -66,12 +68,8 @@ void displayStats(App *app, SelectQuery boxes, SelectQuery lists, SelectQuery ca
 }
 
 void writeStats(App *app, SelectQuery boxes, SelectQuery lists, SelectQuery cards){
-    SDL_Rect textPos;
+    SDL_Rect textPos = {wRatio16(app, 1), hRatio9(app, 2), wRatio16(app, 4), hRatio9(app, 0.5)};
 
-    textPos.x = wRatio16(app, 1);
-    textPos.y = hRatio9(app, 2);
-    textPos.w = wRatio16(app, 4);
-    textPos.h = hRatio9(app, 0.5);
     printNumberStat(app, textPos, "Nombre de boites créées : ", boxes.numberRows);
 
     textPos.y += hRatio9(app, 1);
