@@ -13,7 +13,7 @@
 
 enum {WIN, FAIL};
 
-void newCard(App *app, SelectQuery cards){
+void newCard(App *app, SelectQuery cards, char *backgroundColor){
     SDL_Rect pageButton;
     SDL_Event event;
     int done = 0;
@@ -34,17 +34,17 @@ void newCard(App *app, SelectQuery cards){
             case SDL_MOUSEBUTTONDOWN:
                 if(event.button.button == SDL_BUTTON_LEFT){
                     if(inRect(pageButton, event.button.x, event.button.y)){
-                        cardResponse(app, cards.listColumnsRows[cardRow]);
+                        cardResponse(app, cards.listColumnsRows[cardRow], backgroundColor);
                         done = 1;
                     }
                 }
             break;
         }
-        displayCard(app, cards.listColumnsRows[cardRow], &pageButton);
+        displayCard(app, cards.listColumnsRows[cardRow], &pageButton, backgroundColor);
     }
 }
 
-void cardResponse(App *app, char **card){
+void cardResponse(App *app, char **card, char *backgroundColor){
     SDL_Rect pageButtons[2];
     SDL_Event event;
     int done = 0;
@@ -67,7 +67,7 @@ void cardResponse(App *app, char **card){
                 }
             break;
         }
-        displayResponse(app, card, pageButtons);
+        displayResponse(app, card, pageButtons, backgroundColor);
     }
 }
 
@@ -135,11 +135,12 @@ int isValidCard(char **card){
 /*///////////////////////// DISPLAY \\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
 
-void displayCard(App *app, char **card, SDL_Rect *pageButton){
-    SDL_Rect textPos;
+void displayCard(App *app, char **card, SDL_Rect *pageButton, char *backgroundColor){
+    Uint8 *rgbBackground = hexToRgb(backgroundColor);
+    SDL_Rect questionPos = {wRatio16(app, 3), hRatio9(app, 3), wRatio16(app, 10), hRatio9(app, 2)};
 
     // Setting background
-    SDL_SetRenderDrawColor(app->renderer, app->colors.blue[0], app->colors.blue[1], app->colors.blue[2], app->colors.blue[3]);
+    SDL_SetRenderDrawColor(app->renderer, rgbBackground[0], rgbBackground[1], rgbBackground[2], rgbBackground[3]);
     SDL_RenderClear(app->renderer);
 
     // Texts
@@ -147,8 +148,7 @@ void displayCard(App *app, char **card, SDL_Rect *pageButton){
     writeReturnKey(app);
 
     // Write Question
-    textPos = createRect(app, wRatio16(app, 10), hRatio9(app, 2), wRatio16(app, 3), hRatio9(app, 3), app->colors.blue);
-    renderText(app, textPos, app->config.fontCambriab, card[QUESTION], 50, TEXT_BLENDED, app->colors.white);
+    renderText(app, questionPos, app->config.fontCambriab, card[QUESTION], 50, TEXT_BLENDED, app->colors.white);
 
     // Button
     *pageButton = createRect(app, wRatio16(app, 5), hRatio9(app, 1), wRatio16(app, 5.5), hRatio9(app, 7) + 40, app->colors.yellow);
@@ -156,21 +156,23 @@ void displayCard(App *app, char **card, SDL_Rect *pageButton){
 
     // Refresh screen
     SDL_RenderPresent(app->renderer);
+    free(rgbBackground);
 }
 
-void displayResponse(App *app, char **card, SDL_Rect *pageButtons){
-    SDL_Rect textPos;
+void displayResponse(App *app, char **card, SDL_Rect *pageButtons, char *backgroundColor){
+    Uint8 *rgbBackground = hexToRgb(backgroundColor);
+    SDL_Rect answerPos = {wRatio16(app, 3), hRatio9(app, 3), wRatio16(app, 10), hRatio9(app, 2)};
+
 
     // Setting background
-    SDL_SetRenderDrawColor(app->renderer, app->colors.blue[0], app->colors.blue[1], app->colors.blue[2], app->colors.blue[3]);
+    SDL_SetRenderDrawColor(app->renderer, rgbBackground[0], rgbBackground[1], rgbBackground[2], rgbBackground[3]);
     SDL_RenderClear(app->renderer);
 
     // Texts
     writeTitle(app, card[NAME]);
 
     // Write Answer
-    textPos = createRect(app, wRatio16(app, 10), hRatio9(app, 2), wRatio16(app, 3), hRatio9(app, 3), app->colors.blue);
-    renderText(app, textPos, app->config.fontCambriab, card[ANSWER], 50, TEXT_BLENDED, app->colors.white);
+    renderText(app, answerPos, app->config.fontCambriab, card[ANSWER], 50, TEXT_BLENDED, app->colors.white);
 
     // Button
     pageButtons[WIN] = createRect(app, wRatio16(app, 3), hRatio9(app, 1), wRatio16(app, 4), hRatio9(app, 7) + 40, app->colors.green);
@@ -181,4 +183,5 @@ void displayResponse(App *app, char **card, SDL_Rect *pageButtons){
 
     // Refresh screen
     SDL_RenderPresent(app->renderer);
+    free(rgbBackground);
 }

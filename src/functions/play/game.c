@@ -31,7 +31,7 @@ void game(App *app, char **list, int idList){
                 if(event.button.button == SDL_BUTTON_LEFT){
                     // Action
                     if(inRect(pageButtons[PLAY], event.button.x, event.button.y) && numberOfValidCards(app, cards) > 0){
-                        newCard(app, cards);
+                        newCard(app, cards, list[L_COLOR]);
                         cards = getCardsFromList(app, idList); // Getting new data
                     }
                     else if(inRect(pageButtons[RESET], event.button.x, event.button.y)){
@@ -69,7 +69,7 @@ void displayGame(App *app, char **list, SelectQuery cards, SDL_Rect *pageButtons
     if(numberOfValidCards(app, cards) > 0)
         renderText(app, pageButtons[PLAY], app->config.fontCambriab, "TIRER UNE CARTE", 80, TEXT_BLENDED, app->colors.white);
     else
-        renderText(app, pageButtons[PLAY], app->config.fontCambriab, "AUCUNE CARTE DISPO", 80, TEXT_BLENDED, app->colors.white);
+        renderText(app, pageButtons[PLAY], app->config.fontCambriab, "AUCUNE CARTE JOUABLE", 80, TEXT_BLENDED, app->colors.white);
 
     // Create cards
     sprintf(str, "%d", numberOfValidCards(app, cards));

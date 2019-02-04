@@ -6,12 +6,12 @@
 ** Description  : card headers
 */
 
-void newCard(App *app, SelectQuery cards);
-void cardResponse(App *app, char **card);
+void newCard(App *app, SelectQuery cards, char *backgroundColor);
+void cardResponse(App *app, char **card, char *backgroundColor);
 
 int randomCard(App *app, SelectQuery cards);
 int numberOfValidCards(App *app, SelectQuery cards);
 int isValidCard(char **card);
 
-void displayCard(App *app, char **card, SDL_Rect *pageButton);
-void displayResponse(App *app, char **card, SDL_Rect *pageButtons);
+void displayCard(App *app, char **card, SDL_Rect *pageButton, char *backgroundColor);
+void displayResponse(App *app, char **card, SDL_Rect *pageButtons, char *backgroundColor);
