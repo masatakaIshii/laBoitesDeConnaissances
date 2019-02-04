@@ -14,7 +14,7 @@
 #include "form.h"
 
 void createMode(App *app);
-void createEventBoxes(App *app, SelectQuery *boxes, SDL_Event event, SDL_Rect *pageButtons, SDL_Rect *boxButtons, SDL_Rect *manageButtons, int *page);
+void createEventBoxes(App *app, SelectQuery *boxes, SDL_Event event, SDL_Rect *pageButtons, SDL_Rect *boxButtons, SDL_Rect *manageButtons, int *page, int *activeDel);
 
 #endif // CONTROLL_CREATE_MODE
 
