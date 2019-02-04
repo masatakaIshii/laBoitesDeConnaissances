@@ -78,7 +78,6 @@ int eventForm(App *app, SDL_Event *event, InputManager *inputs, int *done, ListF
             if(event->button.button == SDL_BUTTON_LEFT){
                 textInputButtonLeftEvents(app, event, inputs, fields.numberFields);
                 checkForm = submitButtonEvent(app, event, inputs, fields, qForm, submitButton);
-                printf("checkForm : %d\n", checkForm);
                 *done = (inRect(successButton, event->button.x, event->button.y)) ? 1 : 0;
             }
         break;
@@ -137,8 +136,10 @@ int *adaptedIndexesToForm(App *app, MySqlTable tableInfo, int *numberField){
     int canAddIndex = 0;
 
     for (i = 0; i < tableInfo.numberField; i++){
-        if (strncmp(tableInfo.listFieldsNames[i], "id", 3) != 0 && strncmp(tableInfo.listFieldsNames[i], "id_", 3) != 0 && tableInfo.listFieldsTypes[i] != MYSQL_TYPE_DATETIME){
-            canAddIndex = 1;
+        if (strncmp(tableInfo.listFieldsNames[i], "id", 3) != 0 && strncmp(tableInfo.listFieldsNames[i], "id_", 3) != 0){
+            if (tableInfo.listFieldsTypes[i] == MYSQL_TYPE_STRING || tableInfo.listFieldsTypes[i] == MYSQL_TYPE_VAR_STRING){
+                canAddIndex = 1;
+            }
         }
 
         if (canAddIndex == 1){

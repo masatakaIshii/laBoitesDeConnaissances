@@ -31,7 +31,7 @@ int mainEventLoop(App *app) {
                     playMode(app);
                 // MODE CREATE
                 if (event.key.keysym.scancode == SDL_SCANCODE_2)
-                    createMode(app);
+                    createMode(app, "box", NULL);
                     // Fonction CREATE
             break;
 
@@ -43,7 +43,7 @@ int mainEventLoop(App *app) {
                     // MODE CREATE
                     else if(inRect(buttons[1] , event.button.x, event.button.y))
                         // Fonction CREATE
-                        createMode(app);
+                        createMode(app, "box", NULL);
                 }
             break;
         }
