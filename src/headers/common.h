@@ -3,16 +3,13 @@
 **
 ** Made by  : Baptiste LEGO
 **
-** Description  : common functions used in App
+** Description  : common headers used in App
 */
 
 #ifndef COMMON_FUNCTIONS
 #include "struct.h"
 
-int mainEventLoop(App *app);
 void commonEvents(App *app, SDL_Event event, int *done);
-void displayMenu(App *app, SDL_Rect *buttons);
-void RenderMainTexts (App *app);
 
 void resizeScreen(App *app, int height);
 int hRatio9(App *app, double ratioHeight);
@@ -23,6 +20,13 @@ int inRect(SDL_Rect rect, int clicX, int clicY);
 
 SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSize, typeRenderText typeRender, SDL_Color colorFg);
 void renderText(App *app, SDL_Rect rect, char *pathFontFile, char *text, int fontSize, typeRenderText typeRender, SDL_Color textColor);
+void writeTitle(App *app, char *title);
+void writeReturnKey(App *app);
+
+Uint8 *hexToRgb(const char *hex);
+int hexToDecimal(char *input, int size);
+
+int intConvertor(const char* str);
 
 void verifyPointer(App *app, void *pointer,const char* message);
 

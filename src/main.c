@@ -8,8 +8,10 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 #include "headers/struct.h"
 #include "headers/common.h"
+#include "headers/menu.h"
 #include "headers/model/modelHelper/modelCommon.h"
 #include "headers/model/modelHelper/modelQuit.h"
 #include "headers/model/modelHelper/modelSelect.h"
@@ -34,6 +36,7 @@ int main(int argc, char **argv) {
     app.model.mysql = &mysqlFirst;
 
     int returnStat = NULL;
+    srand(time(NULL));
 
     freopen("CON", "w", stdout);
     freopen("CON", "r", stdin);

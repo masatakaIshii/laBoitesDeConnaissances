@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
+#include <time.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <mysql.h>
@@ -117,6 +118,89 @@ void renderText(App *app, SDL_Rect rect, char *pathFontFile, char *text, int fon
     SDL_DestroyTexture(textTexture);
 }
 
+void writeTitle(App *app, char *title){
+    SDL_Rect textPos;
+
+    // Write title
+    textPos.h = hRatio9(app, 1.5);
+    textPos.y = 0;
+
+    if(strlen(title) < 6){
+        textPos.w = wRatio16(app, 2);
+        textPos.x = wRatio16(app, 7);
+    }
+    else if(strlen(title) < 12){
+        textPos.w = wRatio16(app, 4);
+        textPos.x = wRatio16(app, 6);
+    }
+    else{
+        textPos.w = wRatio16(app, 6);
+        textPos.x = wRatio16(app, 5);
+    }
+
+    renderText(app, textPos, app->config.fontCambriab, title, 80, TEXT_BLENDED, app->colors.white);
+}
+
+void writeReturnKey(App *app){
+    SDL_Rect textPos;
+
+    textPos.x = wRatio16(app, 11);
+    textPos.y = 0;
+    textPos.w = wRatio16(app, 5);
+    textPos.h = hRatio9(app, 0.3);
+
+    renderText(app, textPos, app->config.fontCambriab, "Appuyez sur ESC pour retourner en arriere", 40, TEXT_BLENDED, app->colors.white);
+}
+
+Uint8 *hexToRgb(const char *hex){
+    char hexNumber[2];
+    Uint8 *rgb = NULL;
+    int i;
+
+    rgb = malloc(sizeof(Uint8) * 4);
+    if(rgb == NULL){
+        printf("Unable to convert hex\n");
+        return NULL;
+    }
+
+    for(i = 0; i < 3; i++){
+        strncpy(hexNumber, hex, 2);
+        rgb[i] = hexToDecimal(hexNumber, 2);
+        hex += 2;
+    }
+
+    rgb[3] = 0;
+
+    return rgb;
+}
+
+int hexToDecimal(char *input, int size){
+    int result = 0;
+    int factor = 1;
+    int i;
+
+    for(i = size - 1; i >= 0; i--){
+        if(input[i] >= '0' && input[i] <= '9'){
+            result += (input[i] - '0') * factor;
+            factor *= 16;
+        }
+        else if(input[i] >= 'A' && input[i] <= 'F'){
+            result += (input[i] - 'A' + 10) * factor;
+            factor *= 16;
+        }
+        else if(input[i] >= 'a' && input[i] <= 'f'){
+            result += (input[i] - 'a' + 10) * factor;
+            factor *= 16;
+        }
+    }
+
+    return result;
+}
+
+int intConvertor(const char* str){
+    return (int)strtol(str, NULL, 0);
+}
+
 void verifyPointer(App *app, void *pointer, const char *message) {
     if (!pointer) {
         printf("%s\n", message);
@@ -160,7 +244,7 @@ void loadConfigFile(Config *config) {
 void loadConfigParam(Config *config, char *param, char *value) {
 
     if(strcmp(param, "windowHeight") == 0){
-        config->height = (int)strtol(value, NULL, 0);
+        config->height = intConvertor(value);
         config->width = config->height * SCREEN_FORMAT; // Largeur intialise au format defini suivant la hauteur
     }
     (strcmp(param, "host") == 0) ? strcpy(config->host, value) : "";
@@ -198,8 +282,8 @@ void loadColors(Colors *colors) {
     colors->lightblue[3] = 0;
 
     colors->red[0] = 255;
-    colors->red[1] = 0;
-    colors->red[2] = 0;
+    colors->red[1] = 70;
+    colors->red[2] = 70;
     colors->red[3] = 0;
 
     colors->black.r = 0;

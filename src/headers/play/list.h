@@ -3,9 +3,9 @@
 **
 ** Made by  : Baptiste LEGO
 **
-** Description  : play mode main functions
+** Description  : list menu headers
 */
 
 void listMenu(App *app, SelectQuery boxes, int page, int i);
-void displayHomeBox(App *app, SDL_Rect *listButtons, SelectQuery lists);
-int createListPage(App *app, SDL_Rect *buttons, int size);
+int displayHomeBox(App *app, SelectQuery lists, SDL_Rect *listButtons, char *boxTitle, int *id);
+int createListPage(App *app, SelectQuery lists, SDL_Rect *buttons,int *id, int size);

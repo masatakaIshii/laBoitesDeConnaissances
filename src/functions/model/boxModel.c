@@ -3,7 +3,7 @@
 **
 ** Made by  : Baptiste LEGO
 **
-** Description  : getting data for box table
+** Description  : data model for box table
 */
 
 #include <stdlib.h>
