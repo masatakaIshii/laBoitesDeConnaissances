@@ -55,7 +55,7 @@ void createEventBoxes(App *app, SelectQuery *boxes, SDL_Event event, SDL_Rect *p
     for (i = currentId ; i < (currentId + boxes->numberFields); i++) {
         if (inRect(boxButtons[i], event.button.x, event.button.y)){
             //createModeList(app, boxes, page, i);
-            printf("boxes : %d => %s : %s\n", i, boxes->listColumnsRows[i][0], boxes->listColumnsRows[i][1]);
+            printf("boxes : %d\n", i);
         }
     }
 }

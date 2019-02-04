@@ -36,7 +36,7 @@ int createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableNa
 
         checkForm = eventForm(app, &event, inputs, &done, fields, &qForm, submitButton, successButton);
 
-        if (checkForm == 0){
+        if (checkForm > 0){
             displayAllForm(app, inputs, fields, tableName, &submitButton);
         } else {
             done = 1;

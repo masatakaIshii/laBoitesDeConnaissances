@@ -37,8 +37,8 @@ int createCustumElementsPage(App *app, SDL_Rect *buttons, int sizeElements, int 
     int currentIndex = display.nbElements * page;
     Position *pos = &(display.pos);
 
-    for (x = 0; x < display.nbColumns; x++) {
-        for (y = 0; y < display.nbRows; y++) {
+    for (y = 0; y < display.nbColumns; y++) {
+        for (x = 0; x < display.nbRows; x++) {
             if (currentIndex >= sizeElements) {
                 break;
             }
