@@ -24,8 +24,6 @@ void displayAllForm(App *app, InputManager *inputs, ListFields fields, char *tab
     displayAllTextInputs(app, inputs, fields.numberFields);
 
     //afficher label, input et laisser une place au cas où pour l'error. le sDL_Rect de input doit avoir une bordure
-
-    SDL_RenderPresent(app->renderer);
 }
 
 
@@ -125,4 +123,27 @@ void displayAllTextInputs(App *app, InputManager *inputs, int numberFields){
     for (i = 0; i < numberFields; i++){
         displayInput(app, inputs[i].textInput, black, inputs[i].textInput.firstRect);
     }
+}
+
+void displaySuccessForm(App *app, SDL_Rect successButton){
+    printf("ca rentre normalement\n");
+    Uint8 grey[4] = {192, 192, 192, 0};
+    Uint8 white[4] = {255, 255, 255, 255};
+    SDL_Color black = {0, 0, 0, 0};
+    char *congrate1 = "Congratulation !";
+    char *congrate2 = "Your box is successfully created !";
+    char *textButton = "Return";
+    SDL_Rect frame;
+    SDL_Rect congrateText1 = {wRatio16(app, 4), hRatio9(app, 2.25), wRatio16(app, 0.5) * strlen(congrate1), hRatio9(app, 0.5)};
+    SDL_Rect congrateText2 = {wRatio16(app, 4), hRatio9(app, 3), wRatio16(app, 0.5) * strlen(congrate2), hRatio9(app, 0.5)};
+    SDL_Rect buttonReturn = {wRatio16(app, 7.25), hRatio9(app, 7.15), wRatio16(app, 0.30) * strlen(textButton), hRatio9(app, 1.10)};
+    SDL_SetRenderDrawColor(app->renderer, app->colors.blue[0], app->colors.blue[1], app->colors.blue[2], 50);
+    SDL_RenderClear(app->renderer);
+    frame = createRect(app, wRatio16(app, 8), hRatio9(app, 7.5), wRatio16(app, 4), hRatio9(app, 1.5), grey);
+    SDL_RenderFillRect(app->renderer, &frame);
+    successButton = createRect(app, wRatio16(app, 3), hRatio9(app, 1.25), wRatio16(app, 8), hRatio9(app, 7), white);
+
+    renderText(app, congrateText1, app->config.fontCambriab, congrate1, 40, TEXT_BLENDED, black);
+    renderText(app, congrateText2, app->config.fontCambriab, congrate2, 40, TEXT_BLENDED, black);
+    renderText(app, buttonReturn, app->config.fontCambriab, textButton, 40, TEXT_BLENDED, black);
 }

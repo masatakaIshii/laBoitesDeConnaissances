@@ -15,7 +15,7 @@
 #include "verifyForm.h"
 
 int createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableName, int idParent);
-int eventForm(App *app, SDL_Event *event, InputManager *inputs, int *done, ListFields fields, QueryForm *form,  SDL_Rect submitButton);
+int eventForm(App *app, SDL_Event *event, InputManager *inputs, int *done, ListFields fields, QueryForm *qForm,  SDL_Rect submitButton, SDL_Rect successButton);
 
 ListFields getListFieldsForForm(App *app, MySqlTable tableInfo);
 int *adaptedIndexesToForm(App *app, MySqlTable tableInfo, int *numberField);
@@ -27,7 +27,7 @@ void prepareInsertQuery(App *app, QueryForm *qForm, ListFields fieldsForm, MySql
 void putNowIfItIsDatetime(MySqlTable tableInfo, int index, Varchar *fields, Varchar *values);
 void putIdParentInfo(MySqlTable tableInfo, int index, Varchar *fields, Varchar *values);
 void putComma(MySqlTable tableInfo, int index, Varchar *fields, Varchar *values);
-Varchar *getArrayByListString(App *app, Varchar listString, int *numberFields);
+Varchar *getArrayStringForInsertQuery(App *app, Varchar listString, int *numberFields);
 int getNumberOfFieldsInInsert(Varchar listString);
 
 int submitButtonEvent(App *app, SDL_Event *event, InputManager *inputs, ListFields fields, QueryForm *qForm, SDL_Rect submitButton);

@@ -96,7 +96,6 @@ void textInputEvents(App *app, SDL_Event *event, TextsInput *input){
         input->cursor++;
         input->size+=strlen(event->text.text);
     }
-    printf("nbChar : %d\n", input->nbChar);
 }
 
 void displayInput(App *app, TextsInput input, Uint8 *rectColor, SDL_Rect textPos){
