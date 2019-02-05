@@ -15,11 +15,16 @@
 #include "../headers/common.h"
 #include "../headers/play/box.h"
 #include "../headers/controll/create/create.h"
+#include "../headers/model/modelHelper/modelSelect.h"
 
 int mainEventLoop(App *app) {
     SDL_Rect buttons[2];
     SDL_Event event;
     int done = 0;
+
+    SelectQuery boxes = getSelectQuery(app, "SELECT * FROM box");
+    SelectQuery list = getSelectQuery(app, "SELECT * FROM list");
+    SelectQuery card = getSelectQuery(app, "SELECT * FROM card");
 
     while (!done) {
         SDL_WaitEvent(&event);
@@ -31,7 +36,9 @@ int mainEventLoop(App *app) {
                     playMode(app);
                 // MODE CREATE
                 if (event.key.keysym.scancode == SDL_SCANCODE_2)
-                    createMode(app, "box", NULL);
+                    //createMode(app, "list", boxes.listColumnsRows[0]);
+//                    createMode(app, "card", list.listColumnsRows[0]);
+//                    createMode(app, "end", card.listColumnsRows[0]);
                     // Fonction CREATE
             break;
 
@@ -43,12 +50,18 @@ int mainEventLoop(App *app) {
                     // MODE CREATE
                     else if(inRect(buttons[1] , event.button.x, event.button.y))
                         // Fonction CREATE
-                        createMode(app, "box", NULL);
+                        //createMode(app, "list", boxes.listColumnsRows[0]);
+//                        createMode(app, "card", list.listColumnsRows[0]);
+//                        createMode(app, "end", card.listColumnsRows[0]);
                 }
             break;
         }
         displayMenu(app, buttons);
     }
+
+    quitSelectQuery(boxes);
+    quitSelectQuery(list);
+    quitSelectQuery(card);
 
     return (done) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

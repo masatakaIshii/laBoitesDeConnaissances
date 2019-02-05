@@ -31,6 +31,7 @@ typedef struct Colors {
     Uint8 green[4];
     Uint8 yellow[4];
     Uint8 red[4];
+    Uint8 pink[4];
     SDL_Color black;
     SDL_Color white;
 } Colors;

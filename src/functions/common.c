@@ -200,6 +200,11 @@ void loadColors(Colors *colors) {
     colors->lightblue[2] = 255;
     colors->lightblue[3] = 0;
 
+    colors->pink[0] = 255;
+    colors->pink[1] = 153;
+    colors->pink[2] = 153;
+    colors->pink[3] = 0;
+
     colors->red[0] = 255;
     colors->red[1] = 0;
     colors->red[2] = 0;

@@ -10,21 +10,10 @@
 /**
 *@todo : define structure to manage page :
 
-typedef struct CreateInfo{
-    char tableName[MAX_VARCHAR];
-    char title[MAX_VARCHAR];
-    SDL_Rect titleRect;
-    char detail[MAX_VARCHAR];
-    SDL_Rect detailRect;
-    char datetime[MAX_VARCHAR];
-    SDL_Color textColor;
-    char childTable[MAX_VARCHAR];
-}CreateInfo;
-
 
 typedef struct CreateButtons{
     SDL_Rect manageButtons[2];
-    SDL_Color manageColor[2];
+    Uint8 manageColor[2][4];
     int activeDel;
 }CreateButtons;
 
@@ -43,7 +32,8 @@ void createMode(App *app, char *tableName, char **info) {
     SDL_Event event;
 
     printf("tableName : %s\n", tableName);
-    CreateInfo cInfo = loadCreateInfo(app, tableName, info);
+    CreateInfo cInfo = loadCreateInfo(tableName, info);
+    CreateButtons cButton = loadCreateButtons(app, tableName);
 //    SDL_Rect pageButtons[2];
 //    SDL_Rect manageButtons[2];
     SDL_Rect *boxButtons = NULL;
@@ -55,16 +45,38 @@ void createMode(App *app, char *tableName, char **info) {
     SelectQuery boxes = getBoxes(app);
     boxButtons = malloc(boxes.numberRows * sizeof(SDL_Rect));
 
-    printf("cInfo.childTable  : %s\n", cInfo.childTable);
-    printf("cInfo.datetime : %s\n", cInfo.datetime);
-    printf("cInfo.detail : %s\n", cInfo.detail);
-    printf("cInfo.tableName : %s\n", cInfo.tableName);
-    printf("cInfo.title : %s\n", cInfo.title);
-    printf("cInfo.childTable : %s\n", cInfo.childTable);
-    printf("cInfo.dateRect.h : %d\n", cInfo.dateRect.h);
-    printf("cInfo.detailRect.w : %d\n", cInfo.detailRect.w);
-    printf("cInfo.titleRect.y : %d\n", cInfo.titleRect.y);
-    printf("cInfo.textColor.r : %d\n", cInfo.textColor.r);
+    printf("cButton.colorTCreate.r : %d\n", cButton.colorTCreate.r);
+    printf("cButton.colorTCreate.g : %d\n", cButton.colorTCreate.g);
+    printf("cButton.colorTCreate.b : %d\n", cButton.colorTCreate.b);
+    printf("cButton.colorTCreate.a : %d\n", cButton.colorTCreate.a);
+
+    printf("cButton.colorTDelete.r : %d\n", cButton.colorTDelete.r);
+    printf("cButton.colorTDelete.g : %d\n", cButton.colorTDelete.g);
+    printf("cButton.colorTDelete.b : %d\n", cButton.colorTDelete.b);
+    printf("cButton.colorTDelete.a : %d\n", cButton.colorTDelete.a);
+
+    printf("cButton.rectCreate.x : %d\n", cButton.rectCreate.x);
+    printf("cButton.rectCreate.y : %d\n", cButton.rectCreate.y);
+    printf("cButton.rectCreate.w : %d\n", cButton.rectCreate.w);
+    printf("cButton.rectCreate.h : %d\n", cButton.rectCreate.h);
+
+    printf("cButton.rectCreate.x : %d\n", cButton.rectDelete.x);
+    printf("cButton.rectCreate.y : %d\n", cButton.rectDelete.y);
+    printf("cButton.rectCreate.w : %d\n", cButton.rectDelete.w);
+    printf("cButton.rectCreate.h : %d\n", cButton.rectDelete.h);
+
+    printf("cButton.manageColor[0][1] : %d\n", cButton.manageColor[0][1]);
+    printf("cButton.manageColor[0][2] : %d\n", cButton.manageColor[0][2]);
+    printf("cButton.manageColor[0][3] : %d\n", cButton.manageColor[0][3]);
+
+    printf("cButton.manageColor[0][0] : %d\n", cButton.manageColor[0][0]);
+    printf("cButton.manageColor[0][1] : %d\n", cButton.manageColor[0][1]);
+    printf("cButton.manageColor[0][2] : %d\n", cButton.manageColor[0][2]);
+    printf("cButton.manageColor[0][3] : %d\n", cButton.manageColor[0][3]);
+    printf("cButton.manageColor[1][0] : %d\n", cButton.manageColor[1][0]);
+    printf("cButton.manageColor[1][1] : %d\n", cButton.manageColor[1][1]);
+    printf("cButton.manageColor[1][2] : %d\n", cButton.manageColor[1][2]);
+    printf("cButton.manageColor[1][3] : %d\n", cButton.manageColor[1][3]);
 
     while(!done) {
         SDL_WaitEvent(&event);
@@ -110,7 +122,7 @@ void createEventBoxes(App *app, SelectQuery *boxes, SDL_Event event, SDL_Rect *p
     }
 }
 
-CreateInfo loadCreateInfo(App *app, char* tableName, char **info){
+CreateInfo loadCreateInfo(char* tableName, char **info){
     CreateInfo cInfo = {{0}, {0}, {0}, {0}, "", "", "", ""};
 
     strcpy(cInfo.tableName, tableName);
@@ -119,7 +131,7 @@ CreateInfo loadCreateInfo(App *app, char* tableName, char **info){
         loadCreateInfoBoxes(&cInfo);
     } else if (strcmp(tableName, "list") == 0 || strcmp(tableName, "card") == 0){
         loadCreateInfoLists(&cInfo, tableName, info);
-    } else if (strcmp(tableName, "") == 0){
+    } else if (strcmp(tableName, "end") == 0){
         loadCreateInfoShowCards(&cInfo, info);
     } else {
 
@@ -148,7 +160,7 @@ void loadCreateInfoLists(CreateInfo *cInfo, char *tableName, char **info){
         sscanf(info[4], "%s %s", yearMonthDate, hoursMinutesSec);
     } else {
         sscanf(info[8], "%s %s", yearMonthDate, hoursMinutesSec);
-        strcpy(cInfo->childTable, "");
+        strcpy(cInfo->childTable, "end");
     }
 
     sprintf(cInfo->datetime, "Last modification the %s at %s", yearMonthDate, hoursMinutesSec);
@@ -165,25 +177,48 @@ void loadCreateInfoShowCards(CreateInfo *cInfo, char **info){
     strcpy(cInfo->childTable, "");
 }
 
-//void initCreateRect(CreateInfo *cInfo){
-//
-//    cInfo->dateRect.h = 0;
-//    cInfo->dateRect.w = 0;
-//    cInfo->dateRect.x = 0;
-//    cInfo->dateRect.y = 0;
-//
-//    cInfo->detailRect.h = 0;
-//    cInfo->detailRect.w = 0;
-//    cInfo->detailRect.x = 0;
-//    cInfo->detailRect.y = 0;
-//
-//    cInfo->titleRect.h = 0;
-//    cInfo->titleRect.w = 0;
-//    cInfo->titleRect.x = 0;
-//    cInfo->titleRect.y = 0;
-//
-//    cInfo->textColor.a = 0;
-//    cInfo->textColor.w = 0;
-//    cInfo->textColor.x = 0;
-//    cInfo->textColor.y = 0;
-//}
+CreateButtons loadCreateButtons(App *app, char *tableName){
+    CreateButtons cButtons;
+    int i;
+
+    for (i = 0; i < 2; i++){
+        cButtons.manageButtons[i].h = 0;
+        cButtons.manageButtons[i].w = 0;
+        cButtons.manageButtons[i].x = 0;
+        cButtons.manageButtons[i].y = 0;
+    }
+    if (strcmp(tableName, "box") == 0){
+        getCButtonsManageColor(&cButtons, 0, app->colors.green);
+    } else if (strcmp(tableName, "list") == 0){
+        getCButtonsManageColor(&cButtons, 0, app->colors.yellow);
+    } else if (strcmp(tableName, "card") == 0){
+        getCButtonsManageColor(&cButtons, 0, app->colors.pink);
+    } else if (strcmp(tableName, "end") == 0){
+        getCButtonsManageColor(&cButtons, 0, app->colors.lightblue);
+    }
+
+    getCButtonsManageColor(&cButtons, 1, app->colors.red);
+    cButtons.colorTCreate = app->colors.black;
+    cButtons.colorTDelete = app->colors.black;
+
+    initSDLRect(&cButtons.rectCreate);
+    initSDLRect(&cButtons.rectDelete);
+
+    cButtons.activeDel = 0;
+
+    return cButtons;
+}
+
+void getCButtonsManageColor(CreateButtons *cButtons, int i, Uint8 *color){
+    cButtons->manageColor[i][0] = color[0];
+    cButtons->manageColor[i][1] = color[1];
+    cButtons->manageColor[i][2] = color[2];
+    cButtons->manageColor[i][3] = color[3];
+}
+
+void initSDLRect(SDL_Rect *rect){
+    rect->h = 0;
+    rect->w = 0;
+    rect->x = 0;
+    rect->y = 0;
+}
