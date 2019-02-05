@@ -13,6 +13,7 @@
 
 #include "../../model/createModel.h"
 #include "../../model/modelHelper/modelShow.h"
+#include "../../view/create/createViewElements.h"
 
 void createMode(App *app, char *tableName, char **info);
 //void createEventElements(App *app, SelectQuery *elements, SDL_Event event, CreateInfo *cInfo, CreateButtons *cButton, CreatePage *cPages);

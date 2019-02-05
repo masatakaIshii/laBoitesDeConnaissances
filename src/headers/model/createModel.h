@@ -12,6 +12,6 @@
 #include <stdio.h>
 #include "../../headers/model/modelHelper/modelSelect.h"
 
-SelectQuery getSelectedTable(App *app, char *tableName);
+SelectQuery getSelectedTable(App *app, char *tableName, char **info);
 
 #endif // CREATE_MODEL

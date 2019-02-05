@@ -40,21 +40,11 @@ void createMode(App *app, char *tableName, char **info) {
     int checkEnd = strcmp(tableName, "end");
 
     if (checkEnd != 0){
-        elements = getSelectedTable(app, tableName);
+        elements = getSelectedTable(app, tableName, info);
         cPages = loadCreatePage(app, tableName, elements.numberRows);
     }
 
-//    printf("cInfo.answer : %s\n", cInfo.answer);
-//    printf("cInfo.childTable : %s\n", cInfo.childTable);
-//    printf("cInfo.datetime : %s\n", cInfo.datetime);
-//    printf("cInfo.question : %s\n", cInfo.question);
-//    printf("cInfo.tableName : %s\n", cInfo.tableName);
-//    printf("cInfo.title : %s\n", cInfo.title);
-//    printf("cInfo.answerRect.h : %d\n", cInfo.answerRect.h);
-//    printf("cInfo.answerRect.x : %d\n", cInfo.answerRect.x);
-//    printf("cInfo.dateRect.y : %d\n", cInfo.dateRect.y);
-//    printf("cInfo.questionRect.w : %d\n", cInfo.questionRect.w);
-
+    showQueryResult(app, &elements);
     while(!done) {
         SDL_WaitEvent(&event);
         commonEvents(app, event, &done);
@@ -69,7 +59,11 @@ void createMode(App *app, char *tableName, char **info) {
                     //
                 }
         }
-        //(checkEnd != 0 ) ? displayElements(app, &elements, &cInfo, &cButtons, &cPages) : displayCard(app, &cInfo, cButtons);
+        if (checkEnd != 0 ){
+            displayElements(app, &elements, &cInfo, &cButtons, &cPages);
+        } else {
+            displayCard(app, &cInfo, &cButtons);
+        }
     }
 
     if (checkEnd != 0){
@@ -219,10 +213,13 @@ CreatePage loadCreatePage(App *app, char *tableName, int numberRows){
 void getCPageColors(App *app, CreatePage *cPage, char *tableName){
     if (strcmp(tableName, "box") == 0){
         getCPageMainAndPageColors(cPage, app->colors.blue, app->colors.green);
+        cPage->indexDate = 4;
     } else if (strcmp(tableName, "list") == 0){
-        getCPageMainAndPageColors(cPage, app->colors.green, app->colors.yellow);
+        getCPageMainAndPageColors(cPage, app->colors.blue, app->colors.yellow);
+        cPage->indexDate = 4;
     } else if (strcmp(tableName, "card") == 0){
-        getCPageMainAndPageColors(cPage, app->colors.yellow, app->colors.pink);
+        getCPageMainAndPageColors(cPage, app->colors.blue, app->colors.pink);
+        cPage->indexDate = 8;
     } else {
 
     }

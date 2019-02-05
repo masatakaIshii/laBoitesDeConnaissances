@@ -14,7 +14,7 @@ DisplayManager displayManagerConstructor(int elementHeight, int elementWidth,
                                          int stepX, int stepY);
 
 //int createCustumElementsPage(App *app, SDL_Rect *buttons, int sizeElements, int page, DisplayManager display);
-void displayPageButtons(App *app, int page, SDL_Rect *pageButtons, int nbElements, int nbTotalOfBox);
+//void displayPageButtons(App *app, int page, SDL_Rect *pageButtons, int nbElements, int nbTotalOfBox);
 void displayManageButtons(App *app, SDL_Rect *manageButtons, char boxManageText[2][11]);
 void renderTextManageButton(App *app, SDL_Rect *manageButtons, char boxManageText[2][11]);
 #endif // COMMON_VIEW

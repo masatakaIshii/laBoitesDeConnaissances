@@ -32,21 +32,7 @@ DisplayManager displayManagerConstructor(int elementHeight, int elementWidth,
 
 
 
-void displayPageButtons(App *app, int page, SDL_Rect *pageButtons, int nbElements, int nbTotalOfBox) {
-    SDL_Rect nullBtn = {0};
 
-    if (page != 0) {
-        pageButtons[0] = createRect(app, wRatio16(app, 0.7), hRatio9(app, 0.4), wRatio16(app, 8.5), hRatio9(app, 7.25), app->colors.green);
-    } else {
-        pageButtons[0] = nullBtn;
-    }
-
-    if (nbElements * (page + 1) < nbTotalOfBox) {
-        pageButtons[1] = createRect(app, wRatio16(app, 0.7), hRatio9(app, 0.4), wRatio16(app, 10.5), hRatio9(app, 7.25), app->colors.green);
-    } else {
-        pageButtons[1] = nullBtn;
-    }
-}
 
 void displayManageButtons(App *app, SDL_Rect *manageButtons, char boxManageText[2][11]) {
 

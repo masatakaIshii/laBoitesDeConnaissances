@@ -215,6 +215,12 @@ typedef struct InputManager{
 
 /* -- Create -- */
 
+typedef struct TextRender{
+    SDL_Rect rect;
+    int length;
+    char text[MAX_VARCHAR];
+}TextRender;
+
 typedef struct CreateInfo{
     SDL_Rect titleRect;
     SDL_Rect questionRect;
@@ -252,8 +258,10 @@ typedef struct CreatePage{
     SDL_Rect pageButtons[2];
     char next[MAX_VARCHAR];
     char before[MAX_VARCHAR];
+    int indexDate;
     int page;
 }CreatePage;
+
 /* -- Form -- */
 typedef struct QueryForm{
     int idParent;
