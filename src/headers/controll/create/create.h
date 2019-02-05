@@ -11,6 +11,8 @@
 #include "../../common.h"
 #include "../../model/boxModel.h"
 #include "../../view/create/createViewBoxes.h"
+#include "../../model/createModel.h"
+#include "../../model/modelHelper/modelShow.h"
 #include "form.h"
 
 typedef struct CreateInfo{

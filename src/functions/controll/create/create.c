@@ -34,49 +34,35 @@ void createMode(App *app, char *tableName, char **info) {
     printf("tableName : %s\n", tableName);
     CreateInfo cInfo = loadCreateInfo(tableName, info);
     CreateButtons cButton = loadCreateButtons(app, tableName);
-//    SDL_Rect pageButtons[2];
-//    SDL_Rect manageButtons[2];
-    SDL_Rect *boxButtons = NULL;
+    SelectQuery elements;
+
+    int checkEnd = strcmp(tableName, "end");
+    if (checkEnd != 0){
+        elements = getSelectedTable(app, tableName);
+        showQueryResult(app, &elements);
+    }
+
+
+    //SDL_Rect *boxButtons = NULL;
 //    int nbOfBox = 0;
 //    int page = 0;
 //    int activeDel = 0;
     int done = 0;
+    //boxButtons = malloc(boxes.numberRows * sizeof(SDL_Rect));
 
-    SelectQuery boxes = getBoxes(app);
-    boxButtons = malloc(boxes.numberRows * sizeof(SDL_Rect));
-
-    printf("cButton.colorTCreate.r : %d\n", cButton.colorTCreate.r);
-    printf("cButton.colorTCreate.g : %d\n", cButton.colorTCreate.g);
-    printf("cButton.colorTCreate.b : %d\n", cButton.colorTCreate.b);
-    printf("cButton.colorTCreate.a : %d\n", cButton.colorTCreate.a);
-
-    printf("cButton.colorTDelete.r : %d\n", cButton.colorTDelete.r);
-    printf("cButton.colorTDelete.g : %d\n", cButton.colorTDelete.g);
-    printf("cButton.colorTDelete.b : %d\n", cButton.colorTDelete.b);
-    printf("cButton.colorTDelete.a : %d\n", cButton.colorTDelete.a);
-
-    printf("cButton.rectCreate.x : %d\n", cButton.rectCreate.x);
-    printf("cButton.rectCreate.y : %d\n", cButton.rectCreate.y);
-    printf("cButton.rectCreate.w : %d\n", cButton.rectCreate.w);
-    printf("cButton.rectCreate.h : %d\n", cButton.rectCreate.h);
-
-    printf("cButton.rectCreate.x : %d\n", cButton.rectDelete.x);
-    printf("cButton.rectCreate.y : %d\n", cButton.rectDelete.y);
-    printf("cButton.rectCreate.w : %d\n", cButton.rectDelete.w);
-    printf("cButton.rectCreate.h : %d\n", cButton.rectDelete.h);
-
-    printf("cButton.manageColor[0][1] : %d\n", cButton.manageColor[0][1]);
-    printf("cButton.manageColor[0][2] : %d\n", cButton.manageColor[0][2]);
-    printf("cButton.manageColor[0][3] : %d\n", cButton.manageColor[0][3]);
-
-    printf("cButton.manageColor[0][0] : %d\n", cButton.manageColor[0][0]);
-    printf("cButton.manageColor[0][1] : %d\n", cButton.manageColor[0][1]);
-    printf("cButton.manageColor[0][2] : %d\n", cButton.manageColor[0][2]);
-    printf("cButton.manageColor[0][3] : %d\n", cButton.manageColor[0][3]);
-    printf("cButton.manageColor[1][0] : %d\n", cButton.manageColor[1][0]);
-    printf("cButton.manageColor[1][1] : %d\n", cButton.manageColor[1][1]);
-    printf("cButton.manageColor[1][2] : %d\n", cButton.manageColor[1][2]);
-    printf("cButton.manageColor[1][3] : %d\n", cButton.manageColor[1][3]);
+//    printf("elements.numberFields : %d\n", elements.numberFields);
+//    int i;
+//    for (i =0; i < elements.numberFields; i++){
+//        printf("elements.numberFields : %s\n", elements.listFields[i]);
+//    }
+//
+//    printf("numberRows : %d\n", elements.numberRows);
+//    showQueryResult(app, &elements);
+//
+//
+//    for (i = 0; i < 7; i++){
+//        printf("info[%d] : %s\n", i, info[i]);
+//    }
 
     while(!done) {
         SDL_WaitEvent(&event);
@@ -91,7 +77,7 @@ void createMode(App *app, char *tableName, char **info) {
     }
 
     //free(boxButtons);
-    quitSelectQuery(&boxes);
+    //quitSelectQuery(&elements);
 }
 
 void createEventBoxes(App *app, SelectQuery *boxes, SDL_Event event, SDL_Rect *pageButtons, SDL_Rect *boxButtons, SDL_Rect *manageButtons, int *page, int *activeDel) {
@@ -159,7 +145,7 @@ void loadCreateInfoLists(CreateInfo *cInfo, char *tableName, char **info){
         strcpy(cInfo->childTable, "card");
         sscanf(info[4], "%s %s", yearMonthDate, hoursMinutesSec);
     } else {
-        sscanf(info[8], "%s %s", yearMonthDate, hoursMinutesSec);
+        sscanf(info[4], "%s %s", yearMonthDate, hoursMinutesSec);
         strcpy(cInfo->childTable, "end");
     }
 
@@ -172,7 +158,7 @@ void loadCreateInfoShowCards(CreateInfo *cInfo, char **info){
 
     sprintf(cInfo->title, "The question is : %s", info[3]);
     sprintf(cInfo->detail, "The answer is : %s", info[4]);
-    sscanf(info[4], "%s %s", yearMonthDate, hoursMinutesSec);
+    sscanf(info[8], "%s %s", yearMonthDate, hoursMinutesSec);
     sprintf(cInfo->datetime, "Last modification the %s at %s", yearMonthDate, hoursMinutesSec);
     strcpy(cInfo->childTable, "");
 }
