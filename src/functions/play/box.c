@@ -49,7 +49,6 @@ void playMode(App *app){
                 }
             break;
         }
-
         displayHomePlay(app, boxes, page, pageButtons, boxButtons, &nbOfBox);
     }
 
@@ -62,6 +61,7 @@ void playMode(App *app){
 
 void displayHomePlay(App *app, SelectQuery boxes, int page, SDL_Rect *pageButtons, SDL_Rect *boxButtons, int *nbOfBoxInPage){
     SDL_Rect nullBtn = {0};
+    SDL_Rect textPos = {wRatio16(app, 0.5), hRatio9(app, 3), wRatio16(app, 15), hRatio9(app, 2)};
 
     // Set background color
     SDL_SetRenderDrawColor(app->renderer, app->colors.blue[0], app->colors.blue[1], app->colors.blue[2], app->colors.blue[3]);
@@ -71,23 +71,28 @@ void displayHomePlay(App *app, SelectQuery boxes, int page, SDL_Rect *pageButton
     writeTitle(app, "TOUTES LES BOITES");
     writeReturnKey(app);
 
-    // Creating boxes
-    *nbOfBoxInPage = createBoxPage(app, boxes, boxButtons, boxes.numberRows, page);
-
-    // Conditions for page buttons
-    if(page != 0){
-        pageButtons[PREVIOUS] = createRect(app, app->config.height / 12, app->config.height / 15, (app->config.width / 12) * 5, (app->config.height / 12) * 11, app->colors.green);
-        renderText(app, pageButtons[PREVIOUS], app->config.fontCambriab, "<--", 30, TEXT_BLENDED, app->colors.black);
+    if(boxes.numberRows == 0){
+        renderText(app, textPos, app->config.fontCambriab, "Aucune boite existante ... Commence par le mode create !", 60, TEXT_BLENDED, app->colors.white);
     }
-    else
-        pageButtons[PREVIOUS] = nullBtn;
+    else{
+        // Creating boxes
+        *nbOfBoxInPage = createBoxPage(app, boxes, boxButtons, boxes.numberRows, page);
 
-    if(10 * (page+1) < boxes.numberRows){
-        pageButtons[NEXT] = createRect(app, app->config.height / 12, app->config.height / 15, (app->config.width / 12) * 6, (app->config.height / 12) * 11, app->colors.green);
-        renderText(app, pageButtons[NEXT], app->config.fontCambriab, "-->", 30, TEXT_BLENDED, app->colors.black);
+        // Conditions for page buttons
+        if(page != 0){
+            pageButtons[PREVIOUS] = createRect(app, app->config.height / 12, app->config.height / 15, (app->config.width / 12) * 5, (app->config.height / 12) * 11, app->colors.green);
+            renderText(app, pageButtons[PREVIOUS], app->config.fontCambriab, "<--", 30, TEXT_BLENDED, app->colors.black);
+        }
+        else
+            pageButtons[PREVIOUS] = nullBtn;
+
+        if(10 * (page+1) < boxes.numberRows){
+            pageButtons[NEXT] = createRect(app, app->config.height / 12, app->config.height / 15, (app->config.width / 12) * 6, (app->config.height / 12) * 11, app->colors.green);
+            renderText(app, pageButtons[NEXT], app->config.fontCambriab, "-->", 30, TEXT_BLENDED, app->colors.black);
+        }
+        else
+            pageButtons[NEXT] = nullBtn;
     }
-    else
-        pageButtons[NEXT] = nullBtn;
 
     SDL_RenderPresent(app->renderer);
 }

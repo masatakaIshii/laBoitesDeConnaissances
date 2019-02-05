@@ -19,17 +19,17 @@
 #include "../headers/model/modelHelper/modelQuit.h"
 
 void commonEvents(App *app, SDL_Event event, int *done){
-    // Quitte le programme
+    // Quit the program
     if(event.type == SDL_QUIT){
         quitApp(app);
         exit(EXIT_SUCCESS);
     }
 
-    // Retour
+    // Back
     if(event.type == SDL_KEYDOWN && event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
         *done = 1;
 
-    // Redimensionnement de la fenetre
+    // Resize screen
     if(event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED)
         resizeScreen(app, event.window.data2);
 }
@@ -225,7 +225,6 @@ void loadConfigFile(Config *config) {
         printf("Unable to load file");
     }
 
-    // Utiliser sscanf(line, "%s=%s", param, value) != EOF;
     while(fgets(line, 200, file) != NULL) {
         ptr = strchr(line, '=');
         if(ptr != NULL){
@@ -245,19 +244,15 @@ void loadConfigParam(Config *config, char *param, char *value) {
 
     if(strcmp(param, "windowHeight") == 0){
         config->height = intConvertor(value);
-        config->width = config->height * SCREEN_FORMAT; // Largeur intialise au format defini suivant la hauteur
+        config->width = config->height * SCREEN_FORMAT;
     }
     (strcmp(param, "host") == 0) ? strcpy(config->host, value) : "";
     (strcmp(param, "user") == 0) ? strcpy(config->user, value) : "";
     (strcmp(param, "password") == 0) ? strcpy(config->password, value) : "";
     (strcmp(param, "database") == 0) ? strcpy(config->database, value) : "";
-    (strcmp(param, "database") == 0) ? strcpy(config->database, value) : "";
     (strcmp(param, "fontCambriab") == 0) ? strcpy(config->fontCambriab, value) : "";
     (strcmp(param, "fontSixty") == 0) ? strcpy(config->fontSixty, value) : "";
     (strcmp(param, "fontTimes") == 0) ? strcpy(config->fontTimes, value) : "";
-
-    //else if(strcmp(param, "color1") == 0)
-        // Set la couleur ici
 }
 
 void loadColors(Colors *colors) {
@@ -296,36 +291,33 @@ void loadColors(Colors *colors) {
 }
 
 void loadApp(App *app) {
-    // On charge la config
+    // Load config
     Config config;
-    loadDefaultConfig(&config); // Chargement d'une config par défaut si tout les parametres ne sont pas renseigner dans le fichier
-    loadConfigFile(&config); //Charge le
+    loadDefaultConfig(&config);
+    loadConfigFile(&config);
     app->config = config;
 
-    // On creer la fenetre
+    // Create the window
     app->screen = SDL_CreateWindow(".::. The box of knowledge .::.",
                         WINDOW_POS_X,
                         WINDOW_POS_Y,
                         app->config.width, app->config.height,
                         SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
     verifyPointer(app, app->screen, "Unable to set video mode");
-    SDL_SetWindowIcon(app->screen, SDL_LoadBMP("img/icon.bmp")); // Chargement de l'icone du programme
+    SDL_SetWindowIcon(app->screen, SDL_LoadBMP("img/icon.bmp"));
 
-    // On creer le renderer
+    // Create renderer
     app->renderer = SDL_CreateRenderer(app->screen, -1, SDL_RENDERER_ACCELERATED);
     verifyPointer(app, app->renderer, "Unable to create renderer");
 
-    // On charge les couleurs
+    // Load colors
     Colors colors;
     loadColors(&colors);
     app->colors = colors;
 
-    // Connexion � la base de donn�es , initialisation et chargement
-
+    //Connection to db
     InitModel(&app->model);
-
     dbConnect(app);
-
     loadFileModelTables(app);
 }
 

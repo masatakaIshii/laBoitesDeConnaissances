@@ -61,7 +61,6 @@ void cardResponse(App *app, char **card, char *backgroundColor){
                         done = 1;
                     }
                     if(inRect(pageButtons[FAIL], event.button.x, event.button.y)){
-                        printf("Dommage..\n");
                         done = 1;
                     }
                 }
@@ -137,7 +136,7 @@ int isValidCard(char **card){
 
 void displayCard(App *app, char **card, SDL_Rect *pageButton, char *backgroundColor){
     Uint8 *rgbBackground = hexToRgb(backgroundColor);
-    SDL_Rect questionPos = {wRatio16(app, 3), hRatio9(app, 3), wRatio16(app, 10), hRatio9(app, 2)};
+    SDL_Rect questionPos = {wRatio16(app, 1), hRatio9(app, 3), wRatio16(app, 14), hRatio9(app, 2)};
 
     // Setting background
     SDL_SetRenderDrawColor(app->renderer, rgbBackground[0], rgbBackground[1], rgbBackground[2], rgbBackground[3]);
@@ -161,7 +160,7 @@ void displayCard(App *app, char **card, SDL_Rect *pageButton, char *backgroundCo
 
 void displayResponse(App *app, char **card, SDL_Rect *pageButtons, char *backgroundColor){
     Uint8 *rgbBackground = hexToRgb(backgroundColor);
-    SDL_Rect answerPos = {wRatio16(app, 3), hRatio9(app, 3), wRatio16(app, 10), hRatio9(app, 2)};
+    SDL_Rect answerPos = {wRatio16(app, 1), hRatio9(app, 3), wRatio16(app, 14), hRatio9(app, 2)};
 
 
     // Setting background

@@ -12,16 +12,16 @@
 #include "../../headers/play/game.h"
 #include "../../headers/model/listModel.h"
 
-void listMenu(App *app, SelectQuery boxes, int page, int i){
+void listMenu(App *app, SelectQuery boxes, int page, int listNumber){
     SDL_Rect *listButtons = NULL;
     int *id = NULL;
-    int done = 0;
+    int i, done = 0;
     int numberOfLists = 0;
     SDL_Event event;
     SelectQuery lists;
 
     // Getting data
-    lists = getListsFromBox(app, boxes.listColumnsRows[(i+page) + page*9][ID]);
+    lists = getListsFromBox(app, boxes.listColumnsRows[(listNumber+page) + page*9][ID]);
 
     listButtons = malloc(lists.numberRows * sizeof(SDL_Rect));
     verifyPointer(app, listButtons, "Can't allocate memory for listButtons\n");
@@ -43,7 +43,7 @@ void listMenu(App *app, SelectQuery boxes, int page, int i){
                 }
             break;
         }
-        numberOfLists = displayHomeBox(app, lists, listButtons, boxes.listColumnsRows[(i+page) + page*9][NAME], id);
+        numberOfLists = displayHomeBox(app, lists, listButtons, boxes.listColumnsRows[(listNumber+page) + page*9][NAME], id);
     }
 
     free(listButtons);

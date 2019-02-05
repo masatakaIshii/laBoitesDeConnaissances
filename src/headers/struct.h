@@ -10,7 +10,7 @@
 
 #define WINDOW_POS_X    200
 #define WINDOW_POS_Y    100
-#define SCREEN_FORMAT   1.95
+#define SCREEN_FORMAT   2
 #define MAX_VARCHAR 255
 #define MAX_TEXT 1000
 
