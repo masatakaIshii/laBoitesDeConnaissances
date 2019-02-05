@@ -22,11 +22,12 @@ int mainEventLoop(App *app) {
     SDL_Event event;
     int done = 0;
 
+    // TEST tous les cas
     SelectQuery boxes = getSelectQuery(app, "SELECT * FROM box");
     SelectQuery list = getSelectQuery(app, "SELECT * FROM list");
     SelectQuery card = getSelectQuery(app, "SELECT * FROM card");
+    // TEST tous les cas
 
-    showQueryResult(app, &list);
     while (!done) {
         SDL_WaitEvent(&event);
         commonEvents(app, event, &done);
@@ -54,7 +55,7 @@ int mainEventLoop(App *app) {
                         //createMode(app, "box", NULL);
                         //createMode(app, "list", boxes.listColumnsRows[0]);
                         //createMode(app, "card", list.listColumnsRows[0]);
-                        createMode(app, "end", card.listColumnsRows[0]);
+                        //createMode(app, "end", card.listColumnsRows[0]);
                     }
                 }
             break;
@@ -62,9 +63,11 @@ int mainEventLoop(App *app) {
         displayMenu(app, buttons);
     }
 
+    //fin test
     quitSelectQuery(&boxes);
     quitSelectQuery(&list);
     quitSelectQuery(&card);
+    // fin test
 
     return (done) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

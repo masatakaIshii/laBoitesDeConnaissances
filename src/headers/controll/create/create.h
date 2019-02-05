@@ -38,10 +38,10 @@ typedef struct CreateButtons{
 }CreateButtons;
 
 typedef struct CreatePage{
-    SDL_Rect *boxButtons;
-    SDL_Color mainPColor;
+    SDL_Rect *elementButtons;
+    Uint8 mainPColor[4];
     int nbOfBox;
-    SDL_Color pageBColor;
+    Uint8 pageBColor[4];
     SDL_Rect pageButtons[2];
     int page;
 }CreatePage;
@@ -58,5 +58,9 @@ void loadCreateInfoShowCards(CreateInfo *cInfo, char **info);
 CreateButtons loadCreateButtons(App *app, char *tableName);
 void getCButtonsManageColor(CreateButtons *cButtons, int i, Uint8 *color);
 void initSDLRect(SDL_Rect *rect);
+
+CreatePage loadCreatePage(App *app, char *tableName, int numberRows);
+void getCPageColors(App *app, CreatePage *cPage, char *tableName);
+void getCPageMainAndPageColors(CreatePage *cPage, Uint8 *color1, Uint8 *color2);
 #endif // CONTROLL_CREATE_MODE
 
