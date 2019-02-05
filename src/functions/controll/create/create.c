@@ -18,11 +18,13 @@ typedef struct CreateButtons{
 }CreateButtons;
 
 typedef struct CreatePage{
-    SDL_Rect *boxButtons;
-    SDL_Color mainPColor;
+    SDL_Rect *elementButtons;
+    Uint8 mainPColor[4];
     int nbOfBox;
-    SDL_Color pageBColor;
+    Uint8 pageBColor[4];
     SDL_Rect pageButtons[2];
+    char next[MAX_VARCHAR];
+    char before[MAX_VARCHAR];
     int page;
 }CreatePage;
 *
@@ -66,6 +68,9 @@ void createMode(App *app, char *tableName, char **info) {
             printf("cPage.pageButtons[%d].x : %d\n", i, cPage.pageButtons[i].x);
             printf("cPage.pageButtons[%d].y : %d\n", i, cPage.pageButtons[i].y);
         }
+
+        printf("cPage.next : %s\n", cPage.next);
+        printf("cPage.before : %s\n", cPage.before);
     }
 
 
@@ -255,6 +260,9 @@ CreatePage loadCreatePage(App *app, char *tableName, int numberRows){
 
     initSDLRect(&cPage.pageButtons[0]);
     initSDLRect(&cPage.pageButtons[1]);
+
+    strcpy(cPage.before, "before");
+    strcpy(cPage.next, "next");
 
     cPage.nbOfBox = 0;
     cPage.page = 0;

@@ -43,6 +43,8 @@ typedef struct CreatePage{
     int nbOfBox;
     Uint8 pageBColor[4];
     SDL_Rect pageButtons[2];
+    char next[MAX_VARCHAR];
+    char before[MAX_VARCHAR];
     int page;
 }CreatePage;
 
