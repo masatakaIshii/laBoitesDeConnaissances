@@ -85,7 +85,6 @@ SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSiz
     SDL_Surface *textSurface = NULL;
     TTF_Font *font = NULL;
 
-
     font = TTF_OpenFont(pathFontFile, fontSize);
     verifyPointer(app, font, "Problem font\n");
 

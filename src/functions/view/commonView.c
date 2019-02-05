@@ -30,32 +30,7 @@ DisplayManager displayManagerConstructor(int elementHeight, int elementWidth,
     return display;
 }
 
-int createCustumElementsPage(App *app, SDL_Rect *buttons, int sizeElements, int page, DisplayManager display) {
-    int x, y;
-    int xBox = 0;
-    int yBox = 0;
-    int currentIndex = display.nbElements * page;
-    Position *pos = &(display.pos);
 
-    for (y = 0; y < display.nbColumns; y++) {
-        for (x = 0; x < display.nbRows; x++) {
-            if (currentIndex >= sizeElements) {
-                break;
-            }
-
-            xBox = (display.elementW + pos->stepX) * x + pos->startX;
-            yBox = (display.elementH + pos->stepY) * y + pos->startY;
-            buttons[currentIndex] = createRect(app, display.elementW, display.elementH, xBox, yBox, app->colors.green);
-            currentIndex++;
-        }
-
-        if (currentIndex >= sizeElements) {
-            break;
-        }
-    }
-
-    return currentIndex - display.nbElements * display.currentPage;
-}
 
 void displayPageButtons(App *app, int page, SDL_Rect *pageButtons, int nbElements, int nbTotalOfBox) {
     SDL_Rect nullBtn = {0};

@@ -38,9 +38,10 @@ int mainEventLoop(App *app) {
                     playMode(app);
                 // MODE CREATE
                 if (event.key.keysym.scancode == SDL_SCANCODE_2)
-                    //createMode(app, "list", boxes.listColumnsRows[0]);
-//                    createMode(app, "card", list.listColumnsRows[0]);
-//                    createMode(app, "end", card.listColumnsRows[0]);
+                    //createMode(app, "box", NULL);
+                    //createMode(app, "list", boxes.listColumnsRows[1]);
+                    //createMode(app, "card", list.listColumnsRows[0]);
+                    //createMode(app, "end", card.listColumnsRows[0]);
                     // Fonction CREATE
             break;
 

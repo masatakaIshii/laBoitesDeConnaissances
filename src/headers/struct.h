@@ -211,6 +211,49 @@ typedef struct InputManager{
     int active;
 } InputManager;
 
+
+
+/* -- Create -- */
+
+typedef struct CreateInfo{
+    SDL_Rect titleRect;
+    SDL_Rect questionRect;
+    SDL_Rect answerRect;
+    SDL_Rect dateRect;
+    SDL_Color textColor;
+    char tableName[MAX_VARCHAR];
+    char title[MAX_VARCHAR];
+    char question[MAX_VARCHAR];
+    char answer[MAX_VARCHAR];
+    char datetime[MAX_VARCHAR];
+    char childTable[MAX_VARCHAR];
+}CreateInfo;
+
+typedef struct CreateButtons{
+    char buttonText0[10];
+    char buttonText1[10];
+    SDL_Rect manageButtons[2];
+    SDL_Rect rectCreate;
+    SDL_Rect rectDelete;
+    Uint8 manageColor[2][4];
+    SDL_Color colorTCreate;
+    SDL_Color colorTDelete;
+    int activeDel;
+}CreateButtons;
+
+typedef struct CreatePage{
+    SDL_Rect *elementButtons;
+    SDL_Rect *elementName;
+    SDL_Rect *elementDate;
+    Uint8 mainPColor[4];
+    int nbTotalElements;
+    int nbElementsPage;
+    Uint8 pageBColor[4];
+    SDL_Rect pageButtons[2];
+    char next[MAX_VARCHAR];
+    char before[MAX_VARCHAR];
+    int page;
+}CreatePage;
 /* -- Form -- */
 typedef struct QueryForm{
     int idParent;

@@ -10,7 +10,6 @@
 /**
 *@todo : define structure to manage page :
 
-
 typedef struct CreateButtons{
     SDL_Rect manageButtons[2];
     Uint8 manageColor[2][4];
@@ -34,66 +33,27 @@ void createMode(App *app, char *tableName, char **info) {
     SDL_Event event;
     printf("tableName : %s\n", tableName);
     CreateInfo cInfo = loadCreateInfo(tableName, info);
-    CreateButtons cButton = loadCreateButtons(app, tableName);
+    CreateButtons cButtons = loadCreateButtons(app, tableName);
     SelectQuery elements;
-    CreatePage cPage;
-
+    CreatePage cPages;
+    int done = 0;
     int checkEnd = strcmp(tableName, "end");
+
     if (checkEnd != 0){
         elements = getSelectedTable(app, tableName);
-        cPage = loadCreatePage(app, tableName, elements.numberRows);
-
-        int i;
-        for (i = 0; i < elements.numberRows; i++){
-            printf("cPage.elementButtons[%d].h : %d\n", i, cPage.elementButtons[i].h);
-            printf("cPage.elementButtons[%d].w : %d\n", i, cPage.elementButtons[i].w);
-            printf("cPage.elementButtons[%d].x : %d\n", i, cPage.elementButtons[i].x);
-            printf("cPage.elementButtons[%d].y : %d\n", i, cPage.elementButtons[i].y);
-        }
-        printf("cPage.page : %d\n", cPage.page);
-
-        for (i = 0; i < 4; i++){
-            printf("cPage.mainPColor{%d] : %d\n", i, cPage.mainPColor[i]);
-        }
-
-        for (i = 0; i < 4; i++){
-            printf("cPage.pageBColor[%d] : %d\n", i, cPage.pageBColor[i]);
-        }
-
-        printf("cPage.nbOfBox : %d\n", cPage.nbOfBox);
-
-        for (i = 0; i < 2; i++){
-            printf("cPage.pageButtons[%d].h : %d\n", i, cPage.pageButtons[i].h);
-            printf("cPage.pageButtons[%d].w : %d\n", i, cPage.pageButtons[i].w);
-            printf("cPage.pageButtons[%d].x : %d\n", i, cPage.pageButtons[i].x);
-            printf("cPage.pageButtons[%d].y : %d\n", i, cPage.pageButtons[i].y);
-        }
-
-        printf("cPage.next : %s\n", cPage.next);
-        printf("cPage.before : %s\n", cPage.before);
+        cPages = loadCreatePage(app, tableName, elements.numberRows);
     }
 
-
-    //SDL_Rect *boxButtons = NULL;
-//    int nbOfBox = 0;
-//    int page = 0;
-//    int activeDel = 0;
-    int done = 0;
-    //boxButtons = malloc(boxes.numberRows * sizeof(SDL_Rect));
-
-//    printf("elements.numberFields : %d\n", elements.numberFields);
-//    int i;
-//    for (i =0; i < elements.numberFields; i++){
-//        printf("elements.numberFields : %s\n", elements.listFields[i]);
-//    }
-//
-//    printf("numberRows : %d\n", elements.numberRows);
-//    showQueryResult(app, &elements);
-//
-//
-//    for (i = 0; i < 7; i++){
-//        printf("info[%d] : %s\n", i, info[i]);
-//    }
+//    printf("cInfo.answer : %s\n", cInfo.answer);
+//    printf("cInfo.childTable : %s\n", cInfo.childTable);
+//    printf("cInfo.datetime : %s\n", cInfo.datetime);
+//    printf("cInfo.question : %s\n", cInfo.question);
+//    printf("cInfo.tableName : %s\n", cInfo.tableName);
+//    printf("cInfo.title : %s\n", cInfo.title);
+//    printf("cInfo.answerRect.h : %d\n", cInfo.answerRect.h);
+//    printf("cInfo.answerRect.x : %d\n", cInfo.answerRect.x);
+//    printf("cInfo.dateRect.y : %d\n", cInfo.dateRect.y);
+//    printf("cInfo.questionRect.w : %d\n", cInfo.questionRect.w);
 
     while(!done) {
         SDL_WaitEvent(&event);
@@ -101,50 +61,25 @@ void createMode(App *app, char *tableName, char **info) {
         switch (event.type) {
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT) {
-                    //createEventBoxes(app, &boxes, event, pageButtons, boxButtons, manageButtons, &page, &activeDel);
+                    if (checkEnd){
+                        //createEventElements(app, &elements, &event, &cInfo, &cButtons, &cPages);
+                    } else {
+                        //createEventShowCard(
+                    }
+                    //
                 }
         }
-//        displayBoxes(app, page, pageButtons, boxButtons, manageButtons, &nbOfBox, boxes.numberRows);
+        //(checkEnd != 0 ) ? displayElements(app, &elements, &cInfo, &cButtons, &cPages) : displayCard(app, &cInfo, cButtons);
     }
 
     if (checkEnd != 0){
-        free(cPage.elementButtons);
+        quitCPages(&cPages);
         quitSelectQuery(&elements);
-    }
-    //free(boxButtons);
-
-}
-
-void createEventBoxes(App *app, SelectQuery *boxes, SDL_Event event, SDL_Rect *pageButtons, SDL_Rect *boxButtons, SDL_Rect *manageButtons, int *page, int *activeDel) {
-    int i;
-    int currentId = (*page) * boxes->numberFields;
-    int check = 0;
-    // Change the page
-    if (inRect(pageButtons[0], event.button.x, event.button.y)) {
-        (*page)--;
-    } else if(inRect(pageButtons[1], event.button.x, event.button.y)) {
-        (*page)++;
-    }
-
-    if (inRect(manageButtons[0], event.button.x, event.button.y)) {
-        check = createForm(app, boxes, boxButtons, "box", 0);
-        if(check == 1){
-
-        }
-    }
-    if (inRect(manageButtons[1], event.button.x, event.button.y)) {
-
-    }
-
-    for (i = currentId ; i < (currentId + boxes->numberFields); i++) {
-        if (inRect(boxButtons[i], event.button.x, event.button.y)){
-            //createModeList(app, boxes->listColumnsRows[i]);
-        }
     }
 }
 
 CreateInfo loadCreateInfo(char* tableName, char **info){
-    CreateInfo cInfo = {{0}, {0}, {0}, {0}, "", "", "", ""};
+    CreateInfo cInfo = {{0}, {0}, {0}, {0}, {0}, "", "", "", "", "", ""};
 
     strcpy(cInfo.tableName, tableName);
 
@@ -164,7 +99,8 @@ CreateInfo loadCreateInfo(char* tableName, char **info){
 
 void loadCreateInfoBoxes(CreateInfo *cInfo){
     strcpy(cInfo->title, "Welcome to the create mode !");
-    strcpy(cInfo->detail, "This is all boxes in create mode !");
+    strcpy(cInfo->question, "");
+    strcpy(cInfo->answer, "");
     strcpy(cInfo->datetime, "");
     strcpy(cInfo->childTable, "list");
 }
@@ -174,27 +110,30 @@ void loadCreateInfoLists(CreateInfo *cInfo, char *tableName, char **info){
     char hoursMinutesSec[MAX_VARCHAR];
 
     sprintf(cInfo->title, "This is the '%s' %s !", info[1], (strcmp(tableName, "list") == 0) ? "box" : "list");
-    sprintf(cInfo->detail, "Description : %s", info[2]);
 
     if (strcmp(tableName, "list") == 0){
         strcpy(cInfo->childTable, "card");
-        sscanf(info[4], "%s %s", yearMonthDate, hoursMinutesSec);
+        sscanf(info[3], "%s %s", yearMonthDate, hoursMinutesSec);
     } else {
-        sscanf(info[4], "%s %s", yearMonthDate, hoursMinutesSec);
+        sscanf(info[3], "%s %s", yearMonthDate, hoursMinutesSec);
         strcpy(cInfo->childTable, "end");
     }
 
-    sprintf(cInfo->datetime, "Last modification the %s at %s", yearMonthDate, hoursMinutesSec);
+    strcpy(cInfo->question, "");
+    strcpy(cInfo->answer, "");
+
+    sprintf(cInfo->datetime, "Last modification : %s at %s", yearMonthDate, hoursMinutesSec);
 }
 
 void loadCreateInfoShowCards(CreateInfo *cInfo, char **info){
     char yearMonthDate[MAX_VARCHAR];
     char hoursMinutesSec[MAX_VARCHAR];
 
-    sprintf(cInfo->title, "The question is : %s", info[3]);
-    sprintf(cInfo->detail, "The answer is : %s", info[4]);
+    sprintf(cInfo->title, "The name of card %s", info[1]);
+    sprintf(cInfo->question, "The question is : %s", info[3]);
+    sprintf(cInfo->answer, "The answer is : %s", info[4]);
     sscanf(info[8], "%s %s", yearMonthDate, hoursMinutesSec);
-    sprintf(cInfo->datetime, "Last modification the %s at %s", yearMonthDate, hoursMinutesSec);
+    sprintf(cInfo->datetime, "Last modification : %s at %s", yearMonthDate, hoursMinutesSec);
     strcpy(cInfo->childTable, "");
 }
 
@@ -249,6 +188,11 @@ CreatePage loadCreatePage(App *app, char *tableName, int numberRows){
     int i;
 
     cPage.elementButtons = malloc(sizeof(SDL_Rect) * numberRows);
+    verifyPointer(app, cPage.elementButtons, "Problem malloc cPage.elementButtons in loadCreatePage\n");
+    cPage.elementName = malloc(sizeof(SDL_Rect) * numberRows);
+    verifyPointer(app, cPage.elementName, "Problem malloc cPage.elementName in loadCreatePage\n");
+    cPage.elementDate = malloc(sizeof(SDL_Rect) * numberRows);
+    verifyPointer(app, cPage.elementDate, "Problem malloc cPage.elementDate in loadCreatePage\n");
 
     for (i = 0; i < numberRows; i++){
         cPage.elementButtons[i].h = 0;
@@ -264,7 +208,9 @@ CreatePage loadCreatePage(App *app, char *tableName, int numberRows){
     strcpy(cPage.before, "before");
     strcpy(cPage.next, "next");
 
-    cPage.nbOfBox = 0;
+    //renderText()
+
+    cPage.nbTotalElements = numberRows;
     cPage.page = 0;
 
     return cPage;
@@ -292,4 +238,10 @@ void getCPageMainAndPageColors(CreatePage *cPage, Uint8 *color1, Uint8 *color2){
     cPage->pageBColor[1] = color2[1];
     cPage->pageBColor[2] = color2[2];
     cPage->pageBColor[3] = color2[3];
+}
+
+void quitCPages(CreatePage *cPages){
+    free(cPages->elementButtons);
+    free(cPages->elementDate);
+    free(cPages->elementName);
 }
