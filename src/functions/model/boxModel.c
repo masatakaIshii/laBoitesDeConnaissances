@@ -13,3 +13,15 @@
 SelectQuery getBoxes(App *app){
     return getSelectQuery(app, "SELECT * from box");
 }
+
+char *getNumberOfListsInBox(App *app, char *id){
+    SelectQuery result;
+    char query[100];
+
+    strcpy(query, "SELECT COUNT(id) FROM list WHERE id_box=");
+    strcat(query, id);
+
+    result = getSelectQuery(app, query);
+
+    return result.listColumnsRows[0][0];
+}

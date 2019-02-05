@@ -110,7 +110,7 @@ int createBoxPage(App *app, SelectQuery boxes, SDL_Rect *buttons, int size, int 
             xBox = ((app->config.width / 3) * y) + 10*y + app->config.width/5;
             yBox = ((app->config.height / 8) * x) + 10*x + app->config.height/6;
             buttons[i] = createRect(app, app->config.height / 8, app->config.height / 8, xBox, yBox, hexToRgb(boxes.listColumnsRows[i][B_COLOR]));
-            renderText(app, buttons[i], app->config.fontTimes, "12", 40, TEXT_BLENDED, app->colors.black);
+            renderText(app, buttons[i], app->config.fontTimes, getNumberOfListsInBox(app, boxes.listColumnsRows[i][ID]), 40, TEXT_BLENDED, app->colors.black);
 
             // Create texts
             renderButtonLabel(app, boxes.listColumnsRows[i], buttons[i]);

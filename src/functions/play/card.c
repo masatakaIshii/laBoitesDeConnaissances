@@ -105,6 +105,9 @@ int isValidCard(char **card){
     diffHour = diffSeconds / 3600;
 
     switch (intConvertor(card[COUNT])){
+        case 0:
+            return 1;
+        break;
         case 1:
             if(diffMin < 10)
                 return 0;
@@ -127,7 +130,7 @@ int isValidCard(char **card){
         break;
     }
 
-    return 1;
+    return 0;
 }
 
 

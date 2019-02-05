@@ -13,3 +13,4 @@
 #define B_COLOR           4
 
 SelectQuery getBoxes(App *app);
+char *getNumberOfListsInBox(App *app, char *id);
