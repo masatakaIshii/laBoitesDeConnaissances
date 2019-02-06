@@ -130,7 +130,10 @@ int isValidCard(char **card){
         break;
     }
 
-    return 0;
+    if(intConvertor(card[COUNT]) > 5)
+        return 0;
+
+    return 1;
 }
 
 
