@@ -1,5 +1,4 @@
 windowHeight=480
-elementsInTheBox=30
 host=localhost
 user=root
 password=root

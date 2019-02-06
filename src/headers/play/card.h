@@ -13,5 +13,5 @@ int randomCard(App *app, SelectQuery cards);
 int numberOfValidCards(App *app, SelectQuery cards);
 int isValidCard(char **card);
 
-void displayCard(App *app, char **card, SDL_Rect *pageButton, char *backgroundColor);
+void displayQuestion(App *app, char **card, SDL_Rect *pageButton, char *backgroundColor);
 void displayResponse(App *app, char **card, SDL_Rect *pageButtons, char *backgroundColor);
