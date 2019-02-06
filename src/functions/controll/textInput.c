@@ -93,7 +93,7 @@ void textInputEvents(App *app, SDL_Event *event, TextsInput *input){
 
     printf("input->nbChar : %d\n", input->nbChar);
     printf("input->maxLength : %d\n", input->maxLength);
-    printf("event->text.text : %s\n", event->text.text);
+    printf("event->tdeezeext.text : %s\n", event->text.text);
     if (input->action == ADD_CHAR && input->maxLength > input->nbChar){
         input->listChar = addListInputTextInEnd(app, NULL, event->text.text, input->listChar);
         input->nbChar++;
