@@ -21,15 +21,8 @@ int verifyInputsValues(App *app, InputManager *inputs, ListFields fields, QueryF
 
     check = verifyIfValuesAreCorrects(inputs, fields, inputsValues);
 
-    printf("qForm->query : %s\n", qForm->query);
     qForm->values = getValuesToSend(inputs, qForm, inputsValues, fields.numberFields);
 
-    int i;
-
-    for (i = 0; i < qForm->numberFields; i++){
-        printf("fields.list[%d] : %s\n", i, qForm->fields[i]);
-        printf("qForm->values[%d] : %s\n",i, qForm->values[i]);
-    }
     if (check != -1){
         check = sendInsertQuery(app, qForm);
     }
@@ -191,7 +184,6 @@ Varchar *getValuesToSend(InputManager *inputs, QueryForm *qForm, Varchar *inputs
         if (strncmp(qForm->fields[i], "id_", 3) == 0){
             sprintf(strId, "%d", qForm->idParent);
             strcpy(qValues[index],strId);
-            printf("strId : %s\n", strId);
             index++;
         } else {
             for (j = 0; j < numberInputs; j++){

@@ -200,8 +200,6 @@ void executeBindInputAndGetResult(App *app, MySqlStmtManager *stmtManager, Selec
 void fetchFieldsSelectQueryPrepared(App *app, MySqlStmtManager *stmtManager, SelectQuery *selectQuery) {
     int *listFieldsTypes;
 
-    //printf("stmtManager->stmt.fields[0].table : %s\n", stmtManager->stmt->fields[0].table);
-
     selectQuery->numberFields = mysql_stmt_field_count(stmtManager->stmt);
 
     selectQuery->numberRows = mysql_stmt_num_rows(stmtManager->stmt);

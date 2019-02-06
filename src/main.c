@@ -26,6 +26,7 @@
 #include "headers/view/create/createViewElements.h"
 #include "headers/controll/create/form.h"
 #include "headers/controll/create/verifyForm.h"
+#include "headers/controll/create/createDelete.h"
 
 int main(int argc, char **argv) {
 

@@ -19,19 +19,21 @@ int createEventElements(App *app, SelectQuery *elements, SDL_Event *event, Creat
     if (inRect(cButton->manageButtons[0], event->button.x, event->button.y)) {
         check = createForm(app, elements, tableName, cInfo->idParent);
     }
-//    if (inRect(manageButtons[1], event.button.x, event.button.y)) {
-//
-//    }
-//
+
     for (i = 0; i < cPages->nbElementsPage; i++) {
         if (inRect(cPages->elementButtons[i], event->button.x, event->button.y)){
             currentId = cPages->page * cPages->nbElementMaxPerPage + i;
-            printf("page : %d\n", cPages->page);
-            printf("i : %d\n", i);
-            printf("nbElementsPage : %d\n", cPages->nbElementMaxPerPage);
-            printf("currentId : %d\n", currentId);
-            createMode(app, cInfo->childTable, elements->listColumnsRows[currentId]);
+            if (cButton->activeDel == 1){
+            } else {
+                createMode(app, cInfo->childTable, elements->listColumnsRows[currentId]);
+            }
+
         }
+    }
+    if (inRect(cButton->manageButtons[1], event->button.x, event->button.y)) {
+        cButton->activeDel = 1;
+    } else {
+        cButton->activeDel = 0;
     }
 
     return check;

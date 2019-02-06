@@ -89,7 +89,7 @@ SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSiz
     verifyPointer(app, font, "Problem font\n");
 
     if (typeRender == TEXT_SOLID){
-        textSurface = TTF_RenderText_Solid(font, text, colorFg);
+        textSurface = TTF_RenderUTF8_Solid(font, text, colorFg);
         verifyPointer(app, textSurface, "Problem textSurface to render text_solid\n");
     }
     if (typeRender == TEXT_BLENDED) {

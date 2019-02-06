@@ -28,8 +28,6 @@ int createForm(App *app, SelectQuery *table, char *tableName, int idParent){
     QueryForm qForm = loadQueryForm(app, tableName, fields, tableInfo, idParent);
     int checkForm = 0;
 
-    int i;
-
     SDL_StopTextInput();
     while (!done) {
         SDL_WaitEvent(&event);
@@ -84,7 +82,6 @@ int eventForm(App *app, SDL_Event *event, InputManager *inputs, int *done, ListF
 
                 checkForm = submitButtonEvent(app, event, inputs, fields, qForm, submitButton);
                 //*done = 1;
-
             }
         break;
         case SDL_TEXTINPUT:
@@ -121,7 +118,6 @@ ListFields getListFieldsForForm(App *app, MySqlTable tableInfo){
 
     for (i = 0; i < adaptedTable.numberFields; i++){
         strcpy(adaptedTable.list[i], tableInfo.listFieldsNames[indexToTake[i]]);
-        printf("adaptedTable.list[%d] : %s\n", i, adaptedTable.list[i]);
     }
 
     free(indexToTake);
@@ -293,7 +289,6 @@ Varchar *getArrayStringForInsertQuery(App *app, Varchar listString, int *numberF
     token = strtok(temp, delimiter);
     while(token != NULL){
         if (strstr(token, "_date") == NULL && strcmp(token, "count") != 0){
-                printf("token : %s\n", token);
             strcpy(arrayFields[i], token);
             i++;
         }
@@ -329,7 +324,6 @@ int submitButtonEvent(App *app, SDL_Event *event, InputManager *inputs, ListFiel
     if (inRect(submitButton, event->button.x, event->button.y)){
         check = verifyInputsValues(app, inputs, fields, qForm);
     }
-
 
     return check;
 }
