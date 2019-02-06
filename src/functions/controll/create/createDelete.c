@@ -10,9 +10,7 @@
 
 void deleteElement(App *app, char *tableName, char **info){
     SDL_Event event;
-    SDL_Rect deleteButton;
     int done = 0;
-    int checkDel = 0;
 
     while (!done){
         SDL_WaitEvent(&event);

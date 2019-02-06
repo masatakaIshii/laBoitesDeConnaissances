@@ -312,7 +312,6 @@ int getNumberOfFieldsInInsert(Varchar listString){
         }
         token = strtok(NULL, delimiter);
     }
-    printf("numberFields : %d\n", numberFields);
 
     return numberFields;
 }
