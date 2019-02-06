@@ -13,6 +13,9 @@
 #include "../commonView.h"
 
 void displayElements(App *app, SelectQuery *elements, CreateInfo *cInfo, CreateButtons *cButtons, CreatePage *cPages, char *tableName);
+void displayElementInfo(App *app, CreateInfo *cInfo, char *tableName);
+void displayBoxInfo(App *app, CreateInfo *cInfo);
+void displayListOrCard(App *app, CreateInfo *cInfo);
 
 void putButtonsUpperName(CreateButtons *cButtons, char *tableName, char *buttonsText0, char *buttonsText1);
 

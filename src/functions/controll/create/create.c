@@ -53,7 +53,7 @@ void createMode(App *app, char *tableName, char **info) {
                     if (checkEnd){
                         //createEventElements(app, &elements, &event, &cInfo, &cButtons, &cPages);
                     } else {
-                        //createEventShowCard(
+                        //createEventShowCard(app, &cInfo,
                     }
                     //
                 }

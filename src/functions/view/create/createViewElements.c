@@ -20,6 +20,8 @@ void displayElements(App *app, SelectQuery *elements, CreateInfo *cInfo, CreateB
     SDL_SetRenderDrawColor(app->renderer, cPages->mainPColor[0], cPages->mainPColor[1], cPages->mainPColor[2], cPages->mainPColor[3]);
     SDL_RenderClear(app->renderer);
 
+    displayElementInfo(app, cInfo, tableName);
+
     // Creating elements
     cPages->nbElementsPage = createCustumElementsPage(app, elements, cButtons, cPages, display);
 
@@ -31,6 +33,41 @@ void displayElements(App *app, SelectQuery *elements, CreateInfo *cInfo, CreateB
     displayManageButtons(app, cButtons);
 
     SDL_RenderPresent(app->renderer);
+}
+
+void displayElementInfo(App *app, CreateInfo *cInfo, char *tableName){
+    if (strcmp(tableName, "box") == 0){
+        displayBoxInfo(app, cInfo);
+    } else if (strcmp(tableName, "list") == 0 || strcmp(tableName, "card") == 0){
+        displayListOrCard(app, cInfo);
+    } else {
+
+    }
+}
+
+void displayBoxInfo(App *app, CreateInfo *cInfo){
+    cInfo->titleRect.h = hRatio9(app, 1.25);
+    cInfo->titleRect.w = wRatio16(app, 8.5);
+    cInfo->titleRect.x = getAppropriateXOrY(cInfo->titleRect.w, app->config.width, 0);
+    cInfo->titleRect.y = hRatio9(app, 0.25);
+
+    renderText(app, cInfo->titleRect, app->config.fontCambriab, cInfo->title, 77, TEXT_BLENDED, app->colors.white);
+}
+
+void displayListOrCard(App *app, CreateInfo *cInfo){
+    cInfo->titleRect.h = hRatio9(app, 1.25);
+    cInfo->titleRect.w = wRatio16(app, 8.5);
+    cInfo->titleRect.x = getAppropriateXOrY(cInfo->titleRect.w, app->config.width, 0);
+    cInfo->titleRect.y = hRatio9(app, 0.25);
+
+    renderText(app, cInfo->titleRect, app->config.fontCambriab, cInfo->title, 77, TEXT_BLENDED, app->colors.white);
+
+    cInfo->dateRect.h = hRatio9(app, 0.75);
+    cInfo->dateRect.w = wRatio16(app, 8.5);
+    cInfo->dateRect.x = getAppropriateXOrY(cInfo->dateRect.w, app->config.width, 0);
+    cInfo->dateRect.y = cInfo->titleRect.y + cInfo->titleRect.h;
+
+    renderText(app, cInfo->dateRect, app->config.fontCambriab, cInfo->datetime, 77, TEXT_BLENDED, app->colors.white);
 }
 
 void putButtonsUpperName(CreateButtons *cButtons, char *tableName, char *buttonsText0, char *buttonsText1){
