@@ -145,16 +145,6 @@ int getAppropriateXOrY(int lengthChild, int lengthParent, int posParent){
 
     return posParent + diff;
 }
-//void fillSizePosColor(App *app, SDL_Rect *rectToFill, int width, int height, int x, int y, Uint8 *color){
-//    rectToFill->w = width;
-//    rectToFill->w = height;
-//    rectToFill->x = x;
-//    rectToFill->y = y;
-//
-//    SDL_SetRenderDrawColor(app->renderer, color[0], color[1], color[2], color[3]);
-//
-//    SDL_RenderFillRect(app->renderer, rectToFill);
-//}
 
 void displayPageButtons(App *app, CreatePage *cPage, int nbElements) {
     SDL_Rect nullBtn = {0};
@@ -165,7 +155,7 @@ void displayPageButtons(App *app, CreatePage *cPage, int nbElements) {
 
         cPage->pageButtons[0] = createRect(app, wRatio16(app, 1), hRatio9(app, 0.65), wRatio16(app, 8.5), hRatio9(app, 7.25), cPage->pageBColor);
 
-        renderTextToButtons(app, &textRender, cPage->pageButtons[1], cPage->before, 1.375, 1.5, app->colors.black);
+        renderTextToButtons(app, &textRender, cPage->pageButtons[0], cPage->before, 1.375, 1.5, app->colors.black);
     } else {
         cPage->pageButtons[0] = nullBtn;
     }
@@ -217,7 +207,8 @@ void displayManageButtons(App *app, CreateButtons *cButtons) {
 }
 
 
-void displayCard (App *app, CreateInfo *cInfo, CreateButtons *cButtons){
+/* -- display card -- */
+void displayCard(App *app, CreateInfo *cInfo, CreateButtons *cButtons){
     int h = hRatio9(app, 1.5);
     int w = wRatio16(app, 0.2);
     int y = hRatio9(app, 0.5);
@@ -232,7 +223,6 @@ void displayCard (App *app, CreateInfo *cInfo, CreateButtons *cButtons){
         pFChard[i](app, cInfo, h, w, y);
         y += h;
     }
-
 
     SDL_RenderPresent(app->renderer);
 }

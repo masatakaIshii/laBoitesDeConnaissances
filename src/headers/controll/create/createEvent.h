@@ -10,7 +10,6 @@
 
 #include "../../struct.h"
 #include "../../common.h"
-#include "create.h"
 #include "form.h"
 
 void createEventElements(App *app, SelectQuery *elements, SDL_Event *event, CreateInfo *cInfo, CreateButtons *cButton, CreatePage *cPages);

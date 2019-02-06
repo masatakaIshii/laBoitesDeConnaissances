@@ -51,7 +51,7 @@ void createMode(App *app, char *tableName, char **info) {
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     if (checkEnd){
-                        //createEventElements(app, &elements, &event, &cInfo, &cButtons, &cPages);
+                        createEventElements(app, &elements, &event, &cInfo, &cButtons, &cPages);
                     } else {
                         //createEventShowCard(app, &cInfo);
                     }
