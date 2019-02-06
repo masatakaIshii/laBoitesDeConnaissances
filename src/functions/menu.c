@@ -54,6 +54,7 @@ int mainEventLoop(App *app) {
                     else if(inRect(buttons[1] , event.button.x, event.button.y)){
                         // Fonction CREATE
                         createMode(app, "box", NULL);
+                    }
                 }
             break;
         }

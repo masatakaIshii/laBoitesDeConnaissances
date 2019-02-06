@@ -180,7 +180,7 @@ int *addIndexInArray(App *app, int *indexes, int index, int numberField){
     } else {
         printf("Problem values of numberFields in addIndexInArray\n");
         quitApp(app);
-        return EXIT_FAILURE;
+        exit(EXIT_FAILURE);
     }
 
     return inter;
