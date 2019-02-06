@@ -14,7 +14,7 @@
 #include "../../view/create/createViewForm.h"
 #include "verifyForm.h"
 
-int createForm(App *app, char *tableName, int idParent);
+int createForm(App *app, char *tableName, char *idParent);
 int eventForm(App *app, SDL_Event *event, InputManager *inputs, int *done, ListFields fields, QueryForm *qForm,  SDL_Rect submitButton, SDL_Rect successButton);
 
 ListFields getListFieldsForForm(App *app, MySqlTable tableInfo);
@@ -22,7 +22,7 @@ int *adaptedIndexesToForm(App *app, MySqlTable tableInfo, int *numberField);
 int *addIndexInArray(App *app, int *indexes, int index, int numberField);
 InputManager *loadInputs(App *app, ListFields fields, int maxTextLength);
 
-QueryForm loadQueryForm(App *app, char *tableName, ListFields fieldsForm, MySqlTable tableInfo, int idParent);
+QueryForm loadQueryForm(App *app, char *tableName, ListFields fieldsForm, MySqlTable tableInfo, char *idParent);
 void prepareInsertQuery(App *app, QueryForm *qForm, ListFields fieldsForm, MySqlTable tableInfo);
 void putNowIfItIsDatetime(MySqlTable tableInfo, int index, Varchar *fields, Varchar *values);
 void putIdParentInfo(MySqlTable tableInfo, int index, Varchar *fields, Varchar *values);

@@ -265,7 +265,7 @@ typedef struct CreatePage{
 
 /* -- Form -- */
 typedef struct QueryForm{
-    int idParent;
+    char idParent[10];
     int numberFields;
     Varchar tableName;
     Varchar query;

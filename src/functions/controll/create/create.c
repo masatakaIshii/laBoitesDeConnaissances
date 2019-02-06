@@ -31,16 +31,22 @@ typedef struct CreatePage{
 
 void createMode(App *app, char *tableName, char **info) {
     SDL_Event event;
-    printf("tableName : %s\n", tableName);
+
     CreateInfo cInfo = loadCreateInfo(tableName, info);
     CreateButtons cButtons = loadCreateButtons(app, tableName);
     SelectQuery elements;
     CreatePage cPages;
     int done = 0;
     int checkEnd = strcmp(tableName, "end");
+    int checkForm = 0;
 
     if (checkEnd != 0){
-        elements = getSelectedTable(app, tableName, info);
+        if (info != NULL){
+            elements = getSelectedTable(app, tableName, info[0]);
+        } else {
+            elements = getSelectedTable(app, tableName, NULL);
+        }
+
         cPages = loadCreatePage(app, tableName, elements.numberRows);
     }
 
@@ -51,11 +57,14 @@ void createMode(App *app, char *tableName, char **info) {
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     if (checkEnd){
-                        createEventElements(app, &elements, &event, &cInfo, &cButtons, &cPages, tableName);
-                    } else {
-                        //createEventShowCard(app, &cInfo);
+                        checkForm = createEventElements(app, &elements, &event, &cInfo, &cButtons, &cPages, tableName);
+                        if (checkForm  == 1){
+                            quitSelectQuery(&elements);
+                            quitCPages(&cPages);
+                            elements = getSelectedTable(app, tableName, info[0]);
+                            cPages = loadCreatePage(app, tableName, elements.numberRows);
+                        }
                     }
-                    //
                 }
         }
         if (checkEnd != 0 ){

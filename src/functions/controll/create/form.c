@@ -15,7 +15,7 @@
 *@param (int) idParent : the id of parent if the table contain foreign key
 *@return (int) return : 1 => the form is valid, 0 => nothing
 */
-int createForm(App *app, char *tableName, int idParent){
+int createForm(App *app, char *tableName, char *idParent){
     SDL_Event event;
     SDL_Rect submitButton;
     SDL_Rect successButton;
@@ -26,6 +26,8 @@ int createForm(App *app, char *tableName, int idParent){
     QueryForm qForm = loadQueryForm(app, tableName, fields, tableInfo, idParent);
     int checkForm = 0;
 
+    int i;
+
     SDL_StopTextInput();
     while (!done) {
         SDL_WaitEvent(&event);
@@ -34,7 +36,7 @@ int createForm(App *app, char *tableName, int idParent){
 
         checkForm = eventForm(app, &event, inputs, &done, fields, &qForm, submitButton, successButton);
 
-        if (checkForm > 0){
+        if (checkForm <= 0){
             displayAllForm(app, inputs, fields, tableName, &submitButton);
         } else {
             done = 1;
@@ -135,7 +137,7 @@ int *adaptedIndexesToForm(App *app, MySqlTable tableInfo, int *numberField){
 
     for (i = 0; i < tableInfo.numberField; i++){
         if (strncmp(tableInfo.listFieldsNames[i], "id", 3) != 0 && strncmp(tableInfo.listFieldsNames[i], "id_", 3) != 0){
-            if (tableInfo.listFieldsTypes[i] == MYSQL_TYPE_STRING || tableInfo.listFieldsTypes[i] == MYSQL_TYPE_VAR_STRING){
+            if (tableInfo.listFieldsTypes[i] == MYSQL_TYPE_BLOB || tableInfo.listFieldsTypes[i] == MYSQL_TYPE_VAR_STRING){
                 canAddIndex = 1;
             }
         }
@@ -211,12 +213,16 @@ InputManager *loadInputs(App *app, ListFields fields, int maxTextLength){
     return inputs;
 }
 
-QueryForm loadQueryForm(App *app, char *tableName, ListFields fieldsForm, MySqlTable tableInfo, int idParent){
+QueryForm loadQueryForm(App *app, char *tableName, ListFields fieldsForm, MySqlTable tableInfo, char *idParent){
     QueryForm newForm;
-    newForm.idParent = idParent;
     newForm.fields = NULL;
     newForm.values = NULL;
     newForm.numberFields = 0;
+    if (idParent != NULL){
+        strcpy(newForm.idParent, idParent);
+    } else {
+        strcpy(newForm.idParent, "");
+    }
 
     strcpy(newForm.tableName, tableName);
 
@@ -304,6 +310,7 @@ int getNumberOfFieldsInInsert(Varchar listString){
     strcpy(temp, listString);
     token = strtok(temp, delimiter);
     while(token != NULL){
+        printf("token ! %s\n", token);
         if (strstr(token, "_date") == NULL){
             numberFields++;
         }

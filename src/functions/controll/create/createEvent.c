@@ -8,7 +8,7 @@
 #include "../../../headers/controll/create/createEvent.h"
 #include "../../../headers/controll/create/create.h"
 
-void createEventElements(App *app, SelectQuery *elements, SDL_Event *event, CreateInfo *cInfo, CreateButtons *cButton, CreatePage *cPages, char *tableName) {
+int createEventElements(App *app, SelectQuery *elements, SDL_Event *event, CreateInfo *cInfo, CreateButtons *cButton, CreatePage *cPages, char *tableName) {
     int i;
 
     int currentId;
@@ -18,9 +18,6 @@ void createEventElements(App *app, SelectQuery *elements, SDL_Event *event, Crea
     createPageEvent(app, event, cButton, cPages);
     if (inRect(cButton->manageButtons[0], event->button.x, event->button.y)) {
         check = createForm(app, tableName, 0);
-        if(check == 1){
-
-        }
     }
 //    if (inRect(manageButtons[1], event.button.x, event.button.y)) {
 //
@@ -36,6 +33,8 @@ void createEventElements(App *app, SelectQuery *elements, SDL_Event *event, Crea
             createMode(app, cInfo->childTable, elements->listColumnsRows[currentId]);
         }
     }
+
+    return check;
 }
 
 void createPageEvent(App *app, SDL_Event *event, CreateButtons *cButton, CreatePage *cPages){

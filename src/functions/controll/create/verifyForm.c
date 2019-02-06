@@ -152,7 +152,7 @@ int verifyString(InputManager *inputs, Varchar inputValue){
     int check = 0;
     int length = strlen(inputValue);
 
-    if (length > inputs->textInput.maxLength){
+    if (length > inputs->textInput.maxLength || strlen(inputValue) < 0){
         strcpy(inputs->error, "The name value is not correct");
         check = 1;
     } else {
@@ -179,8 +179,7 @@ Varchar *getValuesToSend(InputManager *inputs, QueryForm *qForm, Varchar *inputs
     for (i = 0; i < qForm->numberFields; i++){
         // verify if id is "id_..." form
         if (strncmp(qForm->fields[i], "id_", 3) == 0){
-            sprintf(strId, "%d", qForm->idParent);
-            strcpy(qValues[i],strId);
+            strcpy(strId, qForm->idParent);
             continue;
         }
         // verify if the query field name == label of input
