@@ -30,6 +30,7 @@ typedef struct Colors {
     Uint8 green[4];
     Uint8 yellow[4];
     Uint8 red[4];
+    Uint8 pink[4];
     SDL_Color black;
     SDL_Color white;
 } Colors;
@@ -208,6 +209,69 @@ typedef struct InputManager{
     char error[MAX_VARCHAR];
     int active;
 } InputManager;
+
+
+
+/* -- Create -- */
+
+typedef struct TextRender{
+    SDL_Rect rect;
+    int length;
+    char text[MAX_VARCHAR];
+}TextRender;
+
+typedef struct CreateInfo{
+    SDL_Rect titleRect;
+    SDL_Rect questionRect;
+    SDL_Rect answerRect;
+    SDL_Rect dateRect;
+    SDL_Color textColor;
+    char tableName[MAX_VARCHAR];
+    char title[MAX_VARCHAR];
+    char question[MAX_VARCHAR];
+    char answer[MAX_VARCHAR];
+    char datetime[MAX_VARCHAR];
+    char childTable[MAX_VARCHAR];
+    int idParent;
+}CreateInfo;
+
+typedef struct CreateButtons{
+    char buttonText0[20];
+    char buttonText1[20];
+    SDL_Rect manageButtons[2];
+    SDL_Rect rectCreate;
+    SDL_Rect rectDelete;
+    Uint8 manageColor[2][4];
+    SDL_Color colorTCreate;
+    SDL_Color colorTDelete;
+    int activeDel;
+}CreateButtons;
+
+typedef struct CreatePage{
+    SDL_Rect *elementButtons;
+    SDL_Rect *elementName;
+    SDL_Rect *elementDate;
+    Uint8 mainPColor[4];
+    int nbTotalElements;
+    int nbElementMaxPerPage;
+    int nbElementsPage;
+    Uint8 pageBColor[4];
+    SDL_Rect pageButtons[2];
+    char next[MAX_VARCHAR];
+    char before[MAX_VARCHAR];
+    int indexDate;
+    int page;
+}CreatePage;
+
+/* -- Form -- */
+typedef struct QueryForm{
+    int idParent;
+    int numberFields;
+    Varchar tableName;
+    Varchar query;
+    Varchar *fields;
+    Varchar *values;
+} QueryForm;
 
 /* --App-- */
 typedef struct App {

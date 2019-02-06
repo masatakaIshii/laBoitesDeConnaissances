@@ -86,12 +86,11 @@ SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSiz
     SDL_Surface *textSurface = NULL;
     TTF_Font *font = NULL;
 
-
     font = TTF_OpenFont(pathFontFile, fontSize);
     verifyPointer(app, font, "Problem font\n");
 
     if (typeRender == TEXT_SOLID){
-        textSurface = TTF_RenderText_Solid(font, text, colorFg);
+        textSurface = TTF_RenderUTF8_Solid(font, text, colorFg);
         verifyPointer(app, textSurface, "Problem textSurface to render text_solid\n");
     }
     if (typeRender == TEXT_BLENDED) {
@@ -111,6 +110,9 @@ SDL_Texture *textToTexture(App *app, char *pathFontFile, char *text, int fontSiz
 
 void renderText(App *app, SDL_Rect rect, char *pathFontFile, char *text, int fontSize, typeRenderText typeRender, SDL_Color textColor){
 
+    if (strlen(text) == 0){
+        return;
+    }
     SDL_Texture *textTexture = textToTexture(app, pathFontFile, text, fontSize, typeRender, textColor);
 
     SDL_RenderCopy(app->renderer, textTexture, NULL, &rect);
@@ -275,6 +277,11 @@ void loadColors(Colors *colors) {
     colors->lightblue[1] = 255;
     colors->lightblue[2] = 255;
     colors->lightblue[3] = 0;
+
+    colors->pink[0] = 255;
+    colors->pink[1] = 153;
+    colors->pink[2] = 153;
+    colors->pink[3] = 0;
 
     colors->red[0] = 255;
     colors->red[1] = 70;

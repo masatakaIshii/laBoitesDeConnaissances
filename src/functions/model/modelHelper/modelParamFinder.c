@@ -39,6 +39,7 @@ void loadInsertParamFinder(App *app, InsertParamFinder *paramFinder, char *query
     //verify if query content 'VALUES'
     paramFinder->listBeforeWordValues = (ifColumnsNamesBeforeValues(queryWithoutWordNow)) ? 1 : 0;
 
+
     if (paramFinder->listBeforeWordValues == 0){
         loadIndexAndStringsParenthesis(app, paramFinder, queryWithoutWordNow, numberParams);
     } else {
@@ -133,6 +134,7 @@ void getParamNameByMysqlTable(App *app, InsertParamFinder *paramFinder, MySqlStm
 }
 
 void loadIndexAndStringsAndFieldsParenthesis(App *app, InsertParamFinder *paramFinder, char *query, int numberParams){
+
     char *strFieldsNames = getStrBtw2Chr(app, query, '(', ')', 0);
     char *strValues = getStrBtw2rChr(app, query, '(', ')', 0);
 
@@ -220,7 +222,6 @@ char *getStrBtw2rChr(App *app, char *stringToCheck, char firstChar, char lastCha
     char *indexString;
     char *result;
 
-
     if (firstChar != 0){
         indexString = strrchr(stringToCheck, firstChar);
         verifyPointer(app, indexString, "Problem for strrchr indexString in loadInsertParamFinder");
@@ -228,7 +229,6 @@ char *getStrBtw2rChr(App *app, char *stringToCheck, char firstChar, char lastCha
     } else {
         min = 0;
     }
-
 
     if (lastChar != 0) {
         indexString = strrchr(stringToCheck, lastChar);
@@ -273,6 +273,7 @@ char *getStrBtw2Chr(App *app, char *stringToCheck, char firstChar, char lastChar
     } else {
         max = strlen(stringToCheck);
     }
+
     result = mySubString(app, stringToCheck, min, max);
 
     return result;
@@ -280,7 +281,7 @@ char *getStrBtw2Chr(App *app, char *stringToCheck, char firstChar, char lastChar
 
 char *mySubString(App *app, char *currentString, int minIndex, int maxIndex){
 
-    char temp[100];
+    char temp[MAX_VARCHAR];
     char *result = malloc(sizeof(char) * (maxIndex - minIndex + 1));
     verifyPointer(app, result, "Problem malloc with result in mySubString\n");
 
@@ -349,7 +350,6 @@ void getBeginAndEndOfParamName(char *query, int *min, int *max) {
     }
 }
 
-
 void mySubVarchar(Varchar newString, const char* stringToSub, int minIndex, int maxIndex) {
     int length = maxIndex - minIndex + 1;
 
@@ -362,6 +362,7 @@ void getListStringAndNumberFields(App *app, Varchar **listFields, char *strToSpl
     Varchar strToReduce;    // string that it is reduced to each demiliter found
     Varchar strInElement;   // string between the begin of strToReduce  and delimiter
     int currentNumber = 0;
+
 
     strcpy(strToReduce, strToSplit);
     while(1){

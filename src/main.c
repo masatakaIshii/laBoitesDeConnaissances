@@ -23,11 +23,12 @@
 #include "headers/model/modelHelper/modelParamFinder.h"
 #include "headers/model/modelHelper/modelFetchSelectHelper.h"
 #include "headers/play/box.h"
-#include "headers/controll/create.h"
-#include "headers/controll/createList.h"
+#include "headers/controll/create/create.h"
 #include "headers/view/commonView.h"
-#include "headers/view/create/createViewBoxes.h"
-#include "headers/controll/form.h"
+#include "headers/view/create/createViewElements.h"
+#include "headers/controll/create/form.h"
+#include "headers/controll/create/verifyForm.h"
+#include "headers/controll/create/createDelete.h"
 
 int main(int argc, char **argv) {
 

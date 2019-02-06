@@ -5,7 +5,7 @@
 **
 ** Description  : text input function functions
 */
-#include "../../../headers/controll/textInput.h"
+#include "../../headers/controll/textInput.h"
 
 /**
 *@brief To initialize the structure TextInput
@@ -90,7 +90,7 @@ void textInputButtonLeftEvents(App *app, SDL_Event *event, InputManager *inputs,
 */
 void textInputEvents(App *app, SDL_Event *event, TextsInput *input){
 
-    if (input->action == ADD_CHAR){
+    if (input->action == ADD_CHAR && input->maxLength > input->nbChar){
         input->listChar = addListInputTextInEnd(app, NULL, event->text.text, input->listChar);
         input->nbChar++;
         input->cursor++;

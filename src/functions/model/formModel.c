@@ -1,7 +1,7 @@
 /*
 ** Filename : formModel.c
 **
-** Made by  : MasaListRectChartaka ISHII
+** Made by  : Masataka ISHII
 **
 ** Description  : function concern to form and query
 */
@@ -45,4 +45,56 @@ MySqlTable copyStructTable(App *app, MySqlTable table) {
     }
 
     return newTable;
+}
+
+int sendInsertQuery(App *app, QueryForm *qForm){
+
+    int result = 0;
+    char **tables = NULL;
+    char **values = NULL;
+
+    tables = getTablesValues(app, qForm->tableName);
+    values = getInsertValues(app, qForm->values, qForm->numberFields);
+
+    setPreparedQuery(app, qForm->query, tables, 1);
+    setBindParams(app, values, qForm->query);
+    result = sendPreparedQueryIUD(app, qForm->query);
+
+    quitStmtManager(&app->model.query.stmtManager);
+    freeArrayString(tables, 1);
+    freeArrayString(values, qForm->numberFields);
+
+    return result;
+}
+
+char **getTablesValues(App *app, Varchar tableName){
+    char **tables = malloc(sizeof(char*));
+
+    tables[0] = malloc(sizeof(char) * (strlen(tableName) + 1));
+
+    strcpy(tables[0], tableName);
+
+    return tables;
+}
+
+char **getInsertValues(App *app, Varchar *valuesVarchar, int numberFields){
+    int i;
+    char **values = malloc(sizeof(char*) * numberFields);
+
+    for (i = 0; i < numberFields; i++){
+        values[i] = malloc(sizeof(char) * (strlen(valuesVarchar[i]) + 1));
+        strcpy(values[i], valuesVarchar[i]);
+    }
+
+    return values;
+}
+
+void freeArrayString(char **strings, int numberFields){
+    int i;
+
+    for (i = 0; i < numberFields; i++){
+        free(strings[i]);
+    }
+
+    free(strings);
 }

@@ -2,8 +2,16 @@ windowHeight=480
 elementsInTheBox=30
 host=localhost
 user=root
+<<<<<<< HEAD
 password=
 database=the_box_of_knowledge
 fontCambriab=..\..\..\resources\cambriab.ttf
 fontSixty=..\..\..\resources\SIXTY.TTF
 fontTimes=..\..\..\resources\times.ttf
+=======
+password=root
+database=the_box_of_knowledge
+fontCambriab=..\resources\cambriab.ttf
+fontSixty=..\resources\SIXTY.TTF
+fontTimes=..\resources\times.ttf
+>>>>>>> createMode

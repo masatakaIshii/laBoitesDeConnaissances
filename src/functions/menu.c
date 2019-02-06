@@ -16,7 +16,8 @@
 #include "../headers/menu.h"
 #include "../headers/stats.h"
 #include "../headers/play/box.h"
-#include "../headers/controll/create.h"
+#include "../headers/controll/create/create.h"
+#include "../headers/model/modelHelper/modelSelect.h"
 
 enum {PLAY, CREATE, STATS};
 
@@ -24,6 +25,12 @@ int mainEventLoop(App *app) {
     SDL_Rect buttons[3];
     SDL_Event event;
     int done = 0;
+
+    // TEST tous les cas
+    SelectQuery boxes = getSelectQuery(app, "SELECT * FROM box");
+    SelectQuery list = getSelectQuery(app, "SELECT * FROM list");
+    SelectQuery card = getSelectQuery(app, "SELECT * FROM card");
+    // TEST tous les cas
 
     while (!done) {
         SDL_WaitEvent(&event);
@@ -35,22 +42,29 @@ int mainEventLoop(App *app) {
                     playMode(app);
                 // MODE CREATE
                 if (event.key.keysym.scancode == SDL_SCANCODE_2)
-                    createMode(app);
+                    createMode(app, "box", NULL);
             break;
 
             case SDL_MOUSEBUTTONDOWN:
                 if(event.button.button == SDL_BUTTON_LEFT){
                     if(inRect(buttons[PLAY] , event.button.x, event.button.y))
                         playMode(app);
-                    else if(inRect(buttons[CREATE] , event.button.x, event.button.y))
-                        createMode(app);
                     else if(inRect(buttons[STATS], event.button.x, event.button.y))
                         stats(app);
+                    else if(inRect(buttons[1] , event.button.x, event.button.y)){
+                        // Fonction CREATE
+                        createMode(app, "box", NULL);
                 }
             break;
         }
         displayMenu(app, buttons);
     }
+
+    //fin test
+    quitSelectQuery(&boxes);
+    quitSelectQuery(&list);
+    quitSelectQuery(&card);
+    // fin test
 
     return (done) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -6,13 +6,15 @@
 ** Description  : function concern to chained list for structure ListInputText
 */
 
-#include "../../../headers/controll/listRectAndChar.h"
+#include "../../headers/controll/listRectAndChar.h"
 
 /**
 *Add new character in list the end of the list
-*
-*
-*
+*@param (App*) app : structure of application
+*@param (SDL_Rect*) rect : rectangle correspond to the display of one character
+*@param (char*) newChar : the array of char to stock one char, even UTF-8 char
+*@param (ListInputText) : chained list of char
+*@return (ListInputText) list : return list with new link
 */
 ListInputText *addListInputTextInEnd(App *app, SDL_Rect *rect, char *newChar, ListInputText *list){
     ListInputText *temp;
