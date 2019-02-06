@@ -11,11 +11,13 @@
 *@brief : function of loop event of form
 *
 *@param (App *) app : the structure of application
+*@param (SelectQuery *) table: adresse of all concerned elements that content in selectQuery
+*@param (SDL_Rect *) listButton : list of all button correponded to select query
 *@param (char *) tableName : the name of table to insert the information
 *@param (int) idParent : the id of parent if the table contain foreign key
 *@return (int) return : 1 => the form is valid, 0 => nothing
 */
-int createForm(App *app, char *tableName, char *idParent){
+int createForm(App *app, SelectQuery *table, char *tableName, int idParent){
     SDL_Event event;
     SDL_Rect submitButton;
     SDL_Rect successButton;
@@ -26,19 +28,22 @@ int createForm(App *app, char *tableName, char *idParent){
     QueryForm qForm = loadQueryForm(app, tableName, fields, tableInfo, idParent);
     int checkForm = 0;
 
+    int i;
+
     SDL_StopTextInput();
     while (!done) {
         SDL_WaitEvent(&event);
 
         commonEvents(app, event, &done);
 
-        checkForm = eventForm(app, &event, &inputs, &done, fields, &qForm, submitButton, successButton);
+        checkForm = eventForm(app, &event, inputs, &done, fields, &qForm, submitButton, successButton);
 
-        if (checkForm <= 0){
+        if (checkForm == 0){
             displayAllForm(app, inputs, fields, tableName, &submitButton);
-        } else {
+        } else if (checkForm > 0){
             done = 1;
         }
+
         SDL_RenderPresent(app->renderer);
     }
 
@@ -58,7 +63,7 @@ int createForm(App *app, char *tableName, char *idParent){
 *
 *@return (int) checkForm : when form is submit and valid, exit the loop
 */
-int eventForm(App *app, SDL_Event *event, InputManager **inputs, int *done, ListFields fields, QueryForm *qForm,  SDL_Rect submitButton, SDL_Rect successButton){
+int eventForm(App *app, SDL_Event *event, InputManager *inputs, int *done, ListFields fields, QueryForm *qForm,  SDL_Rect submitButton, SDL_Rect successButton){
     int checkForm = 0;
     int i;
 
@@ -66,23 +71,26 @@ int eventForm(App *app, SDL_Event *event, InputManager **inputs, int *done, List
         case SDL_KEYDOWN:
             if (SDL_IsTextInputActive()){
                 for (i = 0; i < fields.numberFields; i++){
-                    if (inputs[i]->active == 1){
-                        textInputKeyEvents(event, &inputs[i]->textInput);
+                    if (inputs[i].active == 1){
+                        textInputKeyEvents(event, &inputs[i].textInput);
                     }
                 }
             }
         break;
         case SDL_MOUSEBUTTONDOWN:
             if(event->button.button == SDL_BUTTON_LEFT){
+
                 textInputButtonLeftEvents(app, event, inputs, fields.numberFields);
+
                 checkForm = submitButtonEvent(app, event, inputs, fields, qForm, submitButton);
-                *done = (inRect(successButton, event->button.x, event->button.y)) ? 1 : 0;
+                //*done = 1;
+
             }
         break;
         case SDL_TEXTINPUT:
             for (i = 0; i < fields.numberFields; i++){
-                if (inputs[i]->active == 1){
-                    textInputEvents(app, event, &inputs[i]->textInput);
+                if (inputs[i].active == 1){
+                    textInputEvents(app, event, &inputs[i].textInput);
                 }
             }
         break;
@@ -113,6 +121,7 @@ ListFields getListFieldsForForm(App *app, MySqlTable tableInfo){
 
     for (i = 0; i < adaptedTable.numberFields; i++){
         strcpy(adaptedTable.list[i], tableInfo.listFieldsNames[indexToTake[i]]);
+        printf("adaptedTable.list[%d] : %s\n", i, adaptedTable.list[i]);
     }
 
     free(indexToTake);
@@ -134,10 +143,8 @@ int *adaptedIndexesToForm(App *app, MySqlTable tableInfo, int *numberField){
     int canAddIndex = 0;
 
     for (i = 0; i < tableInfo.numberField; i++){
-        if (strncmp(tableInfo.listFieldsNames[i], "id", 3) != 0 && strncmp(tableInfo.listFieldsNames[i], "id_", 3) != 0){
-            if (tableInfo.listFieldsTypes[i] == MYSQL_TYPE_BLOB || tableInfo.listFieldsTypes[i] == MYSQL_TYPE_VAR_STRING){
-                canAddIndex = 1;
-            }
+        if (tableInfo.listFieldsTypes[i] != MYSQL_TYPE_LONG && tableInfo.listFieldsTypes[i] != MYSQL_TYPE_DATETIME){
+            canAddIndex = 1;
         }
 
         if (canAddIndex == 1){
@@ -211,16 +218,12 @@ InputManager *loadInputs(App *app, ListFields fields, int maxTextLength){
     return inputs;
 }
 
-QueryForm loadQueryForm(App *app, char *tableName, ListFields fieldsForm, MySqlTable tableInfo, char *idParent){
+QueryForm loadQueryForm(App *app, char *tableName, ListFields fieldsForm, MySqlTable tableInfo, int idParent){
     QueryForm newForm;
+    newForm.idParent = idParent;
     newForm.fields = NULL;
     newForm.values = NULL;
     newForm.numberFields = 0;
-    if (idParent != NULL){
-        strcpy(newForm.idParent, idParent);
-    } else {
-        strcpy(newForm.idParent, "");
-    }
 
     strcpy(newForm.tableName, tableName);
 
@@ -270,7 +273,7 @@ void putIdParentInfo(MySqlTable tableInfo, int index, Varchar *fields, Varchar *
 }
 
 void putComma(MySqlTable tableInfo, int index, Varchar *fields, Varchar *values){
-    if (index < (tableInfo.numberField - 1) && !(strncmp(tableInfo.listFieldsNames[index], "id", 3) == 0 && index == 0)){
+    if (index < (tableInfo.numberField - 1) && !(strncmp(tableInfo.listFieldsNames[index], "id", 3) == 0 || strcmp(tableInfo.listFieldsNames[index], "count") == 0 || index == 0)){
         strcat(*fields, ", ");
         strcat(*values, ", ");
     }
@@ -289,7 +292,8 @@ Varchar *getArrayStringForInsertQuery(App *app, Varchar listString, int *numberF
     arrayFields = malloc(sizeof(Varchar) * (*numberFields));
     token = strtok(temp, delimiter);
     while(token != NULL){
-        if (strstr(token, "_date") == NULL){
+        if (strstr(token, "_date") == NULL && strcmp(token, "count") != 0){
+                printf("token : %s\n", token);
             strcpy(arrayFields[i], token);
             i++;
         }
@@ -308,24 +312,24 @@ int getNumberOfFieldsInInsert(Varchar listString){
     strcpy(temp, listString);
     token = strtok(temp, delimiter);
     while(token != NULL){
-        printf("token ! %s\n", token);
-        if (strstr(token, "_date") == NULL){
+        if (strstr(token, "_date") == NULL && strcmp(token, "count") != 0){
             numberFields++;
         }
         token = strtok(NULL, delimiter);
     }
+    printf("numberFields : %d\n", numberFields);
 
     return numberFields;
 }
 
-int submitButtonEvent(App *app, SDL_Event *event, InputManager **inputs, ListFields fields, QueryForm *qForm, SDL_Rect submitButton){
+int submitButtonEvent(App *app, SDL_Event *event, InputManager *inputs, ListFields fields, QueryForm *qForm, SDL_Rect submitButton){
 
     int check = 0;
 
     if (inRect(submitButton, event->button.x, event->button.y)){
-        //check = verifyInputsValues(app, inputs, fields, qForm);
-        printf("tu as cliquer sur submit\n");
+        check = verifyInputsValues(app, inputs, fields, qForm);
     }
+
 
     return check;
 }
@@ -333,6 +337,7 @@ int submitButtonEvent(App *app, SDL_Event *event, InputManager **inputs, ListFie
 /* -- quit form variables with malloc --*/
 void quitForm(MySqlTable tableInfo, ListFields fields, InputManager *inputs, QueryForm qForm){
     free(qForm.fields);
+
     free(qForm.values);
     quitInputs(inputs, fields.numberFields);
     free(fields.list);

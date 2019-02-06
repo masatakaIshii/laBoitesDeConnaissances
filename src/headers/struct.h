@@ -233,6 +233,7 @@ typedef struct CreateInfo{
     char answer[MAX_VARCHAR];
     char datetime[MAX_VARCHAR];
     char childTable[MAX_VARCHAR];
+    int idParent;
 }CreateInfo;
 
 typedef struct CreateButtons{
@@ -265,7 +266,7 @@ typedef struct CreatePage{
 
 /* -- Form -- */
 typedef struct QueryForm{
-    char idParent[10];
+    int idParent;
     int numberFields;
     Varchar tableName;
     Varchar query;

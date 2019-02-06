@@ -56,6 +56,13 @@ int sendInsertQuery(App *app, QueryForm *qForm){
     tables = getTablesValues(app, qForm->tableName);
     values = getInsertValues(app, qForm->values, qForm->numberFields);
 
+    int i;
+    for (i = 0; i < qForm->numberFields; i++){
+        printf("qForm->fields[%d] : %s\n", i, qForm->fields[i]);
+        printf("values[%d] : %s\n", i, values[i]);
+    }
+
+
     setPreparedQuery(app, qForm->query, tables, 1);
     setBindParams(app, values, qForm->query);
     result = sendPreparedQueryIUD(app, qForm->query);
@@ -84,6 +91,7 @@ char **getInsertValues(App *app, Varchar *valuesVarchar, int numberFields){
     for (i = 0; i < numberFields; i++){
         values[i] = malloc(sizeof(char) * (strlen(valuesVarchar[i]) + 1));
         strcpy(values[i], valuesVarchar[i]);
+        printf("values[%d] : %s\n", i, values[i]);
     }
 
     return values;

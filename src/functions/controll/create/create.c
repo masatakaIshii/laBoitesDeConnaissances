@@ -59,11 +59,13 @@ void createMode(App *app, char *tableName, char **info) {
                     if (checkEnd){
                         checkForm = createEventElements(app, &elements, &event, &cInfo, &cButtons, &cPages, tableName);
                         if (checkForm  == 1){
+
                             quitSelectQuery(&elements);
                             quitCPages(&cPages);
-                            elements = getSelectedTable(app, tableName, info[0]);
+                            elements = getSelectedTable(app, tableName, (info != NULL) ? info[0] : NULL);
                             cPages = loadCreatePage(app, tableName, elements.numberRows);
                         }
+
                     }
                 }
         }
@@ -81,7 +83,7 @@ void createMode(App *app, char *tableName, char **info) {
 }
 
 CreateInfo loadCreateInfo(char* tableName, char **info){
-    CreateInfo cInfo = {{0}, {0}, {0}, {0}, {0}, "", "", "", "", "", ""};
+    CreateInfo cInfo = {{0}, {0}, {0}, {0}, {0}, "", "", "", "", "", "", 0};
 
     strcpy(cInfo.tableName, tableName);
 
@@ -89,8 +91,10 @@ CreateInfo loadCreateInfo(char* tableName, char **info){
         loadCreateInfoBoxes(&cInfo);
     } else if (strcmp(tableName, "list") == 0 || strcmp(tableName, "card") == 0){
         loadCreateInfoLists(&cInfo, tableName, info);
+        cInfo.idParent = atoi(info[0]);
     } else if (strcmp(tableName, "end") == 0){
         loadCreateInfoShowCards(&cInfo, info);
+        cInfo.idParent = atoi(info[0]);
     } else {
 
     }

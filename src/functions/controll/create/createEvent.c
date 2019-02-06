@@ -17,7 +17,7 @@ int createEventElements(App *app, SelectQuery *elements, SDL_Event *event, Creat
 
     createPageEvent(app, event, cButton, cPages);
     if (inRect(cButton->manageButtons[0], event->button.x, event->button.y)) {
-        check = createForm(app, tableName, 0);
+        check = createForm(app, elements, tableName, cInfo->idParent);
     }
 //    if (inRect(manageButtons[1], event.button.x, event.button.y)) {
 //

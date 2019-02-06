@@ -54,28 +54,27 @@ void textInputKeyEvents(SDL_Event *event, TextsInput *input){
 *@param (InputManager *) inputs : structure contain all infos of inputs
 *@param (int) numberFields : number of fields to insert
 */
-void textInputButtonLeftEvents(App *app, SDL_Event *event, InputManager **inputs, int numberFields){
+void textInputButtonLeftEvents(App *app, SDL_Event *event, InputManager *inputs, int numberFields){
     int i = 0;
     int change = -1;
 
     for (i = 0; i < numberFields; i++){
 
-        if (inRect(inputs[i]->rectInputs[0], event->button.x, event->button.y) || inRect(inputs[i]->rectInputs[1], event->button.x, event->button.y)){
+        if (inRect(inputs[i].rectInputs[0], event->button.x, event->button.y) || inRect(inputs[i].rectInputs[1], event->button.x, event->button.y)){
             if (SDL_IsTextInputActive() == SDL_FALSE){
                 SDL_StartTextInput();
-                printf("startTextInput!\n");
             }
 
-            inputs[i]->active = 1;
+            inputs[i].active = 1;
             change = i;
         } else {
-            inputs[i]->active = 0;
+            inputs[i].active = 0;
         }
     }
 
     if (change == -1){
         for (i = 0; i < numberFields; i++){
-            inputs[i]->active = 0;
+            inputs[i].active = 0;
         }
         if (SDL_IsTextInputActive()){
             SDL_StopTextInput();
@@ -91,15 +90,11 @@ void textInputButtonLeftEvents(App *app, SDL_Event *event, InputManager **inputs
 */
 void textInputEvents(App *app, SDL_Event *event, TextsInput *input){
 
-    printf("input->nbChar : %d\n", input->nbChar);
-    printf("input->maxLength : %d\n", input->maxLength);
-    printf("event->tdeezeext.text : %s\n", event->text.text);
     if (input->action == ADD_CHAR && input->maxLength > input->nbChar){
         input->listChar = addListInputTextInEnd(app, NULL, event->text.text, input->listChar);
         input->nbChar++;
         input->cursor++;
         input->size+=strlen(event->text.text);
-
     }
 }
 

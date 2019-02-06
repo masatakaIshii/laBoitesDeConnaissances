@@ -21,13 +21,21 @@ int verifyInputsValues(App *app, InputManager *inputs, ListFields fields, QueryF
 
     check = verifyIfValuesAreCorrects(inputs, fields, inputsValues);
 
+    printf("qForm->query : %s\n", qForm->query);
     qForm->values = getValuesToSend(inputs, qForm, inputsValues, fields.numberFields);
 
+    int i;
+
+    for (i = 0; i < qForm->numberFields; i++){
+        printf("fields.list[%d] : %s\n", i, qForm->fields[i]);
+        printf("qForm->values[%d] : %s\n",i, qForm->values[i]);
+    }
     if (check != -1){
         check = sendInsertQuery(app, qForm);
     }
 
     free(inputsValues);
+
 
     return check;
 }
@@ -152,7 +160,7 @@ int verifyString(InputManager *inputs, Varchar inputValue){
     int check = 0;
     int length = strlen(inputValue);
 
-    if (length > inputs->textInput.maxLength || strlen(inputValue) < 0){
+    if (length > inputs->textInput.maxLength || strlen(inputValue) == 0){
         strcpy(inputs->error, "The name value is not correct");
         check = 1;
     } else {
@@ -174,21 +182,28 @@ Varchar *getValuesToSend(InputManager *inputs, QueryForm *qForm, Varchar *inputs
     Varchar strId;              // if fields have id_parent, the string of this number
     int i;
     int j;
+    int index = 0;
 
     qValues = malloc(sizeof(Varchar) * qForm->numberFields);
     for (i = 0; i < qForm->numberFields; i++){
         // verify if id is "id_..." form
+
         if (strncmp(qForm->fields[i], "id_", 3) == 0){
-            strcpy(strId, qForm->idParent);
-            continue;
-        }
-        // verify if the query field name == label of input
-        for (j = 0; j < numberInputs; j++){
-            if (strcmp(inputs[j].label, qForm->fields[i]) == 0){
-                strcpy(qValues[i], inputsValues[j]);
-                continue;
+            sprintf(strId, "%d", qForm->idParent);
+            strcpy(qValues[index],strId);
+            printf("strId : %s\n", strId);
+            index++;
+        } else {
+            for (j = 0; j < numberInputs; j++){
+                if (strcmp(inputs[j].label, qForm->fields[i]) == 0){
+                    strcpy(qValues[index], inputsValues[j]);
+                    index++;
+                    break;
+                }
             }
         }
+        // verify if the query field name == label of input
+
     }
 
     return qValues;
