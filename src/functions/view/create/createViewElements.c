@@ -8,7 +8,7 @@
 
 #include "../../../headers/view/create/createViewElements.h"
 
-void displayElements(App *app, SelectQuery *elements, CreateInfo *cInfo, CreateButtons *cButtons, CreatePage *cPages) {
+void displayElements(App *app, SelectQuery *elements, CreateInfo *cInfo, CreateButtons *cButtons, CreatePage *cPages, char *tableName) {
 
     int elementHeight = hRatio9(app, 1.25),     elementWidth = wRatio16(app, 1.25);
     int nbColomns = 3,                          nbRows = 2;
@@ -17,20 +17,39 @@ void displayElements(App *app, SelectQuery *elements, CreateInfo *cInfo, CreateB
 
     DisplayManager display = displayManagerConstructor(elementHeight, elementWidth, nbColomns, nbRows, startX, startY, stepX, stepY);
 
-    strcpy(cButtons->buttonText0, "CREATE BOX");
-    strcpy(cButtons->buttonText1, "DELETE BOX");
-
     SDL_SetRenderDrawColor(app->renderer, cPages->mainPColor[0], cPages->mainPColor[1], cPages->mainPColor[2], cPages->mainPColor[3]);
     SDL_RenderClear(app->renderer);
 
     // Creating elements
     cPages->nbElementsPage = createCustumElementsPage(app, elements, cButtons, cPages, display);
 
-    //displayPageButtons(app, cPages, display.nbElements);
-//
-//    displayManageButtons(app, manageButtons, boxManageText);
-//
+    // Creating Buttons create and delete
+    putButtonsUpperName(cButtons, tableName, "CREATE ", "DELETE ");
+
+    displayPageButtons(app, cPages, display.nbElements);
+
+    displayManageButtons(app, cButtons);
+
     SDL_RenderPresent(app->renderer);
+}
+
+void putButtonsUpperName(CreateButtons *cButtons, char *tableName, char *buttonsText0, char *buttonsText1){
+    int i = 0;
+    char temp[MAX_VARCHAR] = "";
+    char temp2[MAX_VARCHAR] = "";
+    char temp3[MAX_VARCHAR] = "";
+
+    strcpy(temp, tableName);
+    strcpy(temp2, buttonsText0);
+    strcpy(temp3, buttonsText1);
+
+    while(temp[i]){
+        temp[i] = toupper(temp[i]);
+        i++;
+    }
+
+    strcpy(cButtons->buttonText0, strcat(temp2, temp));
+    strcpy(cButtons->buttonText1, strcat(temp3, temp));
 }
 
 int createCustumElementsPage(App *app, SelectQuery *elements, CreateButtons *cButtons, CreatePage *cPages, DisplayManager display) {
@@ -107,32 +126,59 @@ void displayPageButtons(App *app, CreatePage *cPage, int nbElements) {
 
     if (cPage->page != 0) {
 
-        cPage->pageButtons[0] = createRect(app, wRatio16(app, 0.7), hRatio9(app, 0.4), wRatio16(app, 8.5), hRatio9(app, 7.25), cPage->pageBColor);
+        cPage->pageButtons[0] = createRect(app, wRatio16(app, 1), hRatio9(app, 0.65), wRatio16(app, 8.5), hRatio9(app, 7.25), cPage->pageBColor);
 
-        renderTextToPageButtons(app, &textRender, cPage->pageButtons[1], cPage->next);
+        renderTextToButtons(app, &textRender, cPage->pageButtons[1], cPage->before, 1.375, 1.5, app->colors.black);
     } else {
         cPage->pageButtons[0] = nullBtn;
     }
 
     if (cPage->nbElementsPage * (cPage->page + 1) < cPage->nbTotalElements) {
 
-        cPage->pageButtons[1] = createRect(app, wRatio16(app, 0.7), hRatio9(app, 0.4), wRatio16(app, 10.5), hRatio9(app, 7.25), cPage->pageBColor);
+        cPage->pageButtons[1] = createRect(app, wRatio16(app, 1), hRatio9(app, 0.65), wRatio16(app, 10.5), hRatio9(app, 7.25), cPage->pageBColor);
 
-        renderTextToPageButtons(app, &textRender, cPage->pageButtons[1], cPage->before);
+        renderTextToButtons(app, &textRender, cPage->pageButtons[1], cPage->next, 1.375, 1.5, app->colors.black);
     } else {
         cPage->pageButtons[1] = nullBtn;
     }
 }
 
-void renderTextToPageButtons(App *app, TextRender *textRender, SDL_Rect pageButton, char *text){
+/**
+*@brief : fonction to put text in rect
+*@param (App*) app : structure of application
+*@param (TextRender*) textRender : structure to help render the text
+*@param (SDL_Rect) button : the page that have to contain text
+*@param (double) coefW : the coef of reduction width of text compared to rect
+*@param (double) coefH : the coef of reduction hight of text compared to rect
+*/
+void renderTextToButtons(App *app, TextRender *textRender, SDL_Rect button, char *text, double coefW, double coefH, SDL_Color color){
     textRender->length = strlen(text);
-    textRender->rect.w = pageButton.w / 1.25;
-    textRender->rect.h = pageButton.h / 1.25;
-    textRender->rect.w = getAppropriateXOrY(textRender->rect.w, pageButton.w, pageButton.x);
-    textRender->rect.w = getAppropriateXOrY(textRender->rect.h, pageButton.h, pageButton.y);
+    textRender->rect.w = button.w / coefW;
+    textRender->rect.h = button.h / coefH;
+    textRender->rect.x = getAppropriateXOrY(textRender->rect.w, button.w, button.x);
+    textRender->rect.y = getAppropriateXOrY(textRender->rect.h, button.h, button.y);
 
-    renderText(app, textRender->rect, app->config.fontCambriab, text, 30, TEXT_BLENDED, app->colors.black);
+    renderText(app, textRender->rect, app->config.fontCambriab, text, 50, TEXT_BLENDED, color);
 }
+
+void displayManageButtons(App *app, CreateButtons *cButtons) {
+
+    TextRender textRender;
+
+    cButtons->manageButtons[0] = createRect(app, wRatio16(app, 3), hRatio9(app, 1.5), wRatio16(app, 1),  hRatio9(app, 2.75), app->colors.lightblue);
+
+    renderTextToButtons(app, &textRender, cButtons->manageButtons[0], cButtons->buttonText0, 1.25, 1.25, app->colors.black);
+
+    cButtons->manageButtons[1] = createRect(app, wRatio16(app, 3), hRatio9(app, 1.5), wRatio16(app, 1), hRatio9(app, 4.75), app->colors.red);
+
+    if (cButtons->activeDel == 0){
+        renderTextToButtons(app, &textRender, cButtons->manageButtons[1], cButtons->buttonText1, 1.25, 1.25, app->colors.black);
+    } else {
+        renderTextToButtons(app, &textRender, cButtons->manageButtons[1], cButtons->buttonText1, 1.25, 1.25, app->colors.white);
+    }
+
+}
+
 
 void displayCard (App *app, CreateInfo *cInfo,CreateButtons *cButtons){
     SDL_SetRenderDrawColor(app->renderer, 200, 200, 200, 200);

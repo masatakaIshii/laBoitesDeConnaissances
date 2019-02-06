@@ -44,7 +44,6 @@ void createMode(App *app, char *tableName, char **info) {
         cPages = loadCreatePage(app, tableName, elements.numberRows);
     }
 
-    showQueryResult(app, &elements);
     while(!done) {
         SDL_WaitEvent(&event);
         commonEvents(app, event, &done);
@@ -60,7 +59,7 @@ void createMode(App *app, char *tableName, char **info) {
                 }
         }
         if (checkEnd != 0 ){
-            displayElements(app, &elements, &cInfo, &cButtons, &cPages);
+            displayElements(app, &elements, &cInfo, &cButtons, &cPages, tableName);
         } else {
             displayCard(app, &cInfo, &cButtons);
         }

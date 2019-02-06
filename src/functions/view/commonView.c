@@ -34,14 +34,6 @@ DisplayManager displayManagerConstructor(int elementHeight, int elementWidth,
 
 
 
-void displayManageButtons(App *app, SDL_Rect *manageButtons, char boxManageText[2][11]) {
-
-    manageButtons[0] = createRect(app, wRatio16(app, 3), hRatio9(app, 1.5), wRatio16(app, 1),  hRatio9(app, 2.5), app->colors.lightblue);
-
-    manageButtons[1] = createRect(app, wRatio16(app, 3), hRatio9(app, 1.5), wRatio16(app, 1), hRatio9(app, 5.5), app->colors.red);
-
-    renderTextManageButton(app, manageButtons, boxManageText);
-}
 
 void renderTextManageButton(App *app, SDL_Rect *manageButtons, char boxManageText[2][11]) {
     typeRenderText typeText = TEXT_BLENDED;

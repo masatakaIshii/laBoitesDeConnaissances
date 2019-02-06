@@ -236,8 +236,8 @@ typedef struct CreateInfo{
 }CreateInfo;
 
 typedef struct CreateButtons{
-    char buttonText0[10];
-    char buttonText1[10];
+    char buttonText0[20];
+    char buttonText1[20];
     SDL_Rect manageButtons[2];
     SDL_Rect rectCreate;
     SDL_Rect rectDelete;
