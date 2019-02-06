@@ -12,6 +12,8 @@
 #include "../../common.h"
 #include "../commonView.h"
 
+typedef void(*showCard)(App*, CreateInfo*, int, int, int);
+
 void displayElements(App *app, SelectQuery *elements, CreateInfo *cInfo, CreateButtons *cButtons, CreatePage *cPages, char *tableName);
 void displayElementInfo(App *app, CreateInfo *cInfo, char *tableName);
 void displayBoxInfo(App *app, CreateInfo *cInfo);
@@ -31,6 +33,10 @@ void renderTextToButtons(App *app, TextRender *textRender, SDL_Rect button, char
 void displayManageButtons(App *app, CreateButtons *cButtons);
 
 void displayCard (App *app, CreateInfo *cInfo,CreateButtons *cButtons);
+void displayTitleCard(App *app, CreateInfo *cInfo, int h, int w, int y);
+void displayQuestionCard(App *app, CreateInfo *cInfo, int h, int w, int y);
+void displayAnswerCard(App *app, CreateInfo *cInfo, int h, int w, int y);
+void displayDateTimeCard(App *app, CreateInfo *cInfo, int h, int w, int y);
 
 #endif // CREATE_VIEW_BOXES
 

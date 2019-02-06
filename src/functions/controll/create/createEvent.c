@@ -13,11 +13,11 @@ void createEventElements(App *app, SelectQuery *elements, SDL_Event *event, Crea
     int currentId =  cPages->page * elements->numberFields;
     int check = 0;
     // Change the page
-    if (inRect(pageButtons[0], event.button.x, event.button.y)) {
-        (*page)--;
-    } else if(inRect(pageButtons[1], event.button.x, event.button.y)) {
-        (*page)++;
-    }
+//    if (inRect(pageButtons[0], event.button.x, event.button.y)) {
+//        (*page)--;
+//    } else if(inRect(pageButtons[1], event.button.x, event.button.y)) {
+//        (*page)++;
+//    }
 //
 //    if (inRect(manageButtons[0], event.button.x, event.button.y)) {
 //        check = createForm(app, boxes, boxButtons, "box", 0);

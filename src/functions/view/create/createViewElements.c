@@ -217,9 +217,59 @@ void displayManageButtons(App *app, CreateButtons *cButtons) {
 }
 
 
-void displayCard (App *app, CreateInfo *cInfo,CreateButtons *cButtons){
+void displayCard (App *app, CreateInfo *cInfo, CreateButtons *cButtons){
+    int h = hRatio9(app, 1.5);
+    int w = wRatio16(app, 0.2);
+    int y = hRatio9(app, 0.5);
+    showCard pFChard[4] = {displayTitleCard, displayQuestionCard, displayAnswerCard, displayDateTimeCard};
+    int i;
+
     SDL_SetRenderDrawColor(app->renderer, 200, 200, 200, 200);
     SDL_RenderClear(app->renderer);
 
+    renderText(app, cInfo->titleRect, app->config.fontCambriab, cInfo->title, 77, TEXT_BLENDED, app->colors.black);
+    for (i = 0; i < 4; i++){
+        pFChard[i](app, cInfo, h, w, y);
+        y += h;
+    }
+
+
     SDL_RenderPresent(app->renderer);
+}
+
+
+void displayTitleCard(App *app, CreateInfo *cInfo, int h, int w, int y){
+    cInfo->titleRect.h = h;
+    cInfo->titleRect.w = w * strlen(cInfo->title);
+    cInfo->titleRect.x = getAppropriateXOrY(cInfo->titleRect.w, app->config.width, 0);
+    cInfo->titleRect.y = y;
+
+    renderText(app, cInfo->titleRect, app->config.fontCambriab, cInfo->title, 77, TEXT_BLENDED, app->colors.black);
+}
+
+void displayQuestionCard(App *app, CreateInfo *cInfo, int h, int w, int y){
+    cInfo->questionRect.h = h;
+    cInfo->questionRect.w = w * strlen(cInfo->question);
+    cInfo->questionRect.x = getAppropriateXOrY(cInfo->questionRect.w, app->config.width, 0);
+    cInfo->questionRect.y = y;
+
+    renderText(app, cInfo->questionRect, app->config.fontCambriab, cInfo->question, 77, TEXT_BLENDED, app->colors.black);
+}
+
+void displayAnswerCard(App *app, CreateInfo *cInfo, int h, int w, int y){
+    cInfo->answerRect.h = h;
+    cInfo->answerRect.w = w * strlen(cInfo->answer);
+    cInfo->answerRect.x = getAppropriateXOrY(cInfo->answerRect.w, app->config.width, 0);
+    cInfo->answerRect.y = y;
+
+    renderText(app, cInfo->answerRect, app->config.fontCambriab, cInfo->answer, 77, TEXT_BLENDED, app->colors.black);
+}
+
+void displayDateTimeCard(App *app, CreateInfo *cInfo, int h, int w, int y){
+    cInfo->dateRect.h = h;
+    cInfo->dateRect.w = w * strlen(cInfo->datetime);
+    cInfo->dateRect.x = getAppropriateXOrY(cInfo->dateRect.w, app->config.width, 0);
+    cInfo->dateRect.y = y;
+
+    renderText(app, cInfo->dateRect, app->config.fontCambriab, cInfo->datetime, 77, TEXT_BLENDED, app->colors.black);
 }

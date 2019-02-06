@@ -41,7 +41,7 @@ int mainEventLoop(App *app) {
                     //createMode(app, "box", NULL);
                     //createMode(app, "list", boxes.listColumnsRows[0]);
                     //createMode(app, "card", list.listColumnsRows[0]);
-                    //createMode(app, "end", card.listColumnsRows[0]);
+                    createMode(app, "end", card.listColumnsRows[0]);
                     // Fonction CREATE
             break;
 

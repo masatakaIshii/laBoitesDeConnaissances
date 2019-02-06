@@ -53,7 +53,7 @@ void createMode(App *app, char *tableName, char **info) {
                     if (checkEnd){
                         //createEventElements(app, &elements, &event, &cInfo, &cButtons, &cPages);
                     } else {
-                        //createEventShowCard(app, &cInfo,
+                        //createEventShowCard(app, &cInfo);
                     }
                     //
                 }
@@ -122,7 +122,7 @@ void loadCreateInfoShowCards(CreateInfo *cInfo, char **info){
     char yearMonthDate[MAX_VARCHAR];
     char hoursMinutesSec[MAX_VARCHAR];
 
-    sprintf(cInfo->title, "The name of card %s", info[1]);
+    sprintf(cInfo->title, "The name of card is : %s", info[1]);
     sprintf(cInfo->question, "The question is : %s", info[3]);
     sprintf(cInfo->answer, "The answer is : %s", info[4]);
     sscanf(info[8], "%s %s", yearMonthDate, hoursMinutesSec);
