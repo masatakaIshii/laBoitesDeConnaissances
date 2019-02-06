@@ -6,36 +6,46 @@
 ** Description  : create menu functions for events
 */
 #include "../../../headers/controll/create/createEvent.h"
+#include "../../../headers/controll/create/create.h"
 
-void createEventElements(App *app, SelectQuery *elements, SDL_Event *event, CreateInfo *cInfo, CreateButtons *cButton, CreatePage *cPages) {
+void createEventElements(App *app, SelectQuery *elements, SDL_Event *event, CreateInfo *cInfo, CreateButtons *cButton, CreatePage *cPages, char *tableName) {
     int i;
 
-    int currentId =  cPages->page * elements->numberFields;
+    int currentId;
     int check = 0;
      //Change the page
-    if (inRect(cPages->pageButtons[0], event->button.x, event->button.y)) {
-        (cPages->page)--;
-        printf("ca page--\n");
-    } else if(inRect(cPages->pageButtons[1], event->button.x, event->button.y)) {
-        (cPages->page)++;
-        printf("ca page++\n");
+
+    createPageEvent(app, event, cButton, cPages);
+    if (inRect(cButton->manageButtons[0], event->button.x, event->button.y)) {
+        check = createForm(app, tableName, 0);
+        if(check == 1){
+
+        }
     }
-//
-//    if (inRect(manageButtons[0], event.button.x, event.button.y)) {
-//        check = createForm(app, boxes, boxButtons, "box", 0);
-//        if(check == 1){
-//
-//        }
-//    }
 //    if (inRect(manageButtons[1], event.button.x, event.button.y)) {
 //
 //    }
 //
-//    for (i = currentId ; i < (currentId + boxes->numberFields); i++) {
-//        if (inRect(boxButtons[i], event.button.x, event.button.y)){
-//            //createModeList(app, boxes->listColumnsRows[i]);
-//        }
-//    }
+    for (i = 0; i < cPages->nbElementsPage; i++) {
+        if (inRect(cPages->elementButtons[i], event->button.x, event->button.y)){
+            currentId = cPages->page * cPages->nbElementMaxPerPage + i;
+            printf("page : %d\n", cPages->page);
+            printf("i : %d\n", i);
+            printf("nbElementsPage : %d\n", cPages->nbElementMaxPerPage);
+            printf("currentId : %d\n", currentId);
+            createMode(app, cInfo->childTable, elements->listColumnsRows[currentId]);
+        }
+    }
+}
+
+void createPageEvent(App *app, SDL_Event *event, CreateButtons *cButton, CreatePage *cPages){
+    if (inRect(cPages->pageButtons[0], event->button.x, event->button.y)) {
+        (cPages->page)--;
+        cButton->activeDel = 0;
+    } else if(inRect(cPages->pageButtons[1], event->button.x, event->button.y)) {
+        (cPages->page)++;
+        cButton->activeDel = 0;
+    }
 }
 
 //void eventPages(SDL_Event event)

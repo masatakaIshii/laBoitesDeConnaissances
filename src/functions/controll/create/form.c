@@ -11,13 +11,11 @@
 *@brief : function of loop event of form
 *
 *@param (App *) app : the structure of application
-*@param (SelectQuery *) table: adresse of all concerned elements that content in selectQuery
-*@param (SDL_Rect *) listButton : list of all button correponded to select query
 *@param (char *) tableName : the name of table to insert the information
 *@param (int) idParent : the id of parent if the table contain foreign key
 *@return (int) return : 1 => the form is valid, 0 => nothing
 */
-int createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableName, int idParent){
+int createForm(App *app, char *tableName, int idParent){
     SDL_Event event;
     SDL_Rect submitButton;
     SDL_Rect successButton;

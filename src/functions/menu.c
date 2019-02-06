@@ -41,7 +41,7 @@ int mainEventLoop(App *app) {
                     createMode(app, "box", NULL);
                     //createMode(app, "list", boxes.listColumnsRows[0]);
                     //createMode(app, "card", list.listColumnsRows[0]);
-                    //createMode(app, "end", card.listColumnsRows[0]);
+                    //createMode(app, "end", card.listColumnsRows[2]);
                     // Fonction CREATE
             break;
 
@@ -53,7 +53,7 @@ int mainEventLoop(App *app) {
                     // MODE CREATE
                     else if(inRect(buttons[1] , event.button.x, event.button.y)){
                         // Fonction CREATE
-                        //createMode(app, "box", NULL);
+                        createMode(app, "box", NULL);
                         //createMode(app, "list", boxes.listColumnsRows[0]);
                         //createMode(app, "card", list.listColumnsRows[0]);
                         //createMode(app, "end", card.listColumnsRows[0]);

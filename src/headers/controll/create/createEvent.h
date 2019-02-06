@@ -12,6 +12,7 @@
 #include "../../common.h"
 #include "form.h"
 
-void createEventElements(App *app, SelectQuery *elements, SDL_Event *event, CreateInfo *cInfo, CreateButtons *cButton, CreatePage *cPages);
+void createEventElements(App *app, SelectQuery *elements, SDL_Event *event, CreateInfo *cInfo, CreateButtons *cButton, CreatePage *cPages, char *tableName);
 
+void createPageEvent(App *app, SDL_Event *event, CreateButtons *cButton, CreatePage *cPages);
 #endif // CREATE_EVENT

@@ -253,6 +253,7 @@ typedef struct CreatePage{
     SDL_Rect *elementDate;
     Uint8 mainPColor[4];
     int nbTotalElements;
+    int nbElementMaxPerPage;
     int nbElementsPage;
     Uint8 pageBColor[4];
     SDL_Rect pageButtons[2];

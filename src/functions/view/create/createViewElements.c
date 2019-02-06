@@ -135,9 +135,9 @@ void displayElementsInfos(App *app, SelectQuery *elements, CreatePage *cPages, P
     renderText(app, cPages->elementName[i], app->config.fontCambriab, elements->listColumnsRows[i][1], 50, TEXT_BLENDED, app->colors.black);
 
     // position and put color of date of element and render
-    tRender->length = strlen(elements->listColumnsRows[i][cPages->indexDate]);
-    cPages->elementName[i] = createRect(app, (display.elementW / 10) * tRender->length, display.elementH / 2 , xBox + display.elementW * 1.125, yBox + display.elementH / 2, cPages->mainPColor);
-    renderText(app, cPages->elementName[i], app->config.fontCambriab, elements->listColumnsRows[i][cPages->indexDate], 50, TEXT_BLENDED, app->colors.black);
+//    tRender->length = strlen(elements->listColumnsRows[i][3]);
+//    cPages->elementName[i] = createRect(app, (display.elementW / 10) * tRender->length, display.elementH / 2 , xBox + display.elementW * 1.125, yBox + display.elementH / 2, cPages->mainPColor);
+//    renderText(app, cPages->elementName[i], app->config.fontCambriab, elements->listColumnsRows[i][3], 50, TEXT_BLENDED, app->colors.black);
 }
 
 int getAppropriateXOrY(int lengthChild, int lengthParent, int posParent){
@@ -160,12 +160,13 @@ void displayPageButtons(App *app, CreatePage *cPage, int nbElements) {
         cPage->pageButtons[0] = nullBtn;
     }
 
-    if (cPage->nbElementsPage * (cPage->page + 1) < cPage->nbTotalElements) {
+    if (nbElements * (cPage->page + 1) < cPage->nbTotalElements) {
 
         cPage->pageButtons[1] = createRect(app, wRatio16(app, 1), hRatio9(app, 0.65), wRatio16(app, 10.5), hRatio9(app, 7.25), cPage->pageBColor);
 
         renderTextToButtons(app, &textRender, cPage->pageButtons[1], cPage->next, 1.375, 1.5, app->colors.black);
     } else {
+
         cPage->pageButtons[1] = nullBtn;
     }
 }

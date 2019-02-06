@@ -51,7 +51,7 @@ void createMode(App *app, char *tableName, char **info) {
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT) {
                     if (checkEnd){
-                        createEventElements(app, &elements, &event, &cInfo, &cButtons, &cPages);
+                        createEventElements(app, &elements, &event, &cInfo, &cButtons, &cPages, tableName);
                     } else {
                         //createEventShowCard(app, &cInfo);
                     }
@@ -102,31 +102,58 @@ void loadCreateInfoLists(CreateInfo *cInfo, char *tableName, char **info){
     char yearMonthDate[MAX_VARCHAR];
     char hoursMinutesSec[MAX_VARCHAR];
 
-    sprintf(cInfo->title, "This is the '%s' %s !", info[1], (strcmp(tableName, "list") == 0) ? "box" : "list");
+    if (strlen(info[1]) != 0){
+        sprintf(cInfo->title, "This is the '%s' %s !", info[1], (strcmp(tableName, "list") == 0) ? "box" : "list");
+    }
 
     if (strcmp(tableName, "list") == 0){
         strcpy(cInfo->childTable, "card");
-        sscanf(info[3], "%s %s", yearMonthDate, hoursMinutesSec);
+        if (strlen(info[3]) != 0){
+            sscanf(info[3], "%s %s", yearMonthDate, hoursMinutesSec);
+        }
     } else {
-        sscanf(info[3], "%s %s", yearMonthDate, hoursMinutesSec);
+        if (strlen(info[3]) != 0){
+            sscanf(info[3], "%s %s", yearMonthDate, hoursMinutesSec);
+        }
         strcpy(cInfo->childTable, "end");
     }
 
     strcpy(cInfo->question, "");
     strcpy(cInfo->answer, "");
 
-    sprintf(cInfo->datetime, "Last modification : %s at %s", yearMonthDate, hoursMinutesSec);
+    if (strlen(info[3]) != 0){
+        sprintf(cInfo->datetime, "Last modification : %s at %s", yearMonthDate, hoursMinutesSec);
+    } else {
+        strcpy(cInfo->datetime, " ");
+    }
 }
 
 void loadCreateInfoShowCards(CreateInfo *cInfo, char **info){
     char yearMonthDate[MAX_VARCHAR];
     char hoursMinutesSec[MAX_VARCHAR];
 
-    sprintf(cInfo->title, "The name of card is : %s", info[1]);
-    sprintf(cInfo->question, "The question is : %s", info[3]);
-    sprintf(cInfo->answer, "The answer is : %s", info[4]);
-    sscanf(info[8], "%s %s", yearMonthDate, hoursMinutesSec);
+    if (strlen(info[1]) != 0)
+        sprintf(cInfo->title, "The name of card is : %s", info[1]);
+    else
+        strcpy(cInfo->title, "");
+
+    if (strlen(info[3]) != 0)
+        sprintf(cInfo->question, "The question is : %s", info[3]);
+    else
+        strcpy(cInfo->question, "");
+
+    if (strlen(info[4]) != 0){
+        sprintf(cInfo->answer, "The answer is : %s", info[4]);
+    } else {
+        strcpy(cInfo->answer, "");
+    }
+    if (strlen(info[8]) != 0){
+        sscanf(info[8], "%s %s", yearMonthDate, hoursMinutesSec);
     sprintf(cInfo->datetime, "Last modification : %s at %s", yearMonthDate, hoursMinutesSec);
+    } else {
+        strcpy(cInfo->datetime, "");
+    }
+
     strcpy(cInfo->childTable, "");
 }
 
@@ -202,7 +229,7 @@ CreatePage loadCreatePage(App *app, char *tableName, int numberRows){
     strcpy(cPage.next, "next");
 
     //renderText()
-
+    cPage.nbElementMaxPerPage = 6;
     cPage.nbTotalElements = numberRows;
     cPage.page = 0;
 

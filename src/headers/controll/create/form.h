@@ -14,7 +14,7 @@
 #include "../../view/create/createViewForm.h"
 #include "verifyForm.h"
 
-int createForm(App *app, SelectQuery *table, SDL_Rect *listButton, char *tableName, int idParent);
+int createForm(App *app, char *tableName, int idParent);
 int eventForm(App *app, SDL_Event *event, InputManager *inputs, int *done, ListFields fields, QueryForm *qForm,  SDL_Rect submitButton, SDL_Rect successButton);
 
 ListFields getListFieldsForForm(App *app, MySqlTable tableInfo);
