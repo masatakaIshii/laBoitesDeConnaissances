@@ -15,7 +15,7 @@
 #include "verifyForm.h"
 
 int createForm(App *app, char *tableName, char *idParent);
-int eventForm(App *app, SDL_Event *event, InputManager *inputs, int *done, ListFields fields, QueryForm *qForm,  SDL_Rect submitButton, SDL_Rect successButton);
+int eventForm(App *app, SDL_Event *event, InputManager **inputs, int *done, ListFields fields, QueryForm *qForm,  SDL_Rect submitButton, SDL_Rect successButton);
 
 ListFields getListFieldsForForm(App *app, MySqlTable tableInfo);
 int *adaptedIndexesToForm(App *app, MySqlTable tableInfo, int *numberField);
@@ -30,7 +30,7 @@ void putComma(MySqlTable tableInfo, int index, Varchar *fields, Varchar *values)
 Varchar *getArrayStringForInsertQuery(App *app, Varchar listString, int *numberFields);
 int getNumberOfFieldsInInsert(Varchar listString);
 
-int submitButtonEvent(App *app, SDL_Event *event, InputManager *inputs, ListFields fields, QueryForm *qForm, SDL_Rect submitButton);
+int submitButtonEvent(App *app, SDL_Event *event, InputManager **inputs, ListFields fields, QueryForm *qForm, SDL_Rect submitButton);
 void quitForm(MySqlTable tableInfo, ListFields list, InputManager *inputs, QueryForm qForm);
 void quitInputs(InputManager *inputs, int numberFields);
 #endif // CREATE_FORM

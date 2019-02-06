@@ -26,15 +26,13 @@ int createForm(App *app, char *tableName, char *idParent){
     QueryForm qForm = loadQueryForm(app, tableName, fields, tableInfo, idParent);
     int checkForm = 0;
 
-    int i;
-
     SDL_StopTextInput();
     while (!done) {
         SDL_WaitEvent(&event);
 
         commonEvents(app, event, &done);
 
-        checkForm = eventForm(app, &event, inputs, &done, fields, &qForm, submitButton, successButton);
+        checkForm = eventForm(app, &event, &inputs, &done, fields, &qForm, submitButton, successButton);
 
         if (checkForm <= 0){
             displayAllForm(app, inputs, fields, tableName, &submitButton);
@@ -60,7 +58,7 @@ int createForm(App *app, char *tableName, char *idParent){
 *
 *@return (int) checkForm : when form is submit and valid, exit the loop
 */
-int eventForm(App *app, SDL_Event *event, InputManager *inputs, int *done, ListFields fields, QueryForm *qForm,  SDL_Rect submitButton, SDL_Rect successButton){
+int eventForm(App *app, SDL_Event *event, InputManager **inputs, int *done, ListFields fields, QueryForm *qForm,  SDL_Rect submitButton, SDL_Rect successButton){
     int checkForm = 0;
     int i;
 
@@ -68,8 +66,8 @@ int eventForm(App *app, SDL_Event *event, InputManager *inputs, int *done, ListF
         case SDL_KEYDOWN:
             if (SDL_IsTextInputActive()){
                 for (i = 0; i < fields.numberFields; i++){
-                    if (inputs[i].active == 1){
-                        textInputKeyEvents(event, &inputs[i].textInput);
+                    if (inputs[i]->active == 1){
+                        textInputKeyEvents(event, &inputs[i]->textInput);
                     }
                 }
             }
@@ -83,8 +81,8 @@ int eventForm(App *app, SDL_Event *event, InputManager *inputs, int *done, ListF
         break;
         case SDL_TEXTINPUT:
             for (i = 0; i < fields.numberFields; i++){
-                if (inputs[i].active == 1){
-                    textInputEvents(app, event, &inputs[i].textInput);
+                if (inputs[i]->active == 1){
+                    textInputEvents(app, event, &inputs[i]->textInput);
                 }
             }
         break;
@@ -320,12 +318,13 @@ int getNumberOfFieldsInInsert(Varchar listString){
     return numberFields;
 }
 
-int submitButtonEvent(App *app, SDL_Event *event, InputManager *inputs, ListFields fields, QueryForm *qForm, SDL_Rect submitButton){
+int submitButtonEvent(App *app, SDL_Event *event, InputManager **inputs, ListFields fields, QueryForm *qForm, SDL_Rect submitButton){
 
     int check = 0;
 
     if (inRect(submitButton, event->button.x, event->button.y)){
-        check = verifyInputsValues(app, inputs, fields, qForm);
+        //check = verifyInputsValues(app, inputs, fields, qForm);
+        printf("tu as cliquer sur submit\n");
     }
 
     return check;
